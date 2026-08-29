@@ -62,7 +62,7 @@
     </div>
 
     <div class='foot'>
-      <span>Copyright ©2011-2026</span>
+      <span>Copyright ©2011-2024</span>
       <span>marketing de mercado Pictures All Rights Reserved</span>
     </div>
   </div>

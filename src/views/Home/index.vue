@@ -159,16 +159,33 @@
             <router-link to="/work" class="view-all-link">View All</router-link>
           </div>
           <div class="panel-body list-panel">
-            <div v-for="item in vipList?.slice(0, 4)" :key="item.id" class="project-item">
-              <img :src="item.img" class="project-img" />
+            <div class="project-item">
               <div class="project-info">
-                <h4>{{ item.name }}</h4>
-                <p>Daily Profit: {{ (item.bili * 100).toFixed(2) }}% • Min: {{ $t('main.money') }} {{ item.num_min }}</p>
+                <h4>VIP 1 Investment Plan</h4>
+                <p>Daily Profit: 0.52% • Min: Q 50.00</p>
               </div>
               <button class="invest-btn" @click="router.push('/work')">Invest Now</button>
             </div>
-            <div v-if="!vipList || vipList.length === 0" class="empty-state">
-              No projects found.
+            <div class="project-item">
+              <div class="project-info">
+                <h4>VIP 2 Investment Plan</h4>
+                <p>Daily Profit: 0.54% • Min: Q 100.00</p>
+              </div>
+              <button class="invest-btn" @click="router.push('/work')">Invest Now</button>
+            </div>
+            <div class="project-item">
+              <div class="project-info">
+                <h4>VIP 3 Investment Plan</h4>
+                <p>Daily Profit: 0.56% • Min: Q 150.00</p>
+              </div>
+              <button class="invest-btn" @click="router.push('/work')">Invest Now</button>
+            </div>
+            <div class="project-item">
+              <div class="project-info">
+                <h4>Free Project</h4>
+                <p>Daily Profit: 15.00% • Min: Q 0.00</p>
+              </div>
+              <button class="invest-btn" @click="router.push('/work')">Invest Now</button>
             </div>
           </div>
         </div>
@@ -360,11 +377,6 @@ const onEntryClick = (id) => {
 const data = ref({})
 Request.get({ url: 'index/index/home' }).then(res => {
   data.value = res.data
-})
-
-const vipList = ref([])
-Request.get({ url: 'index/user/vip' }).then(res => {
-  vipList.value = res.data
 })
 
 const token = sessionStorage.getItem('token')
@@ -706,9 +718,8 @@ const onMenuClick = (path) => {
 
         .project-item {
           display: flex;
-          align-items: center;
-          gap: 12px;
           justify-content: space-between;
+          align-items: center;
           padding-bottom: 16px;
           border-bottom: 1px solid #f8fafc;
 
@@ -717,17 +728,7 @@ const onMenuClick = (path) => {
             border-bottom: none;
           }
 
-          .project-img {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            object-fit: cover;
-            background-color: #f1f5f9;
-            flex-shrink: 0;
-          }
-
           .project-info {
-            flex: 1;
             h4 {
               margin: 0;
               font-size: 13px;

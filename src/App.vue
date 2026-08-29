@@ -3,9 +3,9 @@
     <!-- Desktop Layout -->
     <div v-if="isDesktop" class="desktop-layout">
       <!-- Sidebar -->
-      <aside v-if="showSidebar" class="desktop-sidebar" :class="{ 'collapsed': isSidebarCollapsed }">
+      <aside class="desktop-sidebar" :class="{ 'collapsed': isSidebarCollapsed }">
         <div class="sidebar-logo">
-          <img src="@/assets/img/main/logo.jpg" class="logo-img" />
+          <div class="logo-icon">★</div>
           <div class="logo-text" v-show="!isSidebarCollapsed">
             <h3>KKK577</h3>
             <span>EARN & GROW TOGETHER</span>
@@ -90,7 +90,7 @@
       <!-- Main Panel -->
       <div class="desktop-main">
         <!-- Header -->
-        <header v-if="showSidebar" class="desktop-header">
+        <header class="desktop-header">
           <div class="header-left">
             <van-icon name="wap-nav" class="toggle-icon" @click="isSidebarCollapsed = !isSidebarCollapsed" />
             <h2 class="page-title">{{ currentPageTitle }}</h2>
@@ -115,14 +115,12 @@
         </header>
 
         <!-- Page View Wrapper -->
-        <main class="desktop-content" :class="{ 'full-screen': !showSidebar }">
-          <div class="content-wrapper" :class="route.name === 'home' ? 'wide' : (showSidebar ? 'narrow' : 'login-box')">
-            <router-view />
-          </div>
+        <main class="desktop-content">
+          <router-view />
         </main>
 
         <!-- Footer Crypto Ticker -->
-        <footer v-if="showSidebar" class="desktop-footer">
+        <footer class="desktop-footer">
           <div class="ticker-container">
             <div class="ticker-item"><span class="coin">BTC/USDT</span> <span class="price">67,892.41</span> <span class="change positive">+1.25%</span></div>
             <div class="ticker-item"><span class="coin">ETH/USDT</span> <span class="price">3,782.16</span> <span class="change positive">+0.85%</span></div>
@@ -217,10 +215,6 @@ const onLogout = () => {
   userInfo.value = null
   router.push('/login')
 }
-
-const showSidebar = computed(() => {
-  return route.name !== 'login' && route.name !== 'register'
-})
 </script>
 
 <style lang="less">
@@ -281,11 +275,17 @@ const showSidebar = computed(() => {
       margin-bottom: 32px;
       padding: 0 8px;
 
-      .logo-img {
+      .logo-icon {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        object-fit: contain;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 20px;
         flex-shrink: 0;
       }
 
@@ -538,46 +538,6 @@ const showSidebar = computed(() => {
       padding: 32px;
       overflow-y: auto;
       background-color: #f8fafc;
-      display: flex;
-      flex-direction: column;
-      
-      &.full-screen {
-        min-height: 100vh;
-        justify-content: center;
-        align-items: center;
-        background: linear-gradient(135deg, #eff6ff, #dbeafe);
-        padding: 0;
-      }
-      
-      .content-wrapper {
-        margin: 0 auto;
-        width: 100%;
-        
-        &.wide {
-          max-width: 1200px;
-        }
-        
-        &.narrow {
-          max-width: 700px;
-          background-color: #ffffff;
-          border-radius: 16px;
-          padding: 24px;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-          border: 1px solid #e2e8f0;
-          box-sizing: border-box;
-          min-height: calc(100vh - 200px);
-        }
-        
-        &.login-box {
-          max-width: 450px;
-          background-color: #ffffff;
-          border-radius: 20px;
-          padding: 32px;
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-          border: 1px solid #e2e8f0;
-          box-sizing: border-box;
-        }
-      }
     }
 
     .desktop-footer {
