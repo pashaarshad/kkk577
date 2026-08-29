@@ -1,0 +1,60 @@
+<form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label">订单号</label>
+            <div class="layui-input-block">
+                <input value="{$info.id}" readonly class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户</label>
+            <div class="layui-input-block">
+                <input value="{$info.username|default=''}" readonly class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">凭证图片</label>
+            <div class="layui-input-block">
+                <input name="voucher" type="hidden" value="{$info.voucher|default=''}">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th class="text-center">凭证图片（点击上传）</th>
+                    </tr>
+                    <tr>
+                        <td width="180px" class="text-center">
+                            <input name="voucher_show" type="hidden">
+                        </td>
+                    </tr>
+                    </thead>
+                </table>
+                <p class="help-block">支持 jpg / png / gif 等图片格式，已上传过凭证可再次上传覆盖</p>
+            </div>
+        </div>
+        {if $info.voucher}
+        <div class="layui-form-item">
+            <label class="layui-form-label">当前凭证</label>
+            <div class="layui-input-block">
+                <a href="{$info.voucher}" target="_blank">
+                    <img src="{$info.voucher}" style="max-width:240px;max-height:240px;border:1px solid #eee;padding:4px;background:#fff;">
+                </a>
+            </div>
+        </div>
+        {/if}
+    </div>
+    <input name="id" type="hidden" value="{$info.id}">
+    <input type="hidden" name="_csrf_" value="{:systoken('upload_voucher')}">
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>提交</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>取消</button>
+    </div>
+    <script>
+        window.form.render();
+        $('[name="voucher_show"]').uploadOneImage();
+        // 同步显示图片地址到真实提交的 voucher 字段
+        $('[name="voucher_show"]').on('change', function () {
+            $('[name="voucher"]').val(this.value);
+        });
+    </script>
+</form>

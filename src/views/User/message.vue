@@ -1,0 +1,196 @@
+<template>
+  <div class='bill'>
+    <!-- <van-tabs v-model:active='active' color='#7a7a7a' @click-tab='onClickTab'>
+      <template v-for='item in navList'>
+        <van-tab :title='item.title'>
+          <template>
+            
+          </template>
+        </van-tab>
+      </template>
+    </van-tabs> -->
+	
+	<div v-if='list.length > 0' class='item-list'>
+	    <div v-for='item in list' class="box u-m-t-10">
+	    	<div class="flex-between u-font-14">
+				{{ item.title }}
+	    	</div>
+			<div class="u-font-12">{{ item.content }}</div>
+	    	<div class="flex-between">
+	    		<span class="opacity-40">{{ formatDate(item.addtime)}}</span>
+	    		<!-- <span class="opacity-40">After：Q1,273.79</span> -->
+	    	</div>
+	    </div>
+	  <van-pagination v-model='currentPage' :next-text='$t("main.next")' :page-count='pageCount'
+	                  :prev-text='$t("main.last")' class='pagination'
+	                  mode='simple'
+	                  @change='pageChange' />
+	</div>
+	<div v-else>
+	  <van-empty
+	    :description='$t("order.nullMsg")'
+	    :image="emptyImage"
+	    image-size='80'
+	  />
+	</div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import Request from '@/services/index.js'
+import { i18n } from '@/lang/index.js'
+import { formatDate } from '@/utils/format-date.js'
+import emptyImage from '@/assets/img/empty-image-default.png'
+
+const { t } = i18n.global
+
+const active = ref(0)
+
+const navList = [
+  {
+    title: t('bill.All'),
+    id: 0
+  },
+  {
+    title: t('bill.DepositHistory'),
+    id: 1
+  },
+  {
+    title: t('bill.WithdrawalHistory'),
+    id: 2
+  }
+]
+
+const onClickTab = () => {
+}
+
+const props = defineProps({
+  id: Number
+})
+
+console.log(props)
+const currentPage = ref(1)
+const pageCount = ref(1)
+const list = ref([])
+
+const getData = () => {
+  Request.get({
+    url: 'index/my/msg?page=' + currentPage.value
+  }).then(res => {
+    list.value = res.data.data
+    pageCount.value = res.data.last_page
+    currentPage.value = res.data.current_page
+  })
+}
+
+getData()
+
+const pageChange = () => {
+  getData()
+}
+
+</script>
+
+<style lang='less' scoped>
+.bill {
+  padding: 0 0 70px 0;
+  background: #ffffff;
+  min-height: 80vh;
+
+  .list {
+    padding: 16px;
+  }
+
+  :deep(.van-tabs__wrap) {
+    height: 60px;
+    background: #ffffff !important;
+  }
+
+  :deep(.van-tabs__wrap) {
+    box-shadow: 0 3px 5px 0 rgba(191, 199, 221, .251);
+  }
+
+  :deep(.van-tabs__line) {
+    bottom: 25px
+  }
+
+  .pagination {
+    padding: 0 0 30px 0;
+
+    button:after {
+      border: none;
+    }
+  }
+
+}
+
+.item-list {
+	padding: 0 .4rem;
+	font-size: .32rem;
+  .list {
+    padding: 16px;
+  }
+
+  :deep(.van-tabs__wrap) {
+    height: 60px;
+    background: #ffffff !important;
+  }
+
+  :deep(.van-tabs__wrap) {
+    box-shadow: 0 3px 5px 0 rgba(191, 199, 221, .251);
+  }
+
+  :deep(.van-tabs__line) {
+    bottom: 25px
+  }
+
+  .pagination {
+    padding: 0 0 30px 0;
+
+    button:after {
+      border: none;
+    }
+  }
+  .box {
+      width: 95%;
+      border-radius: 0.2667rem;
+      padding: 0.4rem .2rem;
+      -webkit-box-shadow: 0 0 0.267rem 0 rgba(0,0,0,.1);
+      box-shadow: 0 0 0.267rem 0 rgba(0,0,0,.1);
+      overflow: hidden;
+  }
+  .flex-between {
+      -webkit-box-pack: justify!important;
+      -ms-flex-pack: justify!important;
+      justify-content: space-between!important;
+  }
+  .flex-between, .flex-center {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+  }
+  .u-m-t-10 {
+      margin-top: 0.26667rem!important;
+  }
+  .text-red {
+      color: var(--red-color);
+  }
+  .text-green {
+      color: var(--green-color);
+  }
+  .opacity-40 {
+      opacity: .4;
+  }
+  .u-font-14 {
+      font-size: 14px;
+  }
+  .u-font-12 {
+	  margin: 5px 0;
+      font-size: 12px;
+  }
+}
+</style>

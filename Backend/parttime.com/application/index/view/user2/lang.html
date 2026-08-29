@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+    <title>{$Think.lang.lang}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css"/>
+</head>
+<body>
+<div id="app">
+    <van-nav-bar title="{$Think.lang.lang}" left-text="{$Think.lang.back}" left-arrow @click-left="onClickLeft">
+    </van-nav-bar>
+    <van-cell-group>
+        <van-cell icon="other-pay" title="English" url="/index/user/lang_set?lang=en-ng" is-link></van-cell>
+        <van-cell icon="other-pay" title="тай" url="/index/user/lang_set?lang=th-th" is-link></van-cell>
+        <van-cell icon="other-pay" title="Қазақстан" url="/index/user/lang_set?lang=kz-kz" is-link></van-cell>
+        <van-cell icon="other-pay" title="România" url="/index/user/lang_set?lang=ro-ro" is-link></van-cell>
+        <van-cell icon="other-pay" title="Portugal" url="/index/user/lang_set?lang=pt-br" is-link></van-cell>
+        <van-cell icon="other-pay" title="Spain" url="/index/user/lang_set?lang=es-mx" is-link></van-cell>
+        <van-cell icon="other-pay" title="Indonesia" url="/index/user/lang_set?lang=en-id" is-link></van-cell>
+        <van-cell icon="other-pay" title="Vietnam" url="/index/user/lang_set?lang=iv-vn" is-link></van-cell>
+        <van-cell icon="other-pay" title="Turkey" url="/index/user/lang_set?lang=tr-tr" is-link></van-cell>
+        <van-cell icon="other-pay" title="Australia" url="/index/user/lang_set?lang=en-au" is-link></van-cell>
+    </van-cell-group>
+</div>
+<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6/dist/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {
+            details: function () {
+
+            },
+            onClickLeft() {
+                window.history.go(-1);
+            },
+        }
+    })
+</script>
+</body>
+</html>

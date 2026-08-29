@@ -1,0 +1,139 @@
+{extend name='main'}
+
+{block name="content"}
+
+<div class="think-box-shadow">
+    {include file='deal/user_recharge_search'}
+    <fieldset>
+        <legend>数据小记</legend>
+        <div class="row">
+            <div class="col-12">
+                第三方累计充值：{:config("currency")}{$rechargeAmount}，
+                第三方手续费：{:config("currency")}{$rechargePayCom}，
+                第三方成功收款：{$rechargeCount}笔，
+                第三方充值成功人数：{$rechargeUserCount}人
+            </div>
+        </div>
+    </fieldset>
+    <table class="layui-table margin-top-15" lay-skin="line" style="font-size:14px;color:#000">
+        {notempty name='list'}
+        <thead>
+        <tr>
+            <th class='text-left nowrap'>订单号</th>
+            <th class='text-left nowrap'>用户</th>
+            <th class='text-left nowrap'>一级代理/二级代理</th>
+            <th class='text-left nowrap'>充值金额/手续费</th>
+            <th class='text-left nowrap'>支付方式</th>
+            <th class='text-left nowrap'>类型</th>
+            <th class='text-left nowrap'>申请/处理时间</th>
+            <th class='text-left nowrap'>用户确认/交易流水号</th>
+            <th class='text-left nowrap'>第三方下发</th>
+            <th class='text-left nowrap'>操作</th>
+        </tr>
+        </thead>
+        {/notempty}
+        <tbody>
+        {foreach $list as $key=>$vo}
+        <tr>
+            <td class='text-left nowrap'>{$vo.id}</td>
+            <td class='text-left nowrap'>
+                {$vo.username}
+            {if $vo.remark}<span style="color:#f00">（{$vo.remark}）</span>{/if}
+            <br>{$vo.tel}</td>
+            <td class='text-left nowrap'>
+                {if !empty($agent_list[$vo['agent_id']])}
+                {$agent_list[$vo['agent_id']]}
+                {else}
+                ---
+                {/if}
+                <br>
+                {if !empty($agent_service_list[$vo['agent_service_id']])}
+                {$agent_service_list[$vo['agent_service_id']]}
+                {else}
+                ---
+                {/if}
+            </td>
+            <td class='text-left nowrap'>
+                {$vo.num}
+                {if $vo.pay_name=='bit'}(U: {$vo.num2}){/if}
+                <br>
+                {:bcmul($vo.pay_com , $vo.num,2)}({$vo.pay_com*100}%)
+            </td>
+            <td class='text-left nowrap'>
+                {$vo.pay_name|default="-"}
+            </td>
+            <td class='text-left nowrap'>
+                {switch $vo.biz_type}
+                {case 1}
+                    <button class="layui-btn layui-btn-xs">会员充值</button>
+                {/case}
+                {case 2}
+                <button class="layui-btn layui-btn-xs layui-btn-danger">后台充值</button>
+                {/case}
+                {case 3}
+                <button class="layui-btn layui-btn-xs layui-btn-warm">彩金赠送</button>
+                {/case}
+                {/switch}
+            </td>
+            <td class='text-left nowrap'>
+                {$vo.addtime|format_datetime}<br>{$vo.endtime|format_datetime|default='-'}
+            </td>
+            <td class='text-left nowrap'>
+                {switch $vo.status2}
+                {case 0}未确认{/case}
+                {case 1}
+                {if $vo.pay_name=='Vnmcard'}
+                <a class="layui-btn layui-btn-normal layui-btn-xs btn-success">已确认</a><br><a href="{$vo.pay_return}" target="_blank"><img src="{$vo.pay_return}" alt="点击查看大图" height="50px"></a>
+                {else/}
+                <a class="layui-btn layui-btn-normal layui-btn-xs btn-success">已确认</a><br>{$vo.pay_return}
+                {/if}
+                {/case}
+                {/switch}
+            </td>
+            <td class='text-left'>
+                {if $vo.biz_type == 3}
+                付款成功
+                {else/}
+                    {switch $vo.pay_status}
+                    {case 0}<?php echo (time() - $vo['addtime']) > 1800 ? '未支付': '等待付款'; ?>{/case}
+                    {case 1}<a class="layui-btn layui-btn-xs">付款成功</a>{/case}
+                    {case 2}<a class="layui-btn layui-btn-xs layui-btn-danger">付款失败</a>{/case}
+                    {/switch}
+                    {if $vo.pay_status==2}
+                    <br>{$vo.pay_return}
+                    {/if}
+                {/if}
+            </td>
+            <td class='text-left nowrap'>
+                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-primary" data-title="用户备注"
+                   data-modal='{:url("deal/edit_recharge_remark")}?id={$vo.id}'>备注</a>
+                {if $vo.biz_type == 3}
+                审核通过
+                {else/}
+                {switch $vo.status}
+                    {case 0}待付款{/case}
+                    {case 1}
+                    {if time() - $vo.addtime > 1800}
+                    未支付
+                    {else/}
+                        {if auth("edit_recharge")}
+                            <a data-csrf="{:systoken('edit_recharge')}" class="layui-btn layui-btn-xs layui-btn" style="background:none;color:#666;" data-action="{:url('edit_recharge',['status'=>2,'id'=>$vo.id])}" data-value="id#{$vo.id};status#2" >通过</a>
+                            <a data-csrf="{:systoken('edit_recharge')}" class="layui-btn layui-btn-xs layui-btn" style="background:none;color:#666;" data-action="{:url('edit_recharge',['status'=>3,'id'=>$vo.id])}" data-value="id#{$vo.id};status#3" >驳回</a>
+                        {else}
+                            待付款
+                        {/if}
+                    {/if}
+                    {/case}
+                    {case 2}<a class="layui-btn layui-btn-xs">审核通过</a>{/case}
+                    {case 3}<a class="layui-btn layui-btn-xs layui-btn-danger">审核驳回</a>{/case}
+                {/switch}
+                {/if}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+
+</div>
+{/block}

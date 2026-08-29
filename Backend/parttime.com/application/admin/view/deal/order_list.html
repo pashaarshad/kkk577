@@ -1,0 +1,98 @@
+{extend name='main'}
+
+{block name="content"}
+
+<div class="think-box-shadow">
+    {include file='deal/order_list_search'}
+    <table class="layui-table margin-top-15" lay-skin="line">
+        {notempty name='list'}
+        <thead>
+        <tr>
+            <th class='text-left nowrap'>订单号</th>
+            <th class='text-left nowrap'>用户名</th>
+            <th class='text-left nowrap'>商品名称</th>
+            <!-- <th class='text-left nowrap'>商品单价</th>
+            <th class='text-left nowrap'>交易数量</th>
+            <th class='text-left nowrap'>交易数额</th> -->
+            <th class='text-left nowrap'>佣金</th>
+            <th class='text-left nowrap'>金额信息</th>
+            <!-- <th class='text-left nowrap'>用户冻结金额</th> -->
+            <th class='text-left nowrap'>连单信息</th>
+            <th class='text-left nowrap'>下单时间/付款时间</th>
+            <th class='text-left nowrap'>最后付款时间</th>
+            <th class='text-left nowrap'>是否付款</th>
+            <th class='text-left nowrap'>订单状态</th>
+            <th class='text-left nowrap'>操作</th>
+        </tr>
+        </thead>
+        {/notempty}
+        <tbody>
+        {foreach $list as $key=>$vo}
+        <tr>
+            <td class='text-left nowrap;word-wrap:break-word;'>{$vo.id}</td>
+            <td class='text-left nowrap'>{$vo.username}&nbsp;<a class="layui-btn layui-btn-xs layui-btn-warm" >VIP{$vo.level_id}</a><br>{$vo.tel}</td>
+            <td class='text-left nowrap;word-wrap:break-word;'>{$vo.goods_name}<br><p style="color: red;">交易金额：{$vo.num}</p></td>
+            <!-- <td class='text-left nowrap'>{:config("currency")}{$vo.goods_price}</td>
+            <td class='text-left nowrap'>{$vo.goods_count}</td> -->
+            <!-- <td class='text-left nowrap'>{:config("currency")}{$vo.num}</td> -->
+            <td class='text-left nowrap'>{$vo.commission}</td>
+            <td class='text-left nowrap'>冻结：{$vo.user_freeze_balance}<br><p style="color: red;">当前余额：{$vo.balance}</p></td>
+            <!-- <td class='text-left nowrap'>{$vo.user_freeze_balance}</td> -->
+            <td class='text-left nowrap'>{$vo.title}<br><p style="color: rgb(89, 0, 255);">{$vo.group_rule_num}/{$vo.order_num}（{$vo.group_rule_num_num}/{$vo.group_rule_num_size}）</p></td>
+            <td class='text-left nowrap'>
+                {$vo.addtime|format_datetime}<br>
+                {$vo.pay_time|format_datetime|default='-'}
+            </td>
+            <td class='text-left nowrap'>
+                {$vo.endtime|format_datetime}
+            </td>
+            <td>
+                {switch $vo.is_pay}
+                {case 0}<a class="layui-btn layui-btn-xs layui-btn-primary">未付款</a>{/case}
+                {case 1}<a class="layui-btn layui-btn-xs">已付款</a>{/case}
+                {/switch}
+            </td>
+            <td class='text-left nowrap'>
+                {switch $vo.status}
+                {case 0}等待付款{/case}
+                {case 1}完成付款{/case}
+                {case 2}用户取消{/case}
+                {case 3}强制付款{/case}
+                {case 4}系统取消{/case}
+                {case 5}订单冻结{/case}
+                {/switch}
+            </td>
+            <td class='text-left nowrap'>
+                {if $vo.status==0}
+                <a data-csrf="{:systoken('order_status')}" class="layui-btn layui-btn-xs layui-btn-danger"
+                   data-action="{:url('order_status')}" data-value="id#{$vo.id};status#5">冻结</a>
+                <a data-csrf="{:systoken('do_user_order')}" class="layui-btn layui-btn-xs layui-btn"
+                   data-action="{:url('do_user_order')}" data-value="id#{$vo.id};status#3">强制付款</a>
+                <a data-csrf="{:systoken('do_user_order')}" class="layui-btn layui-btn-xs layui-btn-warm"
+                   data-action="{:url('do_user_order')}" data-value="id#{$vo.id};status#4">取消订单</a>
+                   {if $vo.group_rule_num_size-$vo.group_rule_num_num==0 && $vo.group_rule_num_size>1}
+                        <a data-dbclick class="layui-btn layui-btn-xs" data-csrf="{:systoken('do_user_order')}" data-title="新增子单" data-modal='{:url("add_suborder")}?id={$vo.id}'>新增子单</a>
+                    {elseif $vo.group_rule_num_size-$vo.group_rule_num_num>0}
+                    <a data-csrf="{:systoken('do_user_order')}" class="layui-btn layui-btn-xs layui-btn-danger"
+                    data-action="{:url('del_suborder')}" data-value="id#{$vo.id};status#1">删除子单</a>
+                    {/if}
+                {/if}
+                {if $vo.status==1}
+                <!-- <a data-dbclick class="layui-btn layui-btn-xs" data-title="资金流水"
+                   data-modal="{:url('order_commission_list',['oid'=>$vo['id']])}">资金流水</a> -->
+                <a data-dbclick class="layui-btn layui-btn-xs" data-title="已结算" >已结算</a>
+                {/if}
+                {if $vo.status==5}
+                <a data-csrf="{:systoken('order_status')}" class="layui-btn layui-btn-xs layui-btn"
+                   data-action="{:url('order_status')}" data-value="id#{$vo.id};status#0;addtime#{:time()};endtime#{:time()+config('deal_timeout')}">解冻</a>
+                {/if}
+            </td>
+        </tr>
+        {/foreach}
+        </tbody>
+    </table>
+
+    {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
+
+</div>
+{/block}

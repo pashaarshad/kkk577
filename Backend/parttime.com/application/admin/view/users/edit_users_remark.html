@@ -1,0 +1,31 @@
+<form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名称</label>
+            <div class="layui-input-block">
+                <input name="user_name" readonly="" placeholder="请输入用户名称" value="{$info.username}" class="layui-input">
+                <input type="hidden" name="_csrf_" value="{:systoken('edit_users')}">
+
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号码</label>
+            <div class="layui-input-block">
+                <input name="tel" readonly="" placeholder="请输入手机号码" value="{$info.tel}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">备注</label>
+            <div class="layui-input-block">
+                <input name="remark" placeholder="请输入备注" value="{$info.remark}" class="layui-input">
+            </div>
+        </div>
+    </div>
+    <input name="id" type="hidden" value="{$info.id}">
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>提交</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>取消</button>
+    </div>
+    <script>window.form.render();</script>
+</form>
