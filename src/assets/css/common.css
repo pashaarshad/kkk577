@@ -14,9 +14,19 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
 }
 
-@media screen and (min-width: 750px) {
+@media screen and (min-width: 750px) and (max-width: 991px) {
     body {
         max-width: 414PX !important;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    html {
+        font-size: 41.4px !important;
+    }
+    body {
+        max-width: 100% !important;
+        background-color: #f8fafc;
     }
 }
 
@@ -24,8 +34,8 @@ body {
     --bg-color: #fff;
     --bg-second-color: #3d3d3d;
     --default-color: #2a2a2a;
-    --main-color: #ad4f37;
-    --second-color: #faeeec;
+    --main-color: #2563eb;
+    --second-color: #eff6ff;
     --gray-color: #f7f8fa;
     --gray-color2: #a7aebf;
     --gray-color3: #16171d;
