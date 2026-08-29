@@ -8,7 +8,7 @@ body {
     width: 100%;
     max-width: 750PX;
     font-size: 14px;
-    background-color: #f7f8fb;
+    background-color: var(--bg-second-color);
     box-sizing: border-box;
     color: var(--default-color);
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', miui, 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
@@ -21,20 +21,45 @@ body {
 }
 
 body {
-    --bg-color: #fff;
-    --bg-second-color: #3d3d3d;
-    --default-color: #2a2a2a;
-    --main-color: #ad4f37;
-    --second-color: #faeeec;
-    --gray-color: #f7f8fa;
+    --bg-color: #1f2026;
+    --bg-second-color: #16171d;
+    --default-color: #ffffff;
+    --main-color: #d5b586;
+    --second-color: #2a2c35;
+    --gray-color: #16171d;
     --gray-color2: #a7aebf;
-    --gray-color3: #16171d;
-    --text-second: #494d58;
-    --gray-light-color: #a2a2a2;
+    --gray-color3: #1e2027;
+    --text-second: #8f96a3;
+    --gray-light-color: #5c6270;
     --green-color: #00b25e;
     --purple-color: #4c4aef;
     --red-color: #e36564;
     --yellow-color: #d5b586;
+
+    /* Vant components dark theme overrides */
+    --van-background: #16171d;
+    --van-background-light: #1f2026;
+    --van-background-color-light: #1f2026;
+    --van-text-color: #ffffff;
+    --van-text-color-placeholder: #5c6270;
+    --van-border-color: #2a2c35;
+    --van-cell-background: #1f2026;
+    --van-cell-text-color: #ffffff;
+    --van-cell-value-color: #a7aebf;
+    --van-cell-group-background: #16171d;
+    --van-nav-bar-background: #1f2026;
+    --van-nav-bar-title-text-color: #ffffff;
+    --van-nav-bar-text-color: #d5b586;
+    --van-tabbar-background: #1f2026;
+    --van-tabbar-item-text-color: #8f96a3;
+    --van-tabbar-item-active-color: #d5b586;
+    --van-button-default-background: #1f2026;
+    --van-button-default-color: #ffffff;
+    --van-button-default-border-color: #2a2c35;
+    --van-field-label-color: #ffffff;
+    --van-dialog-background: #1f2026;
+    --van-dialog-has-title-message-text-color: #a7aebf;
+    --van-dialog-title-text-color: #ffffff;
 }
 
 html {

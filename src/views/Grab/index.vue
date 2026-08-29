@@ -260,7 +260,7 @@ getData()
 
     .list-item {
       padding: 11px 0;
-      border-bottom: 1px dashed #e0e1e2;
+      border-bottom: 1px dashed var(--second-color);
 
       div {
         display: flex;
@@ -271,7 +271,7 @@ getData()
     }
 
     .task-progress {
-      border: 1px solid #e0e1e2;
+      border: 1px solid var(--second-color);
       padding: 0 12px;
       border-radius: 8px;
     }

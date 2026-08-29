@@ -30,10 +30,10 @@
       <div v-for='(item, index) in nationList' class='nation-list' @click='clickNation(item, index)'>
         <div class='nation-left'>
           <img :src='item.icon' alt='' class=''>
-          <span :style="nationIndex === index ? 'color: rgb(173, 79, 55);' : ''">{{ item.title }}</span>
+          <span :style="nationIndex === index ? 'color: var(--main-color);' : ''">{{ item.title }}</span>
         </div>
         <div v-if='nationIndex === index'>
-          <van-icon color='rgb(173, 79, 55)' name='success' size='26' />
+          <van-icon color='var(--main-color)' name='success' size='26' />
         </div>
       </div>
     </div>
@@ -119,8 +119,9 @@ window.onresize = function() {
   top: 0;
   width: 100%;
   height: 50px;
-  box-shadow: 0 1px 10px 0 rgba(191, 199, 221, .251);
-  background-color: #fff;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, .4);
+  border-bottom: 1px solid var(--second-color);
+  background-color: var(--bg-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -167,7 +168,9 @@ window.onresize = function() {
     height: 58px;
     padding: 16px;
     margin-bottom: 15px;
-    box-shadow: 0 0 0.267rem 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, .3);
+    background-color: var(--bg-color);
+    border: 1px solid var(--second-color);
     overflow: hidden;
     border-radius: 10px;
     box-sizing: border-box;

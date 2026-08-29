@@ -138,7 +138,7 @@ const goBack = () => {
 
 <style lang='less' scoped>
 .Mine {
-  background: #FFFFFF;
+  background: var(--bg-second-color);
   font-size: 13.2px;
   padding: 20px 0 80px 0;
 
@@ -161,7 +161,7 @@ const goBack = () => {
         justify-content: center;
         align-items: center;
         font-size: 13px;
-        color: #333;
+        color: var(--default-color);
         line-height: 1.2;
         text-align: center;
         box-sizing: border-box;
@@ -181,10 +181,12 @@ const goBack = () => {
       .vip {
         padding: 0px 6px;
         height: 20px;
-        color: var(--yellow-color);
-        background: #000;
+        color: #000000;
+        background: var(--main-color);
         margin-left: 8px;
         text-align: center;
+        border-radius: 4px;
+        font-weight: 750;
       }
 
       div {
@@ -206,8 +208,13 @@ const goBack = () => {
   }
 
   .bg-grey {
+    width: 92%;
+    margin: 0 auto 20px;
+    border-radius: 12px;
     padding: 20px 16.5px;
-    background: var(--gray-color);
+    background: var(--bg-color);
+    border: 1px solid var(--second-color);
+    box-sizing: border-box;
 
     .grey-list {
       display: flex;
@@ -273,7 +280,7 @@ const goBack = () => {
     .nav-title {
       display: flex;
       align-items: center;
-      color: #323233;
+      color: var(--default-color);
       font-size: 14px;
       line-height: 24px;
 

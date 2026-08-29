@@ -117,8 +117,9 @@ window.onresize = function() {
   justify-content: space-between;
   padding: 15px 0px 15px 0px;
   box-sizing: border-box;
-  background-color: #fff;
-  box-shadow: 0 -1px 4px 0 rgba(191, 199, 221, .2);
+  background-color: var(--bg-color);
+  box-shadow: 0 -1px 8px 0 rgba(0, 0, 0, .4);
+  border-top: 1px solid var(--second-color);
 }
 
 .tabbar-list {
@@ -127,7 +128,7 @@ window.onresize = function() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #a2a2a2;
+  color: var(--text-second);
 
 
   img {
@@ -162,7 +163,7 @@ window.onresize = function() {
   }
 
   .tabbar-title {
-    color: #3d3d3d;
+    color: var(--main-color);
   }
 }
 

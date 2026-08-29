@@ -25,7 +25,7 @@
         <div></div>
       </div>
       <div class='notice-content'>
-        <van-notice-bar background='#ffffff' color='#a2a2a2'>
+        <van-notice-bar background='var(--bg-color)' color='var(--text-second)'>
           la información de tu cuenta
         </van-notice-bar>
       </div>
@@ -175,7 +175,7 @@ const onMenuClick = (path) => {
 <style lang='less' scoped>
 .Home {
   padding-bottom: 60px;
-  background: #ffffff;
+  background: var(--bg-second-color);
 
   .my-swipe .van-swipe-item {
     color: #fff;
@@ -203,9 +203,9 @@ const onMenuClick = (path) => {
       width: 120px;
       //height: 58px;
       font-weight: 700;
-      color: #ad4f37;
-      border: 0.01rem solid #c28170;
-      background: rgba(226, 84, 73, .102);
+      color: var(--main-color);
+      border: 0.01rem solid var(--main-color);
+      background: rgba(213, 181, 134, 0.1);
       border-radius: 3px;
       padding: 10px 10px 10px 10px;
       box-sizing: border-box;
@@ -253,12 +253,13 @@ const onMenuClick = (path) => {
 
     .notice-content {
       width: 100%;
-      border: 1px solid #e0e1e2;
-      color: #a2a2a2;
+      border: 1px solid var(--second-color);
+      color: var(--text-second);
+      background-color: var(--bg-color);
 
       .van-notice-bar {
         height: 100%;
-        color: #a2a2a2;
+        color: var(--text-second);
       }
     }
   }
@@ -267,7 +268,9 @@ const onMenuClick = (path) => {
     width: 92%;
     border-radius: 10px;
     padding: 10px 16px 0 16px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
+    background-color: var(--bg-color);
+    border: 1px solid var(--second-color);
     overflow: hidden;
     box-sizing: border-box;
     margin: 20px auto;
@@ -292,7 +295,7 @@ const onMenuClick = (path) => {
         }
 
         div:nth-child(2) {
-          color: var(--red-color);
+          color: var(--main-color);
           font-weight: 700 !important;
           margin-top: 2px;
           font-size: 16.5px;
