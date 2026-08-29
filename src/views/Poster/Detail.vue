@@ -32,14 +32,14 @@ getDetail()
 .poster-detail {
   min-height: 90vh;
   padding: 16px;
-  background: #ffffff;
+  background: var(--bg-second-color);
   box-sizing: border-box;
 
   .poster-detail-content {
     .poster-detail-title {
       font-size: 20px;
       font-weight: 700;
-      color: #333;
+      color: var(--default-color);
       line-height: 1.4;
       margin-bottom: 12px;
     }
@@ -52,7 +52,7 @@ getDetail()
 
     .poster-detail-body {
       font-size: 15px;
-      color: #333;
+      color: var(--default-color);
       line-height: 1.7;
 
       :deep(img) {

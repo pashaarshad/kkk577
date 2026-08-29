@@ -365,7 +365,7 @@ const onMenuClick = (path) => {
       .quick-entry-title {
         margin-top: 8px;
         font-size: 13px;
-        color: #333;
+        color: var(--default-color);
         text-align: center;
         line-height: 1.3;
       }
