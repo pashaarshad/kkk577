@@ -558,7 +558,7 @@ const showSidebar = computed(() => {
         }
         
         &.narrow {
-          max-width: 600px;
+          max-width: 700px;
           background-color: #ffffff;
           border-radius: 16px;
           padding: 24px;
