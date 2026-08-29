@@ -45,10 +45,12 @@ const props = defineProps({
 .item {
   width: 100%;
   border-radius: 8px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);
+  box-shadow: 0 4px 10px 0 rgba(0, 0, 0, .3);
+  border: 1px solid var(--second-color);
   padding: 0px 0 10px 0;
-  background: #FFFFFF;
+  background: var(--bg-color);
   font-size: 13.2px;
+  overflow: hidden;
 
   .flex-between {
     display: flex;
@@ -61,12 +63,13 @@ const props = defineProps({
       font-weight: 700 !important;
       padding: 9px;
       color: var(--main-color);
-      background: var(--gray-color);
+      background: var(--bg-second-color);
     }
 
     div:nth-child(2) {
-      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
       padding: 9px;
+      color: var(--text-second);
     }
   }
 
@@ -84,10 +87,11 @@ const props = defineProps({
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
+        color: var(--default-color);
       }
 
       div:nth-child(2) {
-        color: var(--red-color);
+        color: var(--main-color);
         margin: 6px 0;
       }
 
@@ -105,8 +109,10 @@ const props = defineProps({
 
   .item-footer {
     padding: 11px;
-    background: var(--gray-color);
+    background: var(--bg-second-color);
     margin-bottom: 6px;
+    color: var(--default-color);
+    border-top: 1px solid var(--second-color);
 
     div {
       display: flex;
@@ -120,6 +126,7 @@ const props = defineProps({
 
     .foot-q {
       font-weight: 700 !important;
+      color: var(--main-color);
     }
   }
 }

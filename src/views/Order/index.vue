@@ -58,7 +58,7 @@ getData()
 <style lang='less' scoped>
 .order {
   padding: 0 0 70px 0;
-  background: #ffffff;
+  background: var(--bg-second-color);
   min-height: 80vh;
 
   .list {
@@ -67,15 +67,27 @@ getData()
 
   :deep(.van-tabs__wrap) {
     height: 60px;
-    background: #ffffff !important;
+    background: var(--bg-color) !important;
+    box-shadow: 0 3px 10px 0 rgba(0, 0, 0, .4);
+    border-bottom: 1px solid var(--second-color);
   }
 
-  :deep(.van-tabs__wrap) {
-    box-shadow: 0 3px 5px 0 rgba(191, 199, 221, .251);
+  :deep(.van-tabs__nav) {
+    background: var(--bg-color) !important;
+  }
+
+  :deep(.van-tab) {
+    color: var(--text-second);
+  }
+
+  :deep(.van-tab--active) {
+    color: var(--main-color);
+    font-weight: 700;
   }
 
   :deep(.van-tabs__line) {
-    bottom: 25px
+    bottom: 25px;
+    background-color: var(--main-color);
   }
 
   .pagination {

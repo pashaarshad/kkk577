@@ -212,7 +212,7 @@ getData(selectedItemId.value)
    .team {
 		width: 92%;
 		height: 100vh;
-		background: #ffffff;
+		background: var(--bg-second-color);
 		padding: 0 4% 10px;
 		overflow: hidden;
 		font-size: 11px;
@@ -224,7 +224,7 @@ getData(selectedItemId.value)
        font-size: 13px;
    }
    .text-dark {
-       color: #343a40!important;
+       color: var(--default-color)!important;
    }
    .u-m-r-5 {
        margin-right: 5px;
@@ -235,7 +235,7 @@ getData(selectedItemId.value)
    }
    
    .bg-grey {
-   	background: var(--gray-color);
+   	background: var(--bg-color);
    }
    .u-m-t-10 {
        margin-top: 0.26667rem!important;

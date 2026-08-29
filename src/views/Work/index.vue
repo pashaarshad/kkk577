@@ -68,8 +68,11 @@ const toGrab = (item) => {
       position: relative;
       width: 182px;
       height: 280px;
-      border: 1px solid #e0e1e2;
+      border: 1px solid var(--second-color);
+      background-color: var(--bg-color);
       margin-bottom: 10px;
+      border-radius: 8px;
+      overflow: hidden;
 
       img {
         height: 182px;
@@ -81,7 +84,7 @@ const toGrab = (item) => {
         position: absolute;
         left: 0;
         right: 0;
-        background: var(--default-color);
+        background: #000000;
         color: var(--yellow-color);
         width: 66px;
         height: 24px;
