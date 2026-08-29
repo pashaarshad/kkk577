@@ -44,6 +44,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         credentials: 'include' // 携带源请求的Cookie
+      },
+      // 静态图片和资源代理到本地 ThinkPHP 服务
+      '^/(upload|static|static_new|static_new6|statics|static_indonesia|alllang|red|layer|p_static1)': {
+        target: 'http://127.0.0.1:8000/',
+        changeOrigin: true
       }
     }
   }
