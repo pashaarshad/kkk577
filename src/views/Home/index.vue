@@ -305,8 +305,8 @@ const onMenuClick = (path) => {
     cursor: pointer;
 
     svg {
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 42px;
       stroke: white;
       fill: none;
       stroke-width: 2;
