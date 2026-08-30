@@ -64,6 +64,12 @@
         </button>
       </div>
     </div>
+
+    <!-- Orders list visible inside Project Page -->
+    <div class="investment-orders-section">
+      <div class="section-title">Investment Records</div>
+      <ItemList :id="0" />
+    </div>
   </div>
 </template>
 
@@ -72,6 +78,7 @@ import { showSuccessToast } from 'vant'
 import { ref } from 'vue'
 import Request from '@/services/index.js'
 import { useRouter } from 'vue-router'
+import ItemList from '@/views/Order/cpns/item-list.vue'
 
 const list = ref([])
 Request.get({ url: 'index/user/vip' }).then(res => {
@@ -300,6 +307,17 @@ const collectInterest = () => {
         text-align: center;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       }
+    }
+  }
+
+  .investment-orders-section {
+    margin-top: 30px;
+    
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--default-color);
+      margin-bottom: 16px;
     }
   }
 }

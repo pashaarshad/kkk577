@@ -52,10 +52,7 @@
       </div>
     </div>
 
-    <!-- Activities Deck -->
-    <Commission :list="data.deposit_list" />
-
-    <!-- Banner Swipe (Now below the activities) -->
+    <!-- Banner Swipe -->
     <div class="swipe">
       <van-swipe :autoplay="3000" class="my-swipe" indicator-color="white">
         <template v-for="item in data.banner" :key="item.id">
@@ -65,6 +62,9 @@
         </template>
       </van-swipe>
     </div>
+
+    <!-- Activities Deck -->
+    <Commission :list="data.deposit_list" />
 
     <!-- Project Hall Section -->
     <div class="project-hall">
