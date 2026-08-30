@@ -2,7 +2,11 @@
 <template>
   <van-sticky>
     <div class='navbar'>
-      <div v-if='$route.path === "/home" || $route.path === "/order" || $route.path === "/mine" ' class='navbar-left'
+      <div v-if='$route.path === "/home"' class='navbar-left'>
+        <img :src='iconImg' alt='' class='navbar-img'>
+        <div style='margin-left: 8px; font-weight: bold; font-size: 15px;'>环字出海任务商城演示站</div>
+      </div>
+      <div v-else-if='$route.path === "/order" || $route.path === "/mine" ' class='navbar-left'
            @click='$router.go(-1)'>
         <img :src='iconImg' alt='' class='navbar-img'>
         <div style='margin-left: 15px;'>{{ $t('main.' + $route.name) }}</div>

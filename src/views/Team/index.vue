@@ -1,320 +1,466 @@
 <template>
-	<div class="tab-group">
-		<div class="tab-btn" v-for='item in navList' :class="{ 'active': item.id === selectedItemId }"  @click="onClickTab(item.id)">
-			{{ item.title}}
-		</div>
-	</div>
-	<div class="calendar-icon" @click="showCalendar = true">
-	  <i class="icon-calendar"></i>
-	</div>
-	<van-calendar v-model="showCalendar" type="range" @confirm="onConfirm" />
-	<div class="text-center" style="text-align: center;"></div>
-	<div class="team">
-		<div class="team-data bg-grey u-p-10 u-m-t-10">
-		    <div class="d-flex-center border-bottom u-m-b-10 u-p-b-10">
-				<i class="van-icon" style="font-size: 17px;">
-					<img src="../../assets/img/ic_trend.png" class="van-icon__image">
-				</i>
-				<span class="u-font-16 u-m-l-10">All</span>
-		    </div>
-		    <div class="flex-between u-m-b-10 ">
-		        <div class="flex-full">
-		            <div data-v-11c150f3="">Team size</div>
-		            <div class="text-red u-font-20">{{ data?.data.team_count }}</div>
-		        </div>
-		        <div class="flex-full">
-		            <div data-v-11c150f3="">Commission</div>
-		            <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">{{ $t('main.money') }}</span>{{ data?.data.team_yj}}</div>
-		        </div>
-		    </div>
-		    <!-- <div class="flex-between">
-		        <div class="flex-full">
-		            <div data-v-11c150f3="">Accumulated recharge</div>
-		            <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		        </div>
-		        <div class="flex-full">
-		            <div data-v-11c150f3="">Cumulative withdrawals</div>
-		            <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>100</div>
-		        </div>
-		    </div> -->
-		</div>
-		<div class="u-m-tb-10">
-		    <div class="team-data bg-grey u-p-10 u-m-t-10">
-		        <div class="d-flex-center justify-between border-bottom u-m-b-10 u-p-b-10">
-		            <div data-v-11c150f3=""><i class="van-icon" style="font-size: 17px;"><img src="../../assets/img/ic_trend.png" class="van-icon__image"></i><span class="u-font-16 u-m-l-10">Level 1</span>
-		            </div><span class="van-tag van-tag--primary">{{ data?.tj_bili[0] }}%</span>
-		        </div>
-		        <div class="flex-between u-m-b-10 ">
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Team size</div>
-		                <div class="text-red u-font-20">{{ data?.data.team1_count}}</div>
-		            </div>
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Commission</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">{{ $t('main.money') }}</span>{{ data?.data.team1_yj}}</div>
-		            </div>
-		        </div>
-		        <!-- <div class="flex-between">
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Accumulated recharge</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		            </div>
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Cumulative withdrawals</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		            </div>
-		        </div> -->
-		    </div>
-		    <div class="team-data bg-grey u-p-10 u-m-t-10">
-		        <div class="d-flex-center justify-between border-bottom u-m-b-10 u-p-b-10">
-		            <div data-v-11c150f3=""><i class="van-icon" style="font-size: 17px;"><img src="../../assets/img/ic_trend.png" class="van-icon__image"></i><span class="u-font-16 u-m-l-10">Level 2</span>
-		            </div><span class="van-tag van-tag--primary">{{ data?.tj_bili[1] }}%</span>
-		        </div>
-		        <div class="flex-between u-m-b-10 ">
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Team size</div>
-		                <div class="text-red u-font-20">{{ data?.data.team2_count}}</div>
-		            </div>
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Commission</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">{{ $t('main.money') }}</span>{{ data?.data.team2_yj}}</div>
-		            </div>
-		        </div>
-		        <!-- <div class="flex-between">
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Accumulated recharge</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		            </div>
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Cumulative withdrawals</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		            </div>
-		        </div> -->
-		    </div>
-		    <div class="team-data bg-grey u-p-10 u-m-t-10">
-		        <div class="d-flex-center justify-between border-bottom u-m-b-10 u-p-b-10">
-		            <div data-v-11c150f3=""><i class="van-icon" style="font-size: 17px;"><img src="../../assets/img/ic_trend.png" class="van-icon__image"></i><span class="u-font-16 u-m-l-10">Level 3</span>
-		            </div><span class="van-tag van-tag--primary">{{ data?.tj_bili[2] }}%</span>
-		        </div>
-		        <div class="flex-between u-m-b-10 ">
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Team size</div>
-		                <div class="text-red u-font-20">{{ data?.data.team3_count}}</div>
-		            </div>
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Commission</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">{{ $t('main.money') }}</span>{{ data?.data.team3_yj}}</div>
-		            </div>
-		        </div>
-		        <!-- <div class="flex-between">
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Accumulated recharge</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		            </div>
-		            <div class="flex-full">
-		                <div data-v-11c150f3="">Cumulative withdrawals</div>
-		                <div class="text-red u-font-20"><span class="text-dark u-font-13 u-m-r-5">Q</span>0</div>
-		            </div>
-		        </div> -->
-		    </div>
-		    
-		</div>
-	</div>
+  <div class="team-view">
+    <!-- Top Invitation Box -->
+    <div class="invitation-box">
+      <div class="invite-item">
+        <span class="lbl">Invitation code:</span>
+        <span class="code-val">{{ userData.invite_code || '------' }}</span>
+        <button class="copy-btn" @click="copyCode">Copy</button>
+      </div>
+      
+      <div class="invite-link-box">
+        <span class="lbl">Share your referral link and start earning</span>
+        <div class="link-row">
+          <span class="link-val">{{ getReferralLink }}</span>
+          <button class="copy-btn" @click="copyLink">Copy</button>
+        </div>
+      </div>
+      
+      <!-- Social icons row -->
+      <div class="social-icons">
+        <span class="social-icon icon-x">𝕏</span>
+        <span class="social-icon icon-fb">f</span>
+        <span class="social-icon icon-tg">✈</span>
+        <span class="social-icon icon-in">in</span>
+        <span class="social-icon icon-wa">💬</span>
+        <span class="social-icon icon-tt">🎵</span>
+        <span class="social-icon icon-share">🔗</span>
+      </div>
+    </div>
+
+    <!-- Period Selection -->
+    <div class="period-header">
+      <span class="title-text">Selection period</span>
+      <div class="tab-group">
+        <div v-for="item in navList" :key="item.id" class="tab-btn" :class="{ 'active': item.id === selectedItemId }" @click="onClickTab(item.id)">
+          {{ item.title }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Panel -->
+    <div class="team-stats-panel">
+      <div class="stats-row">
+        <div class="stat-cell">
+          <span class="lbl">Team size</span>
+          <span class="val">{{ data?.data?.team_count || 0 }}</span>
+        </div>
+        <div class="stat-cell">
+          <span class="lbl">Team recharge</span>
+          <span class="val">$ {{ data?.data?.team_yj || '0.00' }}</span>
+        </div>
+      </div>
+      <div class="stats-row three-cols">
+        <div class="stat-cell">
+          <span class="lbl">New team</span>
+          <span class="val">0</span>
+        </div>
+        <div class="stat-cell">
+          <span class="lbl">First time recharge</span>
+          <span class="val">0</span>
+        </div>
+        <div class="stat-cell">
+          <span class="lbl">First withdrawal</span>
+          <span class="val">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIP Level Cards -->
+    <div class="level-cards-list">
+      <!-- Level 1 -->
+      <div class="level-card card-gradient-green">
+        <div class="card-left">
+          <span class="level-badge-lbl">LEVEL 1</span>
+        </div>
+        <div class="card-middle">
+          <div class="meta-row">
+            <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team1_count || 0 }}/0</span></div>
+            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[0] * 100).toFixed(0) : 15 }}%</span></div>
+          </div>
+          <div class="meta-row">
+            <div>Task rebate: <span class="bold-txt">5%</span></div>
+            <div>Total income: <span class="bold-txt">$ {{ data?.data?.team1_yj || '0.00' }}</span></div>
+          </div>
+        </div>
+        <button class="details-pill-btn" @click="showLevelDetails(1)">Details</button>
+      </div>
+
+      <!-- Level 2 -->
+      <div class="level-card card-gradient-pink">
+        <div class="card-left">
+          <span class="level-badge-lbl">LEVEL 2</span>
+        </div>
+        <div class="card-middle">
+          <div class="meta-row">
+            <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team2_count || 0 }}/0</span></div>
+            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[1] * 100).toFixed(0) : 5 }}%</span></div>
+          </div>
+          <div class="meta-row">
+            <div>Task rebate: <span class="bold-txt">3%</span></div>
+            <div>Total income: <span class="bold-txt">$ {{ data?.data?.team2_yj || '0.00' }}</span></div>
+          </div>
+        </div>
+        <button class="details-pill-btn" @click="showLevelDetails(2)">Details</button>
+      </div>
+
+      <!-- Level 3 -->
+      <div class="level-card card-gradient-blue">
+        <div class="card-left">
+          <span class="level-badge-lbl">LEVEL 3</span>
+        </div>
+        <div class="card-middle">
+          <div class="meta-row">
+            <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team3_count || 0 }}/0</span></div>
+            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[2] * 100).toFixed(0) : 2 }}%</span></div>
+          </div>
+          <div class="meta-row">
+            <div>Task rebate: <span class="bold-txt">2%</span></div>
+            <div>Total income: <span class="bold-txt">$ {{ data?.data?.team3_yj || '0.00' }}</span></div>
+          </div>
+        </div>
+        <button class="details-pill-btn" @click="showLevelDetails(3)">Details</button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { i18n } from '@/lang/index.js'
 import Request from '@/services/index.js'
 import { showSuccessToast } from 'vant'
-import { formatDate } from '@/utils/format-date.js'
 
 const router = useRouter()
 const { t } = i18n.global
-const showCalendar = ref(false);
-let selectedItemId = ref(0);
-
-const loadShow = ref(false)
-
-const data = ref([]);
+const selectedItemId = ref(0)
+const data = ref([])
+const userData = ref({})
 
 const navList = [
-  {
-    title: t('team.all'),
-    id: 0
-  },
-  {
-    title: t('team.today'),
-    id: 1
-  },
-  {
-    title: t('team.yesterday'),
-    id: 2
-  },
-  {
-    title: t('team.week'),
-    id: 3
-  }
+  { title: 'All', id: 0 },
+  { title: 'Today', id: 1 },
+  { title: 'Yesterday', id: 2 },
+  { title: 'Week', id: 3 }
 ]
+
 const onClickTab = (id) => {
-	console.log(id)
-	selectedItemId.value = id
-	getData(selectedItemId.value)
+  selectedItemId.value = id
+  getData(selectedItemId.value)
 }
+
 const getData = (type) => {
-	let start = ''; 
-	if (type === 1) {
-		start = new Date().getTime() / 1000
-	} else if (type === 2) {
-		start = new Date().getTime() / 1000 - (60 * 60 * 24)
-	} else if (type === 3) {
-		start = new Date().getTime() / 1000 - (60 * 60 * 24 * 7)
-	}
-	  if (start) {
-		  formatDate(start, 'YYYY-MM-DD')
-	  }
+  let start = ''
+  if (type === 1) {
+    start = new Date().getTime() / 1000
+  } else if (type === 2) {
+    start = new Date().getTime() / 1000 - (60 * 60 * 24)
+  } else if (type === 3) {
+    start = new Date().getTime() / 1000 - (60 * 60 * 24 * 7)
+  }
   
   Request.get({ url: '/index/ctrl/junior?ajax=1&start=' + start }).then(res => {
-	data.value = res.data
-  }).catch(err => {
-	  
-  })
+    data.value = res.data
+  }).catch(() => {})
 }
+
+// Fetch user data for copy link and copy code details
+Request.get({ url: 'index/user/info' }).then(res => {
+  userData.value = res.info || {}
+})
+
 getData(selectedItemId.value)
+
+const getReferralLink = computed(() => {
+  return window.location.origin + '/#/register?invite_code=' + (userData.value.invite_code || '')
+})
+
+const copyCode = () => {
+  const code = userData.value.invite_code || ''
+  navigator.clipboard.writeText(code)
+  showSuccessToast('Copy invite code successfully: ' + code)
+}
+
+const copyLink = () => {
+  const link = getReferralLink.value
+  navigator.clipboard.writeText(link)
+  showSuccessToast('Copy referral link successfully')
+}
+
+const showLevelDetails = (level) => {
+  showSuccessToast('Viewing Level ' + level + ' Details')
+}
 </script>
 
-<style lang='less' scoped>
-	.tab-group{
-		width: 92%;
-		display: flex;
-		margin:10px 4%;
-	}
-    .tab-btn {
-		text-align: center;
-		width: 25%;
-		height: .6rem;
-		line-height: .6rem;
-		border: 0.05px solid var(--main-color);
-		color: var(--main-color);
-		font-size: var(--van-button-normal-font-size);
-   }
-   .active {
-	 background-color: var(--second-color);
-   }
-   .calendar-icon {
-	   with:10px;
-	   height:10px;
-	   .icon-calendar {
-	   	   background: url("../../assets/img/mine/calendar.png") 100%/contain;
-	   }
-   }
-   .team {
-		width: 92%;
-		height: 100vh;
-		background: var(--bg-second-color);
-		padding: 0 4% 10px;
-		overflow: hidden;
-		font-size: 11px;
-   }
-   .team-data {
-		
-   }
-   .u-font-13 {
-       font-size: 13px;
-   }
-   .text-dark {
-       color: var(--default-color)!important;
-   }
-   .u-m-r-5 {
-       margin-right: 5px;
-   }
-   
-   .u-p-10, .u-padding-10 {
-   	padding: 10px;
-   }
-   
-   .bg-grey {
-   	background: var(--bg-color);
-   }
-   .u-m-t-10 {
-       margin-top: 0.26667rem!important;
-   }
-   .u-m-b-10 {
-       margin-bottom: 0.26667rem!important;
-   }
-   .border-bottom {
-       border-bottom: 0.5px solid #cacaca;
-   }
-   .van-tag--primary {
-       background-color: #1989fa;
-   }
-   
-   .van-tag {
-       position: relative;
-       display: -webkit-inline-box;
-       display: -webkit-inline-flex;
-       display: inline-flex;
-       -webkit-box-align: center;
-       -webkit-align-items: center;
-       align-items: center;
-       padding: 0 4px;
-       color: #fff;
-       font-size: 12px;
-       line-height: 16px;
-       border-radius: 2px;
-   }
-   
-   .d-flex-center {
-       -webkit-box-align: center;
-       -ms-flex-align: center;
-       align-items: center;
-   }
-   .d-flex-center, .d-flex-row {
-       display: -webkit-box;
-       display: -ms-flexbox;
-       display: flex;
-   }
-   .van-icon {
-       position: relative;
-       display: inline-block;
-       font: normal normal normal 14px/1 vant-icon;
-       font-size: inherit;
-       text-rendering: auto;
-       -webkit-font-smoothing: antialiased;
-   }
-   .van-icon__image {
-       display: block;
-       width: 1em;
-       height: 1em;
-       object-fit: contain;
-   }
-   .u-font-16 {
-       font-size: 16px;
-   }
-   .flex-between, .flex-center {
-       display: -webkit-box;
-       display: -ms-flexbox;
-       display: flex;
-       -webkit-box-align: center;
-       -ms-flex-align: center;
-       align-items: center;
-   }
-   .flex-full {
-       -webkit-box-flex: 1;
-       -ms-flex: 1;
-       flex: 1;
-   }
-   .u-font-20 {
-       font-size: 20px;
-   }
-   
-   .text-red {
-       color: var(--red-color);
-   }
-   .justify-between {
-       -webkit-box-pack: justify;
-       -ms-flex-pack: justify;
-       justify-content: space-between;
-   }
+<style lang="less" scoped>
+.team-view {
+  background: var(--bg-second-color);
+  min-height: 100vh;
+  padding: 16px 16px 90px 16px;
+  box-sizing: border-box;
+
+  .invitation-box {
+    background-color: var(--bg-color);
+    border: 1px solid var(--second-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+
+    .invite-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .lbl {
+        font-size: 13px;
+        color: var(--text-second);
+      }
+
+      .code-val {
+        font-size: 18px;
+        font-weight: 750;
+        color: var(--default-color);
+      }
+    }
+
+    .invite-link-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+
+      .lbl {
+        font-size: 11px;
+        color: var(--text-second);
+      }
+
+      .link-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--bg-second-color);
+        border: 1px solid var(--second-color);
+        padding: 8px 12px;
+        border-radius: 8px;
+
+        .link-val {
+          font-size: 12px;
+          color: var(--text-second);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 75%;
+        }
+      }
+    }
+
+    .copy-btn {
+      background-color: var(--main-color);
+      color: #000000;
+      border: none;
+      padding: 4px 14px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 6px;
+
+      .social-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--second-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--default-color);
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        border: 1px solid var(--second-color);
+
+        &:hover {
+          background-color: var(--main-color);
+          color: #000;
+        }
+      }
+    }
+  }
+
+  .period-header {
+    margin-bottom: 20px;
+
+    .title-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--default-color);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .tab-group {
+      display: flex;
+      background-color: var(--bg-color);
+      border: 1px solid var(--second-color);
+      border-radius: 8px;
+      padding: 4px;
+
+      .tab-btn {
+        flex: 1;
+        text-align: center;
+        padding: 8px 0;
+        font-size: 12px;
+        color: var(--text-second);
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+
+        &.active {
+          background-color: var(--second-color);
+          color: var(--main-color);
+          font-weight: 700;
+        }
+      }
+    }
+  }
+
+  .team-stats-panel {
+    background-color: var(--bg-color);
+    border: 1px solid var(--second-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+
+    .stats-row {
+      display: flex;
+      justify-content: space-between;
+
+      &.three-cols {
+        border-top: 1px solid var(--second-color);
+        padding-top: 16px;
+        
+        .stat-cell {
+          width: 30%;
+          text-align: center;
+          align-items: center;
+        }
+      }
+
+      .stat-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .lbl {
+          font-size: 11px;
+          color: var(--text-second);
+        }
+
+        .val {
+          font-size: 16px;
+          font-weight: 750;
+          color: var(--default-color);
+        }
+      }
+    }
+  }
+
+  .level-cards-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    .level-card {
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+
+      .card-left {
+        width: 25%;
+        font-size: 14px;
+        font-weight: 800;
+        border-right: 1px dashed rgba(30, 41, 59, 0.2);
+        padding-right: 10px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      .card-middle {
+        flex: 1;
+        padding-left: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 10px;
+
+        .meta-row {
+          display: flex;
+          justify-content: space-between;
+
+          .bold-txt {
+            font-weight: 700;
+          }
+        }
+      }
+
+      .details-pill-btn {
+        background: transparent;
+        color: inherit;
+        border: 1px solid currentColor;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-left: 10px;
+
+        &:hover {
+          background-color: rgba(0,0,0,0.05);
+        }
+      }
+
+      &.card-gradient-green {
+        background: linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%);
+        color: #1e293b;
+        .details-pill-btn {
+          border-color: #1e293b;
+        }
+      }
+
+      &.card-gradient-pink {
+        background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 100%);
+        color: #1e293b;
+        .details-pill-btn {
+          border-color: #1e293b;
+        }
+      }
+
+      &.card-gradient-blue {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        color: #1e293b;
+        .details-pill-btn {
+          border-color: #1e293b;
+        }
+      }
+    }
+  }
+}
 </style>

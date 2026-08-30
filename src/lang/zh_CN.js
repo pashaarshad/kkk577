@@ -1,11 +1,27 @@
 export default {
   main: {
     home: '首页',
-    work: '工作',
+    work: '项目',
     order: '订单',
-    mine: '我的',
+    mine: '我',
     login: '登录',
-    posterDetail: ''
+    register: '注册',
+    grab: '抢单',
+    money: '$',
+    submit: '提交',
+    withdraw: '提现',
+    recharge: '充值',
+    information: '信息',
+    record: '记录',
+    team: '团队',
+    password: '密码',
+    message: '消息',
+    rechargeRecord: '充值记录',
+    withdrawRecord: '提现记录',
+    billList: '账单',
+    next: '下一步',
+    last: '上一步',
+    posterDetail: '详情'
   },
   home: {
     recharge: '马上充值',

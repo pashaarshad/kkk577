@@ -39,15 +39,10 @@ const list = ref([
     icon_active: getAssetURL('main/work-sel.png')
   },
   {
-    path: '/grab',
-    icon: getAssetURL('main/grab.png'),
-    icon_active: getAssetURL('main/grab.png')
-  },
-  {
-    title: t('main.order'),
-    path: '/order',
-    icon: getAssetURL('main/orders.png'),
-    icon_active: getAssetURL('main/orders-sel.png')
+    title: t('main.team') || 'Team',
+    path: '/team',
+    icon: getAssetURL('main/team.png'),
+    icon_active: getAssetURL('main/team-sel.png')
   },
   {
     title: t('main.mine'),
@@ -123,7 +118,7 @@ window.onresize = function() {
 }
 
 .tabbar-list {
-  width: 22%;
+  width: 25%;
   position: relative;
   display: flex;
   flex-direction: column;
