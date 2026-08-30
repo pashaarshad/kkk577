@@ -185,6 +185,7 @@ class Handle
             echo "<h1>Exception Occurred:</h1>";
             echo "<pre>" . $exception->getMessage() . "\nFile: " . $exception->getFile() . " on line " . $exception->getLine() . "\n\n" . $exception->getTraceAsString() . "</pre>";
         } else {
+            extract($data);
             include $tmpl;
         }
 
