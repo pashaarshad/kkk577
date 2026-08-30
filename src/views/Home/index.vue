@@ -15,28 +15,55 @@
 
     <!-- Combined Card Container (Profile + Balance + Quick Actions) -->
     <div v-show="loginShow" class="box main-info-card">
-      <div class="profile-header">
-        <span class="phone-number">{{ data.user_info?.tel }}</span>
-        <div class="wallet-icon-btn" @click="router.push('/bankCard')">
-          <van-icon name="card" />
-        </div>
-      </div>
-      
-      <div class="balance-container">
-        <div class="balance-pill">
-          <span class="label">Balance</span>
-          <span class="divider">|</span>
-          <span class="val">$ {{ data.user_info?.balance || '0' }}</span>
-        </div>
-      </div>
-
-      <!-- Quick Actions nested inside card -->
-      <div class="nested-menu">
-        <div v-for="(item, index) in menu" :key="index" class="menu-item" @click="onMenuClick(item.path)">
-          <div class="menu-icon-wrapper">
-            <img :src="item.icon" alt="" class="menu-icon-img">
+      <div class="card-bg-overlay"></div>
+      <div class="card-content">
+        <div class="profile-header">
+          <span class="phone-number">{{ data.user_info?.tel }}</span>
+          <div class="wallet-icon-btn" @click="router.push('/bankCard')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
           </div>
-          <div class="menu-title">{{ item.title }}</div>
+        </div>
+        
+        <div class="balance-container">
+          <div class="balance-pill">
+            <span class="label">Balance</span>
+            <span class="divider">|</span>
+            <span class="val">$ {{ data.user_info?.balance || '0' }}</span>
+          </div>
+        </div>
+
+        <!-- Quick Actions with white SVG icons inside orange circles -->
+        <div class="nested-menu">
+          <div class="menu-item" @click="onMenuClick('/recharge')">
+            <div class="menu-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            </div>
+            <div class="menu-title">Recharge</div>
+          </div>
+          <div class="menu-item" @click="onMenuClick('/withdraw')">
+            <div class="menu-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+            </div>
+            <div class="menu-title">Withdraw</div>
+          </div>
+          <div class="menu-item" @click="onMenuClick('/poster/detail/12')">
+            <div class="menu-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11 8 15.01z"/></svg>
+            </div>
+            <div class="menu-title">Company Profile</div>
+          </div>
+          <div class="menu-item" @click="onMenuClick('/poster/detail/13')">
+            <div class="menu-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+            </div>
+            <div class="menu-title">Invite Friends</div>
+          </div>
+          <div class="menu-item" @click="onMenuClick('/poster/detail/14')">
+            <div class="menu-icon-wrapper">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+            </div>
+            <div class="menu-title">Agency Cooperation</div>
+          </div>
         </div>
       </div>
     </div>
@@ -316,16 +343,35 @@ const onMenuClick = (path) => {
 
   .main-info-card {
     width: 92%;
-    border-radius: 12px;
-    padding: 20px 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    background: linear-gradient(135deg, #2b211a 0%, #1f1813 100%);
-    border: 1px solid #433328;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    background: #1e1710;
+    border: 1px solid #3a2e22;
     box-sizing: border-box;
     margin: 20px auto;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    position: relative;
+    overflow: hidden;
+
+    .card-bg-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://api.kkk577.net/upload/441fb20fdc10f3da/c86f39f4a7ac8465.jpg') center/cover no-repeat;
+      opacity: 0.25;
+      z-index: 0;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
     .profile-header {
       display: flex;
@@ -342,14 +388,12 @@ const onMenuClick = (path) => {
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background-color: #1a1411;
+        background-color: rgba(0,0,0,0.3);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #ffaa00;
-        font-size: 18px;
         cursor: pointer;
-        border: 1px solid #433328;
+        border: 1px solid #3a2e22;
       }
     }
 
@@ -361,7 +405,7 @@ const onMenuClick = (path) => {
         display: flex;
         align-items: center;
         gap: 10px;
-        background-color: #15100d;
+        background-color: rgba(0,0,0,0.45);
         padding: 10px 32px;
         border-radius: 30px;
         border: 1px solid #362920;
@@ -398,24 +442,19 @@ const onMenuClick = (path) => {
         flex-direction: column;
         align-items: center;
         cursor: pointer;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
 
         .menu-icon-wrapper {
-          width: 48px;
-          height: 48px;
+          width: 50px;
+          height: 50px;
           border-radius: 50%;
-          background-color: #fbb03b;
+          background: linear-gradient(135deg, #f5a623 0%, #e8912d 100%);
           display: flex;
           align-items: center;
           justify-content: center;
           margin-bottom: 8px;
-          border: none;
-
-          .menu-icon-img {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-          }
+          border: 2px solid #ffc96b;
+          box-shadow: 0 2px 8px rgba(245, 166, 35, 0.3);
         }
 
         .menu-title {

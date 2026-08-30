@@ -9,8 +9,11 @@
           <span class='activity-id'>321321</span>
         </div>
         <div class='card-right'>
-          <span class='amount positive'>+20.00 USDT</span>
-          <button class='action-btn' @click='router.push("/work")'>View Tasks</button>
+          <span class='amount positive'>+$9.00 USDT</span>
+          <button class='action-btn arrow-btn' @click='router.push("/work")'>
+            <span>New Tasks</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
         </div>
       </div>
       <!-- Card 2 -->
@@ -19,36 +22,24 @@
           <img :src='defaultGameLogo' alt='' class='activity-game-img'>
         </div>
         <div class='card-right'>
-          <span class='amount positive'>+10.00 USDT</span>
-          <button class='action-btn' @click='router.push("/work")'>View Tasks</button>
+          <span class='amount positive'>+$9.00 USDT</span>
+          <button class='action-btn arrow-btn' @click='router.push("/work")'>
+            <span>New Tasks</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
         </div>
       </div>
       <!-- Card 3 -->
       <div class='activity-card'>
-        <div class='card-left-empty'>
-          <!-- Spacer to align right side elements -->
+        <div class='card-left'>
+          <span class='activity-id'>&nbsp;</span>
         </div>
         <div class='card-right'>
-          <span class='amount positive'>+90.00 USDT</span>
-          <button class='action-btn primary' @click='router.push("/work")'>Check In</button>
-        </div>
-      </div>
-      <!-- Card 4 -->
-      <div class='activity-card flex-col-wrap'>
-        <div class='activity-card-top'>
-          <div class='card-left'>
-            <span class='invited-text'>Invitedfriend</span>
-          </div>
-          <div class='card-right'>
-            <span class='amount positive'>+90.00 USDT</span>
-            <button class='action-btn' @click='router.push("/mine")'>0 / 1</button>
-          </div>
-        </div>
-        <div class='activity-card-bottom'>
-          <div class='progress-bar-wrapper'>
-            <div class='progress-bar-inner' style='width: 30%;'></div>
-          </div>
-          <span class='progress-text'>30%</span>
+          <span class='amount gold'>+$69.00 USDT</span>
+          <button class='action-btn arrow-btn primary' @click='router.push("/work")'>
+            <span>New Tasks</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
+          </button>
         </div>
       </div>
     </div>
@@ -65,10 +56,11 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
 
 <style lang='less' scoped>
 .title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700 !important;
-  margin-bottom: 20px;
-  margin-top: 30px;
+  margin-bottom: 14px;
+  margin-top: 24px;
+  color: var(--default-color);
 }
 
 .commission {
@@ -80,56 +72,19 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
   .activity-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .activity-card {
     background-color: var(--bg-color);
     border: 1px solid var(--second-color);
     border-radius: 12px;
-    padding: 16px;
+    padding: 14px 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-sizing: border-box;
-
-    &.flex-col-wrap {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
-    }
-
-    .activity-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    .activity-card-bottom {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-
-      .progress-bar-wrapper {
-        flex: 1;
-        height: 6px;
-        background-color: var(--second-color);
-        border-radius: 3px;
-        overflow: hidden;
-
-        .progress-bar-inner {
-          height: 100%;
-          background-color: var(--main-color);
-        }
-      }
-
-      .progress-text {
-        font-size: 11px;
-        color: var(--text-second);
-      }
-    }
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 
     .card-left {
       font-size: 14px;
@@ -138,6 +93,7 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
 
       .activity-id {
         font-family: monospace;
+        font-size: 14px;
       }
 
       .activity-game-img {
@@ -146,24 +102,23 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
         border-radius: 8px;
         object-fit: cover;
       }
-
-      .invited-text {
-        font-size: 13px;
-        color: var(--default-color);
-      }
     }
 
     .card-right {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 12px;
 
       .amount {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         
         &.positive {
           color: #00b25e;
+        }
+
+        &.gold {
+          color: #f5a623;
         }
       }
 
@@ -171,11 +126,19 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
         background: transparent;
         color: var(--main-color);
         border: 1px solid var(--main-color);
-        padding: 6px 14px;
+        padding: 5px 12px;
         border-radius: 20px;
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        white-space: nowrap;
+
+        &.arrow-btn {
+          padding-right: 8px;
+        }
 
         &.primary {
           background-color: var(--main-color);
