@@ -1,47 +1,32 @@
-<!-- Commission  -->
+<!-- Commission / Activities with Order Popout Arrow -->
 <template>
   <div class='commission'>
-    <div class='title'>Activitys</div>
-    <div class='activity-list'>
-      <!-- Card 1 -->
-      <div class='activity-card'>
-        <div class='card-left'>
-          <span class='activity-id'>321321</span>
-        </div>
-        <div class='card-right'>
-          <span class='amount positive'>+$9.00 USDT</span>
-          <button class='action-btn arrow-btn' @click='router.push("/work")'>
-            <span>New Tasks</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-          </button>
-        </div>
+    <h2 class='section-title'>Activitys</h2>
+
+    <!-- ORDER CARD 1 -->
+    <div class='order-card'>
+      <div class='order-number'>321321</div>
+      <div class='order-profit'>+$9.00 USDT</div>
+      <button class='view-task' @click='router.push("/work")'>View Task</button>
+      <div class='order-popout'></div>
+    </div>
+
+    <!-- ORDER CARD 2 -->
+    <div class='order-card'>
+      <div class='order-number'>
+        <img :src='defaultGameLogo' alt='' class='order-img'>
       </div>
-      <!-- Card 2 -->
-      <div class='activity-card'>
-        <div class='card-left'>
-          <img :src='defaultGameLogo' alt='' class='activity-game-img'>
-        </div>
-        <div class='card-right'>
-          <span class='amount positive'>+$9.00 USDT</span>
-          <button class='action-btn arrow-btn' @click='router.push("/work")'>
-            <span>New Tasks</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-          </button>
-        </div>
-      </div>
-      <!-- Card 3 -->
-      <div class='activity-card'>
-        <div class='card-left'>
-          <span class='activity-id'>&nbsp;</span>
-        </div>
-        <div class='card-right'>
-          <span class='amount gold'>+$69.00 USDT</span>
-          <button class='action-btn arrow-btn primary' @click='router.push("/work")'>
-            <span>New Tasks</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-          </button>
-        </div>
-      </div>
+      <div class='order-profit'>+$9.00 USDT</div>
+      <button class='view-task' @click='router.push("/work")'>New Tasks</button>
+      <div class='order-popout'></div>
+    </div>
+
+    <!-- ORDER CARD 3 -->
+    <div class='order-card'>
+      <div class='order-number'>&nbsp;</div>
+      <div class='order-profit gold'>+$69.00 USDT</div>
+      <button class='view-task' @click='router.push("/work")'>New Tasks</button>
+      <div class='order-popout'></div>
     </div>
   </div>
 </template>
@@ -55,48 +40,44 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
 </script>
 
 <style lang='less' scoped>
-.title {
-  font-size: 20px;
-  font-weight: 700 !important;
-  margin-bottom: 14px;
-  margin-top: 24px;
-  color: var(--default-color);
-}
-
 .commission {
-  width: 92%;
-  margin: 10px auto;
-  box-sizing: border-box;
-  font-size: 13.2px;
+  margin: 0 0 10px;
 
-  .activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .section-title {
+    display: inline-block;
+    position: relative;
+    margin: 3px 0 9px;
+    font-size: 15px;
+    font-weight: normal;
+    color: white;
+
+    &::after {
+      content: "";
+      position: absolute;
+      height: 4px;
+      width: 100%;
+      left: 0;
+      bottom: -4px;
+      background: #2760ae;
+    }
   }
 
-  .activity-card {
-    background-color: var(--bg-color);
-    border: 1px solid var(--second-color);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  .order-card {
+    position: relative;
+    min-height: 70px;
+    padding: 14px;
+    background: #382f28;
+    border-radius: 7px;
+    overflow: visible;
+    margin-bottom: 28px;
 
-    .card-left {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--default-color);
+    .order-number {
+      font-size: 11px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #ffffff;
 
-      .activity-id {
-        font-family: monospace;
-        font-size: 14px;
-      }
-
-      .activity-game-img {
+      .order-img {
         width: 40px;
         height: 40px;
         border-radius: 8px;
@@ -104,46 +85,54 @@ const defaultGameLogo = getAssetURL('mine/ic_gift.png')
       }
     }
 
-    .card-right {
+    .order-profit {
+      position: absolute;
+      right: 15px;
+      top: 12px;
+      color: #65d69a;
+      font-size: 11px;
+
+      &.gold {
+        color: #f5ae48;
+      }
+    }
+
+    .view-task {
+      position: absolute;
+      right: 12px;
+      top: 31px;
+      border: none;
+      padding: 8px 13px;
+      border-radius: 16px;
+      color: white;
+      background: #f5ae48;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Pop-out arrow design */
+    .order-popout {
+      position: absolute;
+      right: 12px;
+      bottom: -16px;
+      width: 35px;
+      height: 32px;
+      border-radius: 0 0 10px 10px;
+      background: #382f28;
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      color: white;
+      z-index: 3;
 
-      .amount {
-        font-size: 13px;
-        font-weight: 700;
-        
-        &.positive {
-          color: #00b25e;
-        }
-
-        &.gold {
-          color: #f5a623;
-        }
-      }
-
-      .action-btn {
-        background: transparent;
-        color: var(--main-color);
-        border: 1px solid var(--main-color);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        white-space: nowrap;
-
-        &.arrow-btn {
-          padding-right: 8px;
-        }
-
-        &.primary {
-          background-color: var(--main-color);
-          color: #000000;
-        }
+      &::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid white;
+        border-bottom: 2px solid white;
+        transform: rotate(45deg) translateY(-2px);
       }
     }
   }

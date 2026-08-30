@@ -21,44 +21,44 @@ body {
 }
 
 body {
-    --bg-color: #1f2026;
-    --bg-second-color: #16171d;
+    --bg-color: #382f28;
+    --bg-second-color: #222222;
     --default-color: #ffffff;
-    --main-color: #d5b586;
-    --second-color: #2a2c35;
-    --gray-color: #16171d;
-    --gray-color2: #a7aebf;
-    --gray-color3: #1e2027;
-    --text-second: #8f96a3;
-    --gray-light-color: #5c6270;
-    --green-color: #00b25e;
+    --main-color: #f5ae48;
+    --second-color: #3a3229;
+    --gray-color: #222222;
+    --gray-color2: #9b9b9b;
+    --gray-color3: #1d1f21;
+    --text-second: #9b9b9b;
+    --gray-light-color: #6b6b6b;
+    --green-color: #65d69a;
     --purple-color: #4c4aef;
     --red-color: #e36564;
-    --yellow-color: #d5b586;
+    --yellow-color: #f5ae48;
 
     /* Vant components dark theme overrides */
-    --van-background: #16171d;
-    --van-background-light: #1f2026;
-    --van-background-color-light: #1f2026;
+    --van-background: #222222;
+    --van-background-light: #382f28;
+    --van-background-color-light: #382f28;
     --van-text-color: #ffffff;
-    --van-text-color-placeholder: #5c6270;
-    --van-border-color: #2a2c35;
-    --van-cell-background: #1f2026;
+    --van-text-color-placeholder: #6b6b6b;
+    --van-border-color: #3a3229;
+    --van-cell-background: #382f28;
     --van-cell-text-color: #ffffff;
-    --van-cell-value-color: #a7aebf;
-    --van-cell-group-background: #16171d;
-    --van-nav-bar-background: #1f2026;
+    --van-cell-value-color: #9b9b9b;
+    --van-cell-group-background: #222222;
+    --van-nav-bar-background: #222222;
     --van-nav-bar-title-text-color: #ffffff;
-    --van-nav-bar-text-color: #d5b586;
-    --van-tabbar-background: #1f2026;
-    --van-tabbar-item-text-color: #8f96a3;
-    --van-tabbar-item-active-color: #d5b586;
-    --van-button-default-background: #1f2026;
+    --van-nav-bar-text-color: #f5ae48;
+    --van-tabbar-background: #382f28;
+    --van-tabbar-item-text-color: #a9a9a9;
+    --van-tabbar-item-active-color: #f5ae48;
+    --van-button-default-background: #382f28;
     --van-button-default-color: #ffffff;
-    --van-button-default-border-color: #2a2c35;
+    --van-button-default-border-color: #3a3229;
     --van-field-label-color: #ffffff;
-    --van-dialog-background: #1f2026;
-    --van-dialog-has-title-message-text-color: #a7aebf;
+    --van-dialog-background: #382f28;
+    --van-dialog-has-title-message-text-color: #9b9b9b;
     --van-dialog-title-text-color: #ffffff;
 }
 

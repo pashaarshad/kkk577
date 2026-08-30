@@ -1,13 +1,21 @@
 <!-- tabbar  -->
 <template>
   <div class='tabbars'>
-    <div id='tabbar' :style='{width:boxHeight}' class='tabbar'>
-      <div v-for='(item, index) in list' :class="'list'+index" class='tabbar-list' @click='onTabbar(item, index)'>
-        <img v-if='tabbarIndex !== index' :class="'icon'+index" :src='item.icon' alt=''>
-        <img v-else :class="'icon'+index" :src='item.icon_active' alt=''>
-        <span :class="tabbarIndex !== index ? '' : 'tabbar-title'">{{ item?.title }}</span>
-      </div>
-    </div>
+    <nav :style='{width:boxHeight}' class='bottom-nav'>
+      <a v-for='(item, index) in list' :key='index'
+         :class="['nav-item', { active: tabbarIndex === index }]"
+         @click='onTabbar(item, index)'>
+        <!-- Home icon -->
+        <svg v-if="index === 0" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+        <!-- Project icon -->
+        <svg v-if="index === 1" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16"></rect><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+        <!-- Team icon -->
+        <svg v-if="index === 2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 21a7 7 0 0 1 14 0"></path></svg>
+        <!-- Me icon -->
+        <svg v-if="index === 3" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-16 0"></path><path d="M12 4v8l3 2"></path></svg>
+        <span>{{ item?.title }}</span>
+      </a>
+    </nav>
   </div>
 </template>
 
@@ -76,19 +84,13 @@ const onTabbar = (item, index) => {
 
 const baseSize = 50
 
-// 设置 rem 函数
 function setRem() {
-  // 当前页面宽度相对于 375 宽的缩放比例，可根据自己需要修改。
-  // const scale = document.documentElement.clientWidth / 375
-  // // 设置页面根节点字体大小
-  // document.documentElement.style.fontSize = (baseSize * Math.min(scale, 2)) + 'px'
   const scale = document.documentElement.clientWidth
   if (scale > 750) {
     document.documentElement.style.fontSize = '41.4px'
   }
 }
 
-// 初始化
 setRem()
 
 const boxHeight = ref(document.getElementById('app').offsetWidth + 'px')
@@ -105,61 +107,42 @@ window.onresize = function() {
   bottom: 0;
 }
 
-.tabbar {
-  display: flex;
+.bottom-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   position: fixed;
   bottom: 0;
-  justify-content: space-between;
-  padding: 15px 0px 15px 0px;
-  box-sizing: border-box;
-  background-color: var(--bg-color);
-  box-shadow: 0 -1px 8px 0 rgba(0, 0, 0, .4);
-  border-top: 1px solid var(--second-color);
+  height: 64px;
+  background: #382f28;
+  border-radius: 6px 6px 0 0;
+  z-index: 100;
 }
 
-.tabbar-list {
-  width: 25%;
-  position: relative;
+.nav-item {
+  text-decoration: none;
+  color: #a9a9a9;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: var(--text-second);
+  justify-content: center;
+  gap: 4px;
+  font-size: 10px;
+  cursor: pointer;
 
+  &.active {
+    color: #f5ae48;
+  }
 
-  img {
-    width: 21px;
-    height: 24px;
+  svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
   }
 
   span {
-    margin-top: 8px;
-    font-size: 12px;
-    word-wrap: break-word;
-    word-break: normal;
-    text-align: center;
-  }
-
-  .list2 {
-    //width: 82px;
-
-    img {
-      width: 52px;
-      height: 52px;
-      position: absolute;
-      top: -15px;
-    }
-  }
-
-  .icon2 {
-    width: 47px;
-    height: 47px;
-    position: absolute;
-    top: -10px;
-  }
-
-  .tabbar-title {
-    color: var(--main-color);
+    font-size: 10px;
   }
 }
-
 </style>

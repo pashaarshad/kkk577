@@ -3,190 +3,77 @@
   <div class="Home">
     <!-- Scrolling Notice -->
     <div class="notice">
-      <div class="notice-icon">
-        <div></div>
-      </div>
-      <div class="notice-content">
-        <van-notice-bar background="var(--bg-color)" color="var(--text-second)">
-          Welcome to the Huanyu Overseas Mission Mall demo station. Please contact the official customer service Telegram to register and activate your account. Official Channel: https://t.me/huanyu_chuhai
+      <span class="notice-icon">♧</span>
+      <div class="notice-text">
+        <van-notice-bar background="transparent" color="#d7d7d7">
+          Telegram customer service 1: @hykafa1 Telegram customer service 2: @hykafa2
         </van-notice-bar>
       </div>
     </div>
 
-    <!-- Combined Card Container (Profile + Balance + Quick Actions) -->
-    <div v-show="loginShow" class="box main-info-card">
-      <div class="card-bg-overlay"></div>
-      <div class="card-content">
-        <div class="profile-header">
-          <span class="phone-number">{{ data.user_info?.tel }}</span>
-          <div class="wallet-icon-btn" @click="router.push('/bankCard')">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-          </div>
-        </div>
-        
-        <div class="balance-container">
-          <div class="balance-pill">
-            <span class="label">Balance</span>
-            <span class="divider">|</span>
-            <span class="val">$ {{ data.user_info?.balance || '0' }}</span>
-          </div>
-        </div>
+    <!-- PROFILE / QUICK ACTION CARD -->
+    <section v-show="loginShow" class="main-card">
+      <div class="phone-row">{{ data.user_info?.tel }}</div>
 
-        <!-- Quick Actions with white SVG icons inside orange circles -->
-        <div class="nested-menu">
-          <div class="menu-item" @click="onMenuClick('/recharge')">
-            <div class="menu-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-            </div>
-            <div class="menu-title">Recharge</div>
-          </div>
-          <div class="menu-item" @click="onMenuClick('/withdraw')">
-            <div class="menu-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            </div>
-            <div class="menu-title">Withdraw</div>
-          </div>
-          <div class="menu-item" @click="onMenuClick('/poster/detail/12')">
-            <div class="menu-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11 8 15.01z"/></svg>
-            </div>
-            <div class="menu-title">Company Profile</div>
-          </div>
-          <div class="menu-item" @click="onMenuClick('/poster/detail/13')">
-            <div class="menu-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-            </div>
-            <div class="menu-title">Invite Friends</div>
-          </div>
-          <div class="menu-item" @click="onMenuClick('/poster/detail/14')">
-            <div class="menu-icon-wrapper">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
-            </div>
-            <div class="menu-title">Agency Cooperation</div>
-          </div>
-        </div>
+      <!-- BALANCE -->
+      <div class="balance">
+        <span>Balance</span>
+        <strong>$ {{ data.user_info?.balance || '0' }}</strong>
       </div>
-    </div>
 
-    <!-- Banner Swipe -->
-    <div class="swipe">
-      <van-swipe :autoplay="3000" class="my-swipe" indicator-color="white">
-        <template v-for="item in data.banner" :key="item.id">
-          <van-swipe-item>
-            <img :src="item.image" alt="" class="swipe-img">
-          </van-swipe-item>
-        </template>
-      </van-swipe>
-    </div>
+      <!-- ACTIONS -->
+      <div class="actions">
+        <a class="action" @click="onMenuClick('/recharge')">
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="13" rx="2"></rect><path d="M8 7V5a4 4 0 0 1 8 0v2"></path><path d="M12 11v5"></path><path d="M10 13h4"></path></svg>
+          </div>
+          <span>Recharge</span>
+        </a>
 
-    <!-- Activities Deck -->
+        <a class="action" @click="onMenuClick('/withdraw')">
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="6" width="11" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
+          </div>
+          <span>Withdraw</span>
+        </a>
+
+        <a class="action" @click="onMenuClick('/poster/detail/12')">
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"></path><path d="M15 4v4h4"></path><path d="M9 12h6"></path><path d="M9 16h5"></path></svg>
+          </div>
+          <span>Company Profile</span>
+        </a>
+
+        <a class="action" @click="onMenuClick('/poster/detail/13')">
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24"><rect x="4" y="6" width="10" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
+          </div>
+          <span>Invite Friends</span>
+        </a>
+
+        <a class="action" @click="onMenuClick('/poster/detail/14')">
+          <div class="action-icon">
+            <svg viewBox="0 0 24 24"><path d="M5 5h10l4 4v10H5z"></path><path d="M15 5v4h4"></path><path d="M8 12h2"></path><path d="M12 12h4"></path><path d="M8 16h2"></path><path d="M12 16h4"></path></svg>
+          </div>
+          <span>Agency Cooperation</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- BANNER IMAGES (stacked, not carousel) -->
+    <section class="banners">
+      <div v-for="item in data.banner" :key="item.id" class="banner">
+        <img :src="item.image" alt="Banner">
+      </div>
+    </section>
+
+    <!-- Activities / Orders -->
     <Commission :list="data.deposit_list" />
 
-    <!-- Project Hall Section -->
-    <div class="project-hall">
-      <div class="section-title">Project hall</div>
-      <div class="project-list">
-        <div v-for="item in vipList.slice(0, 3)" :key="item.id" class="project-card" @click="router.push('/work')">
-          <img :src="item.img" alt="" class="project-img">
-          <div class="project-details">
-            <div class="profit-row">
-              <span class="val">$ {{ (item.num * 3.6).toFixed(2) }}</span>
-              <span class="lbl">The total profit</span>
-            </div>
-            <div class="price-row">
-              <span class="val">$ {{ (item.num_min || item.num).toFixed(2) }}</span>
-              <span class="lbl">Price</span>
-            </div>
-            <div class="vip-tag-wrapper">
-              <span class="vip-tag">{{ item.name }}</span>
-            </div>
-          </div>
-          <div class="project-arrow">
-            <van-icon name="arrow" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Platform Introduction -->
-    <div class="platform-intro">
-      <div class="section-title">Platform Introduction</div>
-      <div class="video-wrapper">
-        <video controls width="100%" class="intro-video" poster="https://xiongmao002.com/api//file/cfg/202312/14/96566d7cf790464587998b55e4ef1aa8_.jpg">
-          <source src="" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      </div>
-    </div>
-
-    <!-- Member List -->
-    <div class="member-list-section">
-      <div class="section-title">Member list</div>
-      <div class="member-grid">
-        <div class="member-card">
-          <span class="val">+$ 3.00</span>
-          <span class="phone">+855******1187</span>
-        </div>
-        <div class="member-card">
-          <span class="val">+$ 3.00</span>
-          <span class="phone">+233******3392</span>
-        </div>
-        <div class="member-card">
-          <span class="val">+$ 20.00</span>
-          <span class="phone">gus******@gma.com</span>
-        </div>
-        <div class="member-card">
-          <span class="val">+$ 20.00</span>
-          <span class="phone">sal******@icloud.com</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Regulatory Authority -->
-    <div class="regulatory-section">
-      <div class="section-title">Regulatory Authority</div>
-      <div class="regulatory-grid">
-        <div class="regulatory-card cftc-logo">
-          <div class="logo-title">CFTC</div>
-          <div class="logo-desc">Commodity Futures Trading Commission</div>
-        </div>
-        <div class="regulatory-card finra-logo">
-          <div class="logo-title">finra</div>
-          <div class="logo-desc">Financial Industry Regulatory Authority</div>
-        </div>
-        <div class="regulatory-card framework-logo bg-blue-dark">
-          <div class="logo-title">U.S. Financial</div>
-          <div class="logo-desc">Regulatory Framework</div>
-        </div>
-        <div class="regulatory-card framework-logo bg-navy-dark">
-          <div class="logo-title">U.S. Financial</div>
-          <div class="logo-desc">Regulatory Framework</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Partner Grid -->
-    <div class="partner">
-      <div class="section-title">{{ $t('home.partnerTitle') }}</div>
-      <div class="partner-list">
-        <div v-for="(item, index) in footList" :key="index" class="partner-item">
-          <img :src="item" alt="">
-        </div>
-      </div>
-    </div>
-
-    <!-- Floating Accessories -->
-    <div class="floating-whatsapp" @click="openWhatsApp">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-    </div>
-    <div class="floating-actions-right">
-      <div class="floating-btn gift" @click="router.push('/work')">
-        <van-icon name="gift-o" />
-      </div>
-      <div class="floating-btn email" @click="router.push('/message')">
-        <van-icon name="envelop-o" />
-      </div>
-    </div>
+    <!-- Floating Gift -->
+    <button class="gift-float" @click="router.push('/work')">
+      <svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="2"></rect><path d="M3 9h18v4H3z"></path><path d="M12 9v11"></path><path d="M12 9S7 8 7 5.5A2.5 2.5 0 0 1 12 5z"></path><path d="M12 9s5-1 5-3.5A2.5 2.5 0 0 0 12 5z"></path></svg>
+    </button>
   </div>
 </template>
 
@@ -201,35 +88,6 @@ import { useRouter } from 'vue-router'
 
 const { t } = i18n.global
 const router = useRouter()
-const searchValue = ref('')
-
-const menu = [
-  {
-    title: 'Recharge',
-    icon: getAssetURL('home/ic_recharge.png'),
-    path: '/recharge'
-  },
-  {
-    title: 'Withdraw',
-    icon: getAssetURL('home/ic_withdraw.png'),
-    path: '/withdraw'
-  },
-  {
-    title: 'Company Profile',
-    icon: getAssetURL('home/ic-company.png'),
-    path: '/poster/detail/12'
-  },
-  {
-    title: 'Invite Friends',
-    icon: getAssetURL('home/ic_invite.png'),
-    path: '/poster/detail/13'
-  },
-  {
-    title: 'Agency Cooperation',
-    icon: getAssetURL('home/ic-agent.png'),
-    path: '/poster/detail/14'
-  }
-]
 
 const footList = [
   getAssetURL('home/1.png'),
@@ -256,16 +114,6 @@ if (token) {
   loginShow.value = true
 }
 
-const copyInviteCode = () => {
-  const code = data.value.user_info?.invite_code || ''
-  navigator.clipboard.writeText(code)
-  showSuccessToast('Copy invite code successfully: ' + code)
-}
-
-const openWhatsApp = () => {
-  window.open('https://wa.me/', '_blank')
-}
-
 const onMenuClick = (path) => {
   router.push(path)
 }
@@ -273,515 +121,188 @@ const onMenuClick = (path) => {
 
 <style lang="less" scoped>
 .Home {
-  padding-bottom: 90px;
-  background: var(--bg-second-color);
+  padding: 14px 10px 90px;
+  background: #222222;
+  min-height: 100vh;
 
-  .search-bar {
-    width: 92%;
-    margin: 10px auto 0;
-    
-    :deep(.van-search__content) {
-      background-color: var(--bg-color);
-      border: 1px solid var(--second-color);
-    }
-    
-    :deep(.van-field__control) {
-      color: var(--default-color) !important;
-    }
-  }
-
-  .my-swipe .van-swipe-item {
-    color: #fff;
-    font-size: 20px;
-    line-height: 150px;
-    text-align: center;
-    background-color: #39a9ed;
-    height: 243px;
-  }
-
-  .swipe-img {
-    width: 100%;
-    height: 100%;
-    object-fit: fill;
-  }
-
+  /* ================= NOTICE ================= */
   .notice {
     display: flex;
-    padding: 0px 16px;
-    margin-top: 10px;
+    align-items: center;
+    gap: 9px;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: 20px;
+    color: #d7d7d7;
+    font-size: 12px;
 
     .notice-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 50px;
-      height: 50px;
-      background: #000;
-      border-radius: 8px 0 0 8px;
-
-      div {
-        width: 20px;
-        height: 20px;
-        background: url("../../assets/img/home/ic_notice.png") no-repeat 100%/cover;
-      }
+      font-size: 15px;
+      flex-shrink: 0;
     }
 
-    .notice-content {
-      width: 100%;
-      border: 1px solid var(--second-color);
-      border-left: none;
-      color: var(--text-second);
-      background-color: var(--bg-color);
-      border-radius: 0 8px 8px 0;
+    .notice-text {
+      overflow: hidden;
+      flex: 1;
 
-      .van-notice-bar {
-        height: 100%;
-        color: var(--text-second);
+      :deep(.van-notice-bar) {
+        padding: 0;
+        height: auto;
       }
     }
   }
 
-  .main-info-card {
-    width: 92%;
-    border-radius: 16px;
-    padding: 0;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-    background: #1e1710;
-    border: 1px solid #3a2e22;
-    box-sizing: border-box;
-    margin: 20px auto;
+  /* ================= MAIN CARD ================= */
+  .main-card {
     position: relative;
     overflow: hidden;
+    background: #382f28;
+    border-radius: 8px;
+    padding: 14px 0 10px;
+    margin-bottom: 14px;
 
-    .card-bg-overlay {
+    /* Background decorative circles */
+    &::before {
+      content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: url('https://api.kkk577.net/upload/441fb20fdc10f3da/c86f39f4a7ac8465.jpg') center/cover no-repeat;
-      opacity: 0.25;
-      z-index: 0;
+      width: 220px;
+      height: 220px;
+      left: -110px;
+      bottom: -130px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.09);
     }
 
-    .card-content {
+    &::after {
+      content: "";
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      right: -130px;
+      bottom: -130px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.13);
+    }
+
+    .phone-row {
       position: relative;
-      z-index: 1;
-      padding: 20px 16px;
+      z-index: 2;
+      padding: 0 14px 12px;
+      color: #9b9b9b;
+      font-size: 11px;
+    }
+
+    /* ================= BALANCE ================= */
+    .balance {
+      position: relative;
+      z-index: 2;
+      margin: 0 12px 8px;
+      height: 40px;
+      background: #1d1f21;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-size: 13px;
+      color: #ffffff;
+
+      strong {
+        color: #f5ae48;
+        font-size: 16px;
+      }
+    }
+
+    /* ================= ACTION GRID ================= */
+    .actions {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px 8px;
+      padding: 0 25px;
+    }
+
+    .action {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-    }
-
-    .profile-header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-
-      .phone-number {
-        font-size: 15px;
-        font-weight: 700;
-        color: #8c837d;
-      }
-
-      .wallet-icon-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        border: 1px solid #3a2e22;
-      }
+      gap: 7px;
+      color: white;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
     }
 
-    .balance-container {
+    .action-icon {
+      width: 39px;
+      height: 39px;
+      border-radius: 50%;
       display: flex;
       justify-content: center;
+      align-items: center;
+      background: #f5ae48;
+      color: white;
+      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
 
-      .balance-pill {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background-color: rgba(0,0,0,0.45);
-        padding: 10px 32px;
-        border-radius: 30px;
-        border: 1px solid #362920;
-        width: 100%;
-        justify-content: center;
-        box-sizing: border-box;
-
-        .label {
-          font-size: 16px;
-          color: #ffffff;
-          font-weight: 600;
-        }
-
-        .divider {
-          color: #4a3e36;
-        }
-
-        .val {
-          font-size: 20px;
-          color: #ffaa00;
-          font-weight: 800;
-        }
-      }
-    }
-
-    .nested-menu {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      padding: 10px 0 0;
-      margin-top: 6px;
-
-      .menu-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-        margin-bottom: 14px;
-
-        .menu-icon-wrapper {
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #f5a623 0%, #e8912d 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 8px;
-          border: 2px solid #ffc96b;
-          box-shadow: 0 2px 8px rgba(245, 166, 35, 0.3);
-        }
-
-        .menu-title {
-          font-size: 11px;
-          color: #ffffff;
-          text-align: center;
-          font-weight: 600;
-          white-space: nowrap;
-        }
+      svg {
+        width: 21px;
+        height: 21px;
+        stroke: white;
+        fill: none;
+        stroke-width: 2.2;
       }
     }
   }
 
-  .swipe {
-    width: 92%;
-    margin: 10px auto;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--second-color);
-  }
-
-  .section-title {
-    font-size: 20px;
-    font-weight: 700 !important;
-    margin: 30px 0 16px;
-    color: var(--default-color);
-  }
-
-  .project-hall {
-    width: 92%;
-    margin: 0 auto;
-
-    .project-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      .project-card {
-        background-color: var(--bg-color);
-        border: 1px solid var(--second-color);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        cursor: pointer;
-        height: 100px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-
-        .project-img {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          margin-left: 10px;
-          border-radius: 8px;
-        }
-
-        .project-details {
-          flex: 1;
-          padding: 10px 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-
-          .profit-row, .price-row {
-            display: flex;
-            align-items: baseline;
-            gap: 6px;
-
-            .val {
-              font-size: 14px;
-              font-weight: 700;
-            }
-
-            .lbl {
-              font-size: 10px;
-              color: var(--text-second);
-            }
-          }
-
-          .profit-row .val {
-            color: var(--main-color);
-          }
-
-          .price-row .val {
-            color: var(--red-color);
-          }
-
-          .vip-tag-wrapper {
-            margin-top: 2px;
-            .vip-tag {
-              background-color: #000;
-              color: var(--main-color);
-              font-size: 10px;
-              font-weight: 700;
-              padding: 2px 8px;
-              border-radius: 4px;
-            }
-          }
-        }
-
-        .project-arrow {
-          background-color: var(--main-color);
-          width: 32px;
-          height: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #000;
-          font-size: 20px;
-          font-weight: bold;
-        }
-      }
-    }
-  }
-
-  .platform-intro {
-    width: 92%;
-    margin: 0 auto;
-
-    .video-wrapper {
-      background-color: var(--bg-color);
-      border: 1px solid var(--second-color);
-      border-radius: 12px;
-      overflow: hidden;
-      padding: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-
-      .intro-video {
-        border-radius: 8px;
-        display: block;
-      }
-    }
-  }
-
-  .member-list-section {
-    width: 92%;
-    margin: 0 auto;
-
-    .member-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-
-      .member-card {
-        background-color: var(--bg-color);
-        border: 1px solid var(--main-color);
-        border-radius: 12px;
-        padding: 14px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 6px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-
-        .val {
-          font-size: 15px;
-          font-weight: 700;
-          color: var(--main-color);
-        }
-
-        .phone {
-          font-size: 11px;
-          color: var(--text-second);
-        }
-      }
-    }
-  }
-
-  .regulatory-section {
-    width: 92%;
-    margin: 0 auto;
-
-    .regulatory-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-
-      .regulatory-card {
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 16px;
-        height: 80px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        box-sizing: border-box;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-
-        .logo-title {
-          font-size: 20px;
-          font-weight: bold;
-          line-height: 1.1;
-        }
-
-        .logo-desc {
-          font-size: 8px;
-          margin-top: 4px;
-          line-height: 1.2;
-        }
-
-        &.cftc-logo {
-          border-left: 6px solid #b22234;
-          .logo-title {
-            color: #1a365d;
-          }
-          .logo-desc {
-            color: #4a5568;
-          }
-        }
-
-        &.finra-logo {
-          border-left: 6px solid #00a4e4;
-          .logo-title {
-            color: #0b2265;
-            font-style: italic;
-          }
-          .logo-desc {
-            color: #4a5568;
-          }
-        }
-
-        &.bg-blue-dark {
-          background-color: #1a365d;
-          color: #ffffff;
-          border: 1px solid #2a4365;
-          .logo-title {
-            color: #ffffff;
-          }
-          .logo-desc {
-            color: #cbd5e0;
-          }
-        }
-
-        &.bg-navy-dark {
-          background-color: #0b2265;
-          color: #ffffff;
-          border: 1px solid #1a365d;
-          .logo-title {
-            color: #ffffff;
-          }
-          .logo-desc {
-            color: #cbd5e0;
-          }
-        }
-      }
-    }
-  }
-
-  .partner {
-    width: 92%;
-    margin: 10px auto;
-
-    .partner-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-
-      .partner-item {
-        width: 33%;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: center;
-      }
-
-      img {
-        height: 24px;
-        max-width: 90%;
-        object-fit: contain;
-      }
-    }
-  }
-
-  /* Floating bubble accessories */
-  .floating-whatsapp {
-    position: fixed;
-    bottom: 80px;
-    left: 16px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: #25d366;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99;
-    cursor: pointer;
-    transition: transform 0.2s;
-
-    &:hover {
-      transform: scale(1.1);
-    }
-
-    img {
-      width: 28px;
-      height: 28px;
-    }
-  }
-
-  .floating-actions-right {
-    position: fixed;
-    bottom: 80px;
-    right: 16px;
+  /* ================= BANNERS ================= */
+  .banners {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    z-index: 99;
+    margin: 14px 0 18px;
 
-    .floating-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: var(--bg-color);
-      border: 1px solid var(--second-color);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--main-color);
-      font-size: 20px;
-      cursor: pointer;
-      transition: transform 0.2s;
+    .banner {
+      position: relative;
+      width: 100%;
+      border-radius: 7px;
+      overflow: hidden;
+      display: block;
+      background: #333;
 
-      &:hover {
-        transform: scale(1.1);
+      img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
       }
+    }
+  }
+
+  /* ================= FLOATING GIFT ================= */
+  .gift-float {
+    position: fixed;
+    right: 16px;
+    bottom: 130px;
+    width: 33px;
+    height: 33px;
+    border-radius: 50%;
+    background: #3c3937;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border: none;
+    color: white;
+    cursor: pointer;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      fill: none;
+      stroke-width: 2;
     }
   }
 }

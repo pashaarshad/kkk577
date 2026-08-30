@@ -123,9 +123,7 @@ window.onresize = function() {
   top: 0;
   width: 100%;
   height: 50px;
-  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, .4);
-  border-bottom: 1px solid var(--second-color);
-  background-color: var(--bg-color);
+  background-color: #222222;
   display: flex;
   justify-content: space-between;
   align-items: center;
