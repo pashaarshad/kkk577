@@ -1,17 +1,6 @@
 <!-- Home  -->
 <template>
   <div class="Home">
-    <!-- Search Bar -->
-    <div class="search-bar">
-      <van-search
-        v-model="searchValue"
-        shape="round"
-        background="transparent"
-        placeholder="Please enter search keyword"
-        class="custom-search"
-      />
-    </div>
-
     <!-- Scrolling Notice -->
     <div class="notice">
       <div class="notice-icon">
