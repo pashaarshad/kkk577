@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+  DirectoryIndex index.html index.php
+
+  # Strip /api prefix and route to public/index.php?s=...
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteRule ^api/(.*)$ public/index.php?s=$1 [QSA,PT,L]
+
+  # If the file exists in the public directory, serve it directly
+  RewriteCond %{DOCUMENT_ROOT}/public/$1 -f [OR]
+  RewriteCond %{DOCUMENT_ROOT}/public/$1 -d
+  RewriteRule ^(.*)$ public/$1 [L]
+
+  # Rewrite all other dynamic routes to public/index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ public/index.php?s=$1 [QSA,PT,L]
+</IfModule>

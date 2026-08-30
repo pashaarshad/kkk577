@@ -1,0 +1,1 @@
+import{_ as s,s as o,q as t,y as a,z as c,t as d}from"./index-LBJK1dMZ.js";const _={},n=e=>(a("data-v-8442badd"),e=e(),c(),e),p={class:"pay"},r=n(()=>d("h2",null,"pay",-1)),i=[r];function h(e,l){return t(),o("div",p,i)}const u=s(_,[["render",h],["__scopeId","data-v-8442badd"]]);export{u as default};

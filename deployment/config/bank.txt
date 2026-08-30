@@ -1,0 +1,24 @@
+ZAR10010|Absa
+ZAR10011|NedBank
+ZAR10012|Capitec
+ZAR10013|Standard
+ZAR10014|Fnb
+ZAR10015|African Bank
+ZAR10016|Bidvest Bank
+ZAR10017|Discovery
+ZAR10018|First National Bank
+ZAR10019|FirstRand Bank
+ZAR10020|Grindrod Bank
+ZAR10021|Imperial Bank
+ZAR10022|Investec Bank
+ZAR10023|Sasfin Bank
+ZAR10024|Standard Bank
+ZAR10025|Ubank
+ZAR10026|TymeBank
+ZAR10027|Mercantile Bank
+ZAR10028|Albaraka Bank
+ZAR10029|HBZ Bank
+ZAR10030|Habib Overseas
+ZAR10031|Wesbank
+ZAR10032|Rand Merchant Bank
+ZAR10033|Bank of Athens

