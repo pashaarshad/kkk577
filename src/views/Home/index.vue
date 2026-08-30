@@ -268,7 +268,7 @@ const onMenuClick = (path) => {
       border-radius: 7px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      height: 164px;
+      height: 189px;
     }
 
     .banner {
