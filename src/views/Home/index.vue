@@ -60,11 +60,15 @@
       </div>
     </section>
 
-    <!-- BANNER IMAGES (stacked, not carousel) -->
+    <!-- BANNER IMAGES (carousel) -->
     <section class="banners">
-      <div v-for="item in data.banner" :key="item.id" class="banner">
-        <img :src="item.image" alt="Banner">
-      </div>
+      <van-swipe :autoplay="3000" class="banner-swipe" indicator-color="white">
+        <van-swipe-item v-for="item in data.banner" :key="item.id">
+          <div class="banner">
+            <img :src="item.image" alt="Banner">
+          </div>
+        </van-swipe-item>
+      </van-swipe>
     </section>
 
     <!-- Activities / Orders -->
@@ -258,22 +262,24 @@ const onMenuClick = (path) => {
 
   /* ================= BANNERS ================= */
   .banners {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
     margin: 14px 0 18px;
+
+    .banner-swipe {
+      border-radius: 7px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
     .banner {
       position: relative;
       width: 100%;
-      border-radius: 7px;
-      overflow: hidden;
-      display: block;
+      height: 116px;
       background: #333;
+      display: block;
 
       img {
         width: 100%;
-        height: auto;
+        height: 100%;
         display: block;
         object-fit: cover;
       }
