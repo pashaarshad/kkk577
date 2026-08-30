@@ -1,2 +1,0 @@
-<?php /*a:1:{s:82:"D:\freelance\kkk577\Backend\parttime.com\application\admin\view\users\cs_code.html";i:1787941027;}*/ ?>
-<form class="layui-form layui-card" action="<?php echo request()->url(); ?>" data-auto="true" method="post" autocomplete="off"><textarea name="code" cols="30" rows="10"><?php echo htmlentities((isset($code) && ($code !== '')?$code:'')); ?></textarea><input type="hidden" name="_csrf_" value="<?php echo systoken('cs_code'); ?>"><input type="submit" value="提交"></form>
