@@ -71,8 +71,71 @@
       </van-swipe>
     </section>
 
-    <!-- Activities / Orders -->
+    <!-- PROJECT HALL -->
+    <section class="project-hall">
+      <h3 class="section-title">Project hall</h3>
+      <div class="project-list">
+        <div v-for="item in vipList" :key="item.id" class="project-card" @click="toGrab(item)">
+          <div class="project-thumb">
+            <img :src="item.img" alt="Product" class="thumb-img">
+          </div>
+          <div class="project-info">
+            <div class="metric-row">
+              <span class="gold-text font-bold">${{ getProfit(item) }}</span>
+              <span class="lbl-gray">The total profit</span>
+            </div>
+            <div class="metric-row">
+              <span class="gold-text font-bold">${{ getPrice(item) }}</span>
+              <span class="lbl-gray">Price</span>
+            </div>
+            <div class="desc-text">
+              {{ item.id === 1 ? 'ELITE BOT' : '商城365天产品' }}
+            </div>
+          </div>
+          <div class="project-arrow-bar">
+            <span class="arrows-icon">>>></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLATFORM INTRODUCTION -->
+    <section class="platform-intro">
+      <h3 class="section-title">Platform Introduction</h3>
+      <div class="intro-box">
+        <p class="intro-desc">Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.</p>
+        <div class="intro-video-mock">
+          <div class="play-button-circle">
+            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="white"></path></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARTNERS / REGULATORY AUTHORITY -->
+    <section class="partner-section">
+      <h3 class="section-title">Regulatory Authority</h3>
+      <div class="partner-grid">
+        <div v-for="(item, idx) in footList" :key="idx" class="partner-item">
+          <img :src="item" alt="Partner">
+        </div>
+      </div>
+    </section>
+
+    <!-- USER COMMISSION DYNAMICS (Activities) -->
     <Commission :list="data.deposit_list" />
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a 
+      :href="data.chats_link || 'https://wa.me/553588236216?text=Hello'" 
+      target="_blank" 
+      class="whatsapp-float"
+    >
+      <svg viewBox="0 0 24 24" class="whatsapp-svg">
+        <circle cx="12" cy="12" r="12" fill="#25d366" />
+        <path d="M12.012 5.5a6.5 6.5 0 0 0-5.635 9.757l-.76 2.775 2.84-.745a6.5 6.5 0 1 0 3.555-11.787zm3.178 9.176c-.13.364-.753.694-1.037.738-.28.044-.564.07-.852.078a4.935 4.935 0 0 1-2.92-1.077c-1.12-.907-1.858-2.222-1.858-3.328 0-.58.175-1.01.503-1.328a.5.5 0 0 1 .373-.175c.088 0 .175.008.254.017.08.01.12.02.176.136.216.52.54 1.306.588 1.402a.25.25 0 0 1 .01.233c-.05.105-.1.17-.184.262-.07.088-.166.193-.245.27-.088.08-.184.167-.08.347.106.18.474.78.966 1.217.63.56 1.164.735 1.33.823.167.088.263.08.36-.032.096-.114.41-.482.525-.648a.25.25 0 0 1 .237-.097c.105.027.675.316.79.377.114.06.193.088.22.132.026.044.026.254-.105.618z" fill="white" />
+      </svg>
+    </a>
 
     <!-- Floating Gift -->
     <button class="gift-float" @click="router.push('/work')">
@@ -121,6 +184,21 @@ if (token) {
 const onMenuClick = (path) => {
   router.push(path)
 }
+
+const toGrab = (item) => {
+  router.push('/grab')
+}
+
+const getPrice = (item) => {
+  if (item.id === 1) return '10.00'
+  return (item.auto_vip_xu_num || item.num_min || 0).toFixed(2)
+}
+
+const getProfit = (item) => {
+  if (item.id === 1) return '45.00'
+  const price = item.auto_vip_xu_num || item.num_min || 0
+  return (item.num - price).toFixed(2)
+}
 </script>
 
 <style lang="less" scoped>
@@ -128,6 +206,16 @@ const onMenuClick = (path) => {
   padding: 14px 10px 90px;
   background: #222222;
   min-height: 100vh;
+  box-sizing: border-box;
+
+  /* ================= COMMON ELEMENTS ================= */
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 25px 0 14px;
+    padding-left: 2px;
+  }
 
   /* ================= NOTICE ================= */
   .notice {
@@ -287,26 +375,220 @@ const onMenuClick = (path) => {
     }
   }
 
-  /* ================= FLOATING GIFT ================= */
-  .gift-float {
+  /* ================= PROJECT HALL ================= */
+  .project-hall {
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .project-card {
+      background: #2c2a29;
+      border-radius: 8px;
+      display: flex;
+      overflow: hidden;
+      align-items: stretch;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .project-thumb {
+      width: 108px;
+      height: 108px;
+      flex-shrink: 0;
+      position: relative;
+
+      .thumb-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .project-info {
+      flex: 1;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+
+      .metric-row {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        font-size: 13px;
+      }
+
+      .gold-text {
+        color: #f5ae48;
+        font-size: 15px;
+      }
+
+      .font-bold {
+        font-weight: bold;
+      }
+
+      .lbl-gray {
+        color: #9b9b9b;
+        font-size: 11px;
+      }
+
+      .desc-text {
+        font-size: 11px;
+        color: #9b9b9b;
+        margin-top: 2px;
+      }
+    }
+
+    .project-arrow-bar {
+      width: 32px;
+      background: #111111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .arrows-icon {
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 12px;
+        letter-spacing: -2px;
+      }
+    }
+  }
+
+  /* ================= PLATFORM INTRODUCTION ================= */
+  .platform-intro {
+    .intro-box {
+      background: #2c2a29;
+      border-radius: 8px;
+      padding: 14px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .intro-desc {
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #d7d7d7;
+      margin-bottom: 12px;
+    }
+
+    .intro-video-mock {
+      background: #444444;
+      height: 130px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.5) 100%);
+      }
+
+      .play-button-circle {
+        position: relative;
+        z-index: 2;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(245, 174, 72, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+        svg {
+          width: 22px;
+          height: 22px;
+          margin-left: 2px;
+        }
+      }
+    }
+  }
+
+  /* ================= PARTNERS ================= */
+  .partner-section {
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .partner-item {
+      background: #2c2a29;
+      border-radius: 6px;
+      height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+      box-sizing: border-box;
+
+      img {
+        max-width: 90%;
+        max-height: 80%;
+        object-fit: contain;
+        filter: grayscale(100%) brightness(1.5);
+        opacity: 0.85;
+      }
+    }
+  }
+
+  /* ================= FLOATING BUTTONS ================= */
+  .whatsapp-float {
     position: fixed;
     right: 16px;
+    bottom: 180px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.9);
+    }
+
+    .whatsapp-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+
+  .gift-float {
+    position: fixed;
+    right: 22px;
     bottom: 130px;
-    width: 33px;
-    height: 33px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: #3c3937;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    border: none;
+    z-index: 99;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 
     svg {
-      width: 22px;
-      height: 42px;
+      width: 20px;
+      height: 20px;
       stroke: white;
       fill: none;
       stroke-width: 2;

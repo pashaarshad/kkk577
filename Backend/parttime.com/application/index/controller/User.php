@@ -237,7 +237,7 @@ class User extends Controller
     }
 
     public function vip() {
-        $level_list = Db::table('xy_level')->field('id,name,num_min,bili')->where('level<6')->select();
+        $level_list = Db::table('xy_level')->field('id,name,num,num_min,bili,auto_vip_xu_num')->where('level<6')->select();
         foreach ($level_list as &$item) {
             $item['img'] =  $this->request->domain() . "/static/images/vip{$item['id']}.jpg";
         }
