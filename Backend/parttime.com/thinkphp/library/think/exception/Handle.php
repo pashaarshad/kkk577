@@ -180,13 +180,9 @@ class Handle
         $data['echo'] = ob_get_clean();
 
         ob_start();
-        $tmpl = Container::get('app')->config('exception_tmpl');
-        if (empty($tmpl) || !is_file($tmpl)) {
-            echo "<h1>Exception Occurred:</h1>";
-            echo "<pre>" . $exception->getMessage() . "\nFile: " . $exception->getFile() . " on line " . $exception->getLine() . "\n\n" . $exception->getTraceAsString() . "</pre>";
-        } else {
-            include $tmpl;
-        }
+        extract($data);
+        // var_dump(Container::get('app')->config('exception_tmpl'));
+        include Container::get('app')->config('exception_tmpl');
 
         // 获取并清空缓存
         $content  = ob_get_clean();

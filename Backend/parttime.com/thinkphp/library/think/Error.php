@@ -31,7 +31,7 @@ class Error
      */
     public static function register()
     {
-        error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
+        error_reporting(E_ALL);
         set_error_handler([__CLASS__, 'appError']);
         set_exception_handler([__CLASS__, 'appException']);
         register_shutdown_function([__CLASS__, 'appShutdown']);
@@ -68,10 +68,6 @@ class Error
      */
     public static function appError($errno, $errstr, $errfile = '', $errline = 0)
     {
-        // Suppress non-critical errors (deprecations, notices, strict warnings) from throwing/logging
-        if ($errno === E_DEPRECATED || $errno === E_USER_DEPRECATED || $errno === E_NOTICE || $errno === E_USER_NOTICE || $errno === 2048) {
-            return;
-        }
         $exception = new ErrorException($errno, $errstr, $errfile, $errline);
         if (error_reporting() & $errno) {
             // 将错误信息托管至 think\exception\ErrorException
