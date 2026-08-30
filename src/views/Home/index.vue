@@ -1,15 +1,15 @@
 <!-- Home  -->
 <template>
   <div class="Home">
-    <!-- Banner Swipe -->
-    <div class="swipe">
-      <van-swipe :autoplay="3000" class="my-swipe" indicator-color="white">
-        <template v-for="item in data.banner" :key="item.id">
-          <van-swipe-item>
-            <img :src="item.image" alt="" class="swipe-img">
-          </van-swipe-item>
-        </template>
-      </van-swipe>
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <van-search
+        v-model="searchValue"
+        shape="round"
+        background="transparent"
+        placeholder="Please enter search keyword"
+        class="custom-search"
+      />
     </div>
 
     <!-- Scrolling Notice -->
@@ -19,21 +19,20 @@
       </div>
       <div class="notice-content">
         <van-notice-bar background="var(--bg-color)" color="var(--text-second)">
-          service accounts, other unofficial customer service accounts are all scammers.
+          Welcome to the Huanyu Overseas Mission Mall demo station. Please contact the official customer service Telegram to register and activate your account. Official Channel: https://t.me/huanyu_chuhai
         </van-notice-bar>
       </div>
     </div>
 
-    <!-- User Profile Card -->
-    <div v-show="loginShow" class="box user-profile-card">
+    <!-- Combined Card Container (Profile + Balance + Quick Actions) -->
+    <div v-show="loginShow" class="box main-info-card">
       <div class="profile-header">
-        <div class="profile-header-left">
-          <span class="phone-number">{{ data.user_info?.tel }}</span>
-        </div>
-        <div class="profile-header-right" @click="copyInviteCode">
-          <van-icon name="share-o" class="copy-icon" />
+        <span class="phone-number">{{ data.user_info?.tel }}</span>
+        <div class="wallet-icon-btn" @click="router.push('/bankCard')">
+          <van-icon name="card" />
         </div>
       </div>
+      
       <div class="balance-container">
         <div class="balance-pill">
           <span class="label">Balance</span>
@@ -41,16 +40,27 @@
           <span class="val">$ {{ data.user_info?.balance || '0' }}</span>
         </div>
       </div>
+
+      <!-- Quick Actions nested inside card -->
+      <div class="nested-menu">
+        <div v-for="(item, index) in menu" :key="index" class="menu-item" @click="onMenuClick(item.path)">
+          <div class="menu-icon-wrapper">
+            <img :src="item.icon" alt="" class="menu-icon-img">
+          </div>
+          <div class="menu-title">{{ item.title }}</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Quick Menu Icons (3-2 grid) -->
-    <div class="menu">
-      <div v-for="(item, index) in menu" :key="index" class="menu-item" @click="onMenuClick(item.path)">
-        <div class="menu-icon-wrapper">
-          <img :src="item.icon" alt="" class="menu-icon-img">
-        </div>
-        <div class="menu-title">{{ item.title }}</div>
-      </div>
+    <!-- Banner Swipe (Now below the info card) -->
+    <div class="swipe">
+      <van-swipe :autoplay="3000" class="my-swipe" indicator-color="white">
+        <template v-for="item in data.banner" :key="item.id">
+          <van-swipe-item>
+            <img :src="item.image" alt="" class="swipe-img">
+          </van-swipe-item>
+        </template>
+      </van-swipe>
     </div>
 
     <!-- Activities Deck -->
@@ -175,6 +185,7 @@ import { useRouter } from 'vue-router'
 
 const { t } = i18n.global
 const router = useRouter()
+const searchValue = ref('')
 
 const menu = [
   {
@@ -249,6 +260,20 @@ const onMenuClick = (path) => {
   padding-bottom: 90px;
   background: var(--bg-second-color);
 
+  .search-bar {
+    width: 92%;
+    margin: 10px auto 0;
+    
+    :deep(.van-search__content) {
+      background-color: var(--bg-color);
+      border: 1px solid var(--second-color);
+    }
+    
+    :deep(.van-field__control) {
+      color: var(--default-color) !important;
+    }
+  }
+
   .my-swipe .van-swipe-item {
     color: #fff;
     font-size: 20px;
@@ -262,53 +287,6 @@ const onMenuClick = (path) => {
     width: 100%;
     height: 100%;
     object-fit: fill;
-  }
-
-  .menu {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 16px 8px;
-    background-color: var(--bg-color);
-    border-radius: 12px;
-    width: 92%;
-    margin: 10px auto;
-    box-sizing: border-box;
-    border: 1px solid var(--second-color);
-
-    .menu-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 30%;
-      margin-bottom: 12px;
-      cursor: pointer;
-
-      .menu-icon-wrapper {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background-color: var(--second-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 6px;
-        border: 1px solid var(--main-color);
-
-        .menu-icon-img {
-          width: 24px;
-          height: 24px;
-          object-fit: contain;
-        }
-      }
-
-      .menu-title {
-        font-size: 12px;
-        color: var(--default-color);
-        text-align: center;
-        font-weight: 600;
-      }
-    }
   }
 
   .notice {
@@ -347,7 +325,7 @@ const onMenuClick = (path) => {
     }
   }
 
-  .user-profile-card {
+  .main-info-card {
     width: 92%;
     border-radius: 12px;
     padding: 16px;
@@ -368,13 +346,21 @@ const onMenuClick = (path) => {
       .phone-number {
         font-size: 15px;
         font-weight: 700;
-        color: var(--default-color);
+        color: var(--text-second);
       }
 
-      .copy-icon {
-        font-size: 20px;
+      .wallet-icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: var(--bg-second-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: var(--main-color);
+        font-size: 18px;
         cursor: pointer;
+        border: 1px solid var(--second-color);
       }
     }
 
@@ -390,6 +376,9 @@ const onMenuClick = (path) => {
         padding: 8px 32px;
         border-radius: 30px;
         border: 1px solid var(--second-color);
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
 
         .label {
           font-size: 14px;
@@ -402,12 +391,65 @@ const onMenuClick = (path) => {
         }
 
         .val {
-          font-size: 16px;
+          font-size: 18px;
           color: var(--main-color);
           font-weight: 750;
         }
       }
     }
+
+    .nested-menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      padding: 16px 0 0;
+      margin-top: 10px;
+      border-top: 1px dashed var(--second-color);
+
+      .menu-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30%;
+        margin-bottom: 12px;
+        cursor: pointer;
+
+        .menu-icon-wrapper {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background-color: var(--bg-second-color);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 6px;
+          border: 1px solid var(--main-color);
+
+          .menu-icon-img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+          }
+        }
+
+        .menu-title {
+          font-size: 11px;
+          color: var(--default-color);
+          text-align: center;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  .swipe {
+    width: 92%;
+    margin: 10px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--second-color);
   }
 
   .section-title {
