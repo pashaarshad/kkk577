@@ -268,12 +268,13 @@ const onMenuClick = (path) => {
       border-radius: 7px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      height: 116px;
     }
 
     .banner {
       position: relative;
       width: 100%;
-      height: 116px;
+      height: 100%;
       background: #333;
       display: block;
 
