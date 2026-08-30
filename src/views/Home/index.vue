@@ -317,15 +317,15 @@ const onMenuClick = (path) => {
   .main-info-card {
     width: 92%;
     border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.3);
-    background-color: var(--bg-color);
-    border: 1px solid var(--second-color);
+    padding: 20px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(135deg, #2b211a 0%, #1f1813 100%);
+    border: 1px solid #433328;
     box-sizing: border-box;
     margin: 20px auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
 
     .profile-header {
       display: flex;
@@ -335,21 +335,21 @@ const onMenuClick = (path) => {
       .phone-number {
         font-size: 15px;
         font-weight: 700;
-        color: var(--text-second);
+        color: #8c837d;
       }
 
       .wallet-icon-btn {
         width: 36px;
         height: 36px;
         border-radius: 50%;
-        background-color: var(--bg-second-color);
+        background-color: #1a1411;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--main-color);
+        color: #ffaa00;
         font-size: 18px;
         cursor: pointer;
-        border: 1px solid var(--second-color);
+        border: 1px solid #433328;
       }
     }
 
@@ -360,59 +360,56 @@ const onMenuClick = (path) => {
       .balance-pill {
         display: flex;
         align-items: center;
-        gap: 8px;
-        background-color: var(--bg-second-color);
-        padding: 8px 32px;
+        gap: 10px;
+        background-color: #15100d;
+        padding: 10px 32px;
         border-radius: 30px;
-        border: 1px solid var(--second-color);
+        border: 1px solid #362920;
         width: 100%;
         justify-content: center;
         box-sizing: border-box;
 
         .label {
-          font-size: 14px;
-          color: var(--text-second);
+          font-size: 16px;
+          color: #ffffff;
           font-weight: 600;
         }
 
         .divider {
-          color: var(--second-color);
+          color: #4a3e36;
         }
 
         .val {
-          font-size: 18px;
-          color: var(--main-color);
-          font-weight: 750;
+          font-size: 20px;
+          color: #ffaa00;
+          font-weight: 800;
         }
       }
     }
 
     .nested-menu {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      padding: 16px 0 0;
-      margin-top: 10px;
-      border-top: 1px dashed var(--second-color);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      padding: 10px 0 0;
+      margin-top: 6px;
 
       .menu-item {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 30%;
-        margin-bottom: 12px;
         cursor: pointer;
+        margin-bottom: 12px;
 
         .menu-icon-wrapper {
           width: 48px;
           height: 48px;
           border-radius: 50%;
-          background-color: var(--bg-second-color);
+          background-color: #fbb03b;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-bottom: 6px;
-          border: 1px solid var(--main-color);
+          margin-bottom: 8px;
+          border: none;
 
           .menu-icon-img {
             width: 24px;
@@ -423,7 +420,7 @@ const onMenuClick = (path) => {
 
         .menu-title {
           font-size: 11px;
-          color: var(--default-color);
+          color: #ffffff;
           text-align: center;
           font-weight: 600;
           white-space: nowrap;
