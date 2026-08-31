@@ -1,41 +1,40 @@
 <?php
 
 // +----------------------------------------------------------------------
-// | ThinkAdmin
-// +----------------------------------------------------------------------
-// | 版权所有 2014~2019 广州楚才信息科技有限公司 [ http://www.cuci.cc ]
-// +----------------------------------------------------------------------
-// | 官方网站: http://demo.thinkadmin.top
-// +----------------------------------------------------------------------
-// | 开源协议 ( https://mit-license.org )
-// +----------------------------------------------------------------------
-//技术 飞机 https://t.me/Teeeeemo
-//后台地址 xxx.com/owe9j2/login
+// | ThinkAdmin Database Configuration (Auto-Detect Local vs VPS)
 // +----------------------------------------------------------------------
 
-return [
-    //-----------------------------------------------------------
-    //    本源码仅供学习研究测试, 请勿用做商业或者用于其他违法行为,一切后果自负！！！
-    //-----------------------------------------------------------
+// Check if running on Linux VPS or Windows Local
+$is_vps = (PHP_OS_FAMILY === 'Linux') 
+    || (isset($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] === '154.12.63.116')
+    || (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], '154.12.63.116') !== false);
 
-    // 数据库调试模式
-    'debug'       => true,
-    // 数据库类型
-    'type'        => 'mysql',
-    // 服务器地址
-    'hostname'    => '127.0.0.1',
-    // 数据库名
-    'database'    => 'good',
-    // 用户名
-    'username'    => 'root',
-    // 密码
-    'password'    => 'root',
-    // 编码
-    'charset'     => 'utf8mb4',
-    // 端口
-    'hostport'    => '3306',
-    // 主从
-    'deploy'      => 0,
-    // 分离
-    'rw_separate' => false,
-];
+if ($is_vps) {
+    // Linux VPS MySQL Configuration
+    return [
+        'debug'       => true,
+        'type'        => 'mysql',
+        'hostname'    => 'localhost',
+        'database'    => 'kkk577',
+        'username'    => 'kkk577user',
+        'password'    => 'KKK5777.com',
+        'charset'     => 'utf8mb4',
+        'hostport'    => '3306',
+        'deploy'      => 0,
+        'rw_separate' => false,
+    ];
+} else {
+    // Windows Local Development MySQL Configuration
+    return [
+        'debug'       => true,
+        'type'        => 'mysql',
+        'hostname'    => '127.0.0.1',
+        'database'    => 'good',
+        'username'    => 'root',
+        'password'    => 'root',
+        'charset'     => 'utf8mb4',
+        'hostport'    => '3306',
+        'deploy'      => 0,
+        'rw_separate' => false,
+    ];
+}
