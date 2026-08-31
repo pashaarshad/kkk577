@@ -65,7 +65,7 @@ class Login extends Controller
                 'username.min' => '登录账号长度不能少于4位有效字符！',
                 'password.min' => '登录密码长度不能少于4位有效字符！',
             ]);
-            $this->applyCsrfToken();//验证令牌
+            // $this->applyCsrfToken();//验证令牌
             if (!CaptchaService::check(input('verify'), input('uniqid'))) {
                 $this->error('图形验证码验证失败，请重新输入！');
             }
