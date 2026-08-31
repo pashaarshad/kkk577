@@ -1,35 +1,102 @@
-<!-- loading  -->
+<!-- loading preloader -->
 <template>
-  <div v-if='mainStore.isLoading' class='loading' @click='clickLoading'>
-    <van-loading class='Loadings' color='#1989fa' type='spinner' />
-  </div>
+  <transition name="fade">
+    <div v-if="showPreloader || mainStore.isLoading" class="preloader-overlay" @click="dismissLoading">
+      <div class="preloader-content">
+        <div class="logo-spinner-box">
+          <img src="../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg" class="preloader-logo" alt="Logo">
+          <div class="spinner-ring"></div>
+        </div>
+        <div class="preloader-text">Loading...</div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useMainStore } from '@/store/modules/main.js'
 
 const mainStore = useMainStore()
+const showPreloader = ref(true)
 
-const clickLoading = () => {
+onMounted(() => {
+  // Show initial preloader for 1.5s on arrival
+  setTimeout(() => {
+    showPreloader.value = false
+  }, 1500)
+})
+
+const dismissLoading = () => {
+  showPreloader.value = false
   mainStore.isLoading = false
 }
 </script>
 
-<style lang='less' scoped>
-.loading {
+<style lang="less" scoped>
+.preloader-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 999;
+  background: #1a1a1a;
+  z-index: 99999;
 
-  .Loadings {
-    margin-top: -20%;
+  .preloader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
   }
+
+  .logo-spinner-box {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .preloader-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .spinner-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid rgba(245, 174, 72, 0.15);
+      border-top-color: #f5ae48;
+      animation: spin 0.9s linear infinite;
+    }
+  }
+
+  .preloader-text {
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
