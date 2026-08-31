@@ -71,13 +71,14 @@
       </van-swipe>
     </section>
 
-    <!-- PROJECT HALL -->
+    <!-- MEMBER LIST -->
     <section class="project-hall">
-      <h3 class="section-title">Project hall</h3>
+      <h3 class="section-title">Member list</h3>
       <div class="project-list">
         <div v-for="item in vipList" :key="item.id" class="project-card" @click="toGrab(item)">
           <div class="project-thumb">
             <img :src="item.img" alt="Product" class="thumb-img">
+            <span class="member-badge">{{ item.name }}</span>
           </div>
           <div class="project-info">
             <div class="metric-row">
@@ -89,7 +90,7 @@
               <span class="lbl-gray">Price</span>
             </div>
             <div class="desc-text">
-              {{ item.id === 1 ? 'ELITE BOT' : '商城365天产品' }}
+              {{ item.id === 1 ? 'ELITE BOT' : (item.name || 'Member Product') }}
             </div>
           </div>
           <div class="project-arrow-bar">
@@ -474,6 +475,19 @@ const onWaClick = (e) => {
         width: 100%;
         height: 100%;
         object-fit: cover;
+      }
+
+      .member-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: linear-gradient(135deg, #f5ae48, #e67e22);
+        color: #1a1a1a;
+        font-weight: 700;
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
       }
     }
 

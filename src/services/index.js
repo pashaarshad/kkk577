@@ -14,8 +14,7 @@ class Request {
     })
 
     this.instance.interceptors.request.use(config => {
-      console.log('config', config)
-      if (config.url !== 'index/rot_order/submit_order' && config.url !== 'index/order/do_order') {
+      if (config.showLoading) {
         mainStore.isLoading = true
       }
       return config
@@ -23,7 +22,6 @@ class Request {
       return err
     })
     this.instance.interceptors.response.use(res => {
-      // const cookie = res.headers['set-cookie']
       mainStore.isLoading = false
       return res
     }, err => {
@@ -38,7 +36,10 @@ class Request {
         .request(config)
         .then((res) => {
           if (res?.data?.code !== 0) {
-            showFailToast(res?.data.info)
+            // Only show toast if explicitly requested via config or non-empty user-facing error
+            if (config.showToast && res?.data?.info) {
+              showFailToast(res.data.info)
+            }
             reject(res.data)
           } else {
             resolve(res.data)
@@ -47,9 +48,6 @@ class Request {
         .catch((err) => {
           console.log('request err:', err)
           reject(err)
-        })
-        .finally(() => {
-          // loadingStore.changeLoading(false);
         })
     })
   }
