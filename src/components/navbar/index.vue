@@ -12,8 +12,8 @@
         <div style='margin-left: 15px;'>{{ $t('main.' + $route.name) }}</div>
       </div>
       <div v-else class='navbar-left' @click='$router.go(-1)'>
-        <van-icon :name='arrowLeft' size='20' />
-        <div style='margin-left: 10px;'>{{ $t('main.' + $route.name) }}</div>
+        <van-icon :name='arrowLeft' size='22' class='white-arrow' />
+        <div style='margin-left: 10px; color: #ffffff; font-weight: 600; font-size: 16px;'>{{ $t('main.' + $route.name) }}</div>
       </div>
       <div class='navber-right'>
         <slot name='right'>
