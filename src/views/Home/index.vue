@@ -127,17 +127,19 @@
     <!-- USER COMMISSION DYNAMICS (Activities) -->
     <Commission :list="data.deposit_list" />
 
-    <!-- FLOATING WHATSAPP BUTTON -->
-    <a 
-      :href="data.chats_link || 'https://wa.me/553588236216?text=Hello'" 
-      target="_blank" 
+    <!-- FLOATING DRAGGABLE WHATSAPP BUTTON -->
+    <div 
       class="whatsapp-float"
+      :style="{ left: `${waPosition.x}px`, top: `${waPosition.y}px` }"
+      @mousedown="onDragStart"
+      @touchstart.passive="onDragStart"
+      @click="onWaClick"
     >
       <svg viewBox="0 0 24 24" class="whatsapp-svg">
         <circle cx="12" cy="12" r="12" fill="#25d366" />
         <path d="M12.012 5.5a6.5 6.5 0 0 0-5.635 9.757l-.76 2.775 2.84-.745a6.5 6.5 0 1 0 3.555-11.787zm3.178 9.176c-.13.364-.753.694-1.037.738-.28.044-.564.07-.852.078a4.935 4.935 0 0 1-2.92-1.077c-1.12-.907-1.858-2.222-1.858-3.328 0-.58.175-1.01.503-1.328a.5.5 0 0 1 .373-.175c.088 0 .175.008.254.017.08.01.12.02.176.136.216.52.54 1.306.588 1.402a.25.25 0 0 1 .01.233c-.05.105-.1.17-.184.262-.07.088-.166.193-.245.27-.088.08-.184.167-.08.347.106.18.474.78.966 1.217.63.56 1.164.735 1.33.823.167.088.263.08.36-.032.096-.114.41-.482.525-.648a.25.25 0 0 1 .237-.097c.105.027.675.316.79.377.114.06.193.088.22.132.026.044.026.254-.105.618z" fill="white" />
       </svg>
-    </a>
+    </div>
 
     <!-- Floating Gift -->
     <button class="gift-float" @click="router.push('/work')">
@@ -200,6 +202,75 @@ const getProfit = (item) => {
   if (item.id === 1) return '45.00'
   const price = item.auto_vip_xu_num || item.num_min || 0
   return (item.num - price).toFixed(2)
+}
+
+// ================= DRAGGABLE WHATSAPP BUTTON =================
+const waPosition = ref({
+  x: typeof window !== 'undefined' ? window.innerWidth - 64 : 320,
+  y: typeof window !== 'undefined' ? window.innerHeight - 200 : 500
+})
+
+let isDragging = false
+let dragStarted = false
+let startX = 0
+let startY = 0
+let initialLeft = 0
+let initialTop = 0
+
+const onDragStart = (e) => {
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY
+  
+  isDragging = true
+  dragStarted = false
+  startX = clientX
+  startY = clientY
+  initialLeft = waPosition.value.x
+  initialTop = waPosition.value.y
+  
+  window.addEventListener('mousemove', onDragMove, { passive: false })
+  window.addEventListener('mouseup', onDragEnd)
+  window.addEventListener('touchmove', onDragMove, { passive: false })
+  window.addEventListener('touchend', onDragEnd)
+}
+
+const onDragMove = (e) => {
+  if (!isDragging) return
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY
+  
+  const deltaX = clientX - startX
+  const deltaY = clientY - startY
+  
+  if (Math.hypot(deltaX, deltaY) > 5) {
+    dragStarted = true
+    if (e.cancelable) e.preventDefault()
+  }
+  
+  if (dragStarted) {
+    const maxX = window.innerWidth - 56
+    const maxY = window.innerHeight - 56
+    waPosition.value.x = Math.min(Math.max(10, initialLeft + deltaX), maxX)
+    waPosition.value.y = Math.min(Math.max(10, initialTop + deltaY), maxY)
+  }
+}
+
+const onDragEnd = () => {
+  isDragging = false
+  window.removeEventListener('mousemove', onDragMove)
+  window.removeEventListener('mouseup', onDragEnd)
+  window.removeEventListener('touchmove', onDragMove)
+  window.removeEventListener('touchend', onDragEnd)
+}
+
+const onWaClick = (e) => {
+  if (dragStarted) {
+    e.preventDefault()
+    e.stopPropagation()
+    return
+  }
+  const link = data.value.chats_link || 'https://wa.me/553588236216?text=Hello'
+  window.open(link, '_blank')
 }
 </script>
 
@@ -561,26 +632,30 @@ const getProfit = (item) => {
   /* ================= FLOATING BUTTONS ================= */
   .whatsapp-float {
     position: fixed;
-    right: 16px;
-    bottom: 180px;
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    z-index: 9999;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 
     &:active {
-      transform: scale(0.9);
+      cursor: grabbing;
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
     }
 
     .whatsapp-svg {
       width: 100%;
       height: 100%;
       display: block;
+      pointer-events: none;
     }
   }
 
