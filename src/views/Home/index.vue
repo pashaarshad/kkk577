@@ -115,9 +115,11 @@
     <!-- PARTNERS / REGULATORY AUTHORITY -->
     <section class="partner-section">
       <h3 class="section-title">Regulatory Authority</h3>
-      <div class="partner-grid">
-        <div v-for="(item, idx) in footList" :key="idx" class="partner-item">
-          <img :src="item" alt="Partner">
+      <div class="partner-card-wrapper">
+        <div class="partner-grid">
+          <div v-for="(item, idx) in footList" :key="idx" class="partner-item">
+            <img :src="item" alt="Partner">
+          </div>
         </div>
       </div>
     </section>
@@ -516,28 +518,42 @@ const getProfit = (item) => {
 
   /* ================= PARTNERS ================= */
   .partner-section {
+    margin-bottom: 20px;
+
+    .partner-card-wrapper {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
+
     .partner-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 20px;
+      gap: 12px;
     }
 
     .partner-item {
-      background: #2c2a29;
-      border-radius: 6px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
       height: 48px;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 6px;
+      padding: 6px 8px;
       box-sizing: border-box;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
 
       img {
-        max-width: 90%;
-        max-height: 80%;
+        max-width: 100%;
+        max-height: 32px;
         object-fit: contain;
-        opacity: 1;
       }
     }
   }
