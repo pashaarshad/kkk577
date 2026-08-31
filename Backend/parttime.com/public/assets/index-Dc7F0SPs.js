@@ -1,0 +1,1 @@
+import{_ as s,q as o,p as a,y as c,z as t,s as d}from"./index-loNeBmpA.js";const _={},n=e=>(c("data-v-8442badd"),e=e(),t(),e),p={class:"pay"},r=n(()=>d("h2",null,"pay",-1)),i=[r];function h(e,l){return a(),o("div",p,i)}const u=s(_,[["render",h],["__scopeId","data-v-8442badd"]]);export{u as default};

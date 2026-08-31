@@ -99,11 +99,16 @@ const onSubmit = () => {
   param.append('deposit_pwd', deposit_pwd.value)
 
   Request.post({ url: '/index/user/do_register', data: param, withCredentials: true }).then(res => {
-    router.push('/login')
-    showSuccessToast(res.info)
+    showSuccessToast(res.info || 'Registration successful!')
     loginShow.value = false
-  }).catch(() => {
+    setTimeout(() => {
+      router.push('/login')
+    }, 500)
+  }).catch((err) => {
     loginShow.value = false
+    if (err?.info) {
+      showFailToast(err.info)
+    }
   })
 }
 

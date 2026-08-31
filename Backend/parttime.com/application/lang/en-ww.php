@@ -365,7 +365,7 @@ return [
     'zhyebz' => 'Your account balance is not enough, there is a gap of %s',
     'wszshdz' => 'The delivery address has not been set yet',
     'sjhmgzbzq' => 'Mobile phone number format is incorrect',
-    'zhbcz' => 'Account does not exist',
+    'zhbcz' => 'Phone number already registered. Please login.',
     'yhybjy' => 'User has been disabled',
     'yzmbcz' => 'The verification code does not exist',
     'yzmcw' => 'Verification code error',
