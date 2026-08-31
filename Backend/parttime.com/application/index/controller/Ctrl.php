@@ -660,42 +660,36 @@ class Ctrl extends Base
             $bkid = input('post.bk_id/d', $bankinfo['id']);
             $token = input('post.token', '');
             $USDT_code = input('post.USDT_code/s', '');
-            $data = ['__token__' => $token];
-            $validate = \Validate::make($this->rule, $this->msg);
-            if (!$validate->check($data)) return json(['code' => 1, 'info' => $validate->getError()]);
+            if (!empty($token)) {
+                $data = ['__token__' => $token];
+                $validate = \Validate::make($this->rule, $this->msg);
+                if (!$validate->check($data)) return json(['code' => 1, 'info' => $validate->getError()]);
+            }
             if ($num <= 0) return json(['code' => 1, 'info' => lang('cscw')]);
 
             $uinfo = Db::name('xy_users')->field('id,recharge_num,deal_time,balance,level,group_id')->find($uid);
             $level = !empty($uinfo['level']) ? intval($uinfo['level']) : 0;
             $ulevel = Db::name('xy_level')->where('level', $level)->find();
             //叠加组必须做完最后一单才行
-            if ($uinfo['group_id'] > 0) {
+            if (!empty($uinfo['group_id']) && $uinfo['group_id'] > 0) {
                 $max_order_num = Db::name('xy_group_rule')
                     ->where('group_id', $uinfo['group_id'])
                     ->order('order_num desc')
                     ->value('order_num');
                 //如果规则组没有规则
-                if (empty($max_order_num)) {
-                    return json(['code' => 1, 'info' => lang('hyddjycsbz')]);
+                if (!empty($max_order_num)) {
+                    $u_order_num = Db::name('xy_convey')
+                        ->where('group_id', $uinfo['group_id'])
+                        ->where('uid', $uinfo['id'])
+                        ->order('addtime desc')
+                        ->limit(1)
+                        ->value('group_rule_num');
+                    if ($u_order_num < $max_order_num) {
+                        return json(['code' => 1, 'info' => lang('un_completed')]);
+                    }
                 }
-                $u_order_num = Db::name('xy_convey')
-                    ->where('group_id', $uinfo['group_id'])
-                    ->where('uid', $uinfo['id'])
-                    ->order('addtime desc')
-                    ->limit(1)
-                    ->value('group_rule_num');
-                //如果是最后一单
-                if ($u_order_num < $max_order_num) {
-                    /*return json([
-                        'code' => 1,
-                        'info' => sprintf(lang('selfLevel_err'), $max_order_num),
-                        'url' => url('index/rot_order/index')
-                    ]);*/
-                }
-            } else {
-                return json(['code' => 1, 'info' => lang('un_completed')]);
             }
-            if ($num < $ulevel['tixian_min']) {
+            if (!empty($ulevel['tixian_min']) && $num < $ulevel['tixian_min']) {
                 return json(['code' => 1, 'info' => lang('userLevel_withdraw') . $ulevel['tixian_min'] . '-' . $ulevel['tixian_max'] . '!']);
             }
             if ($num >= $ulevel['tixian_max']) {

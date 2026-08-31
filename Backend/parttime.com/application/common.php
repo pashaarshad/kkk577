@@ -129,6 +129,9 @@ function get_username()
  */
 function check_time($a, $b)
 {
+    if ((intval($a) === 0 && (intval($b) === 24 || intval($b) === 0)) || empty($b)) {
+        return false;
+    }
     $nowtime = time();
     $start = strtotime($a . ':00:00');
     $end = strtotime($b . ':00:00');
