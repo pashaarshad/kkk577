@@ -23,13 +23,23 @@
           class='btn'
           type='password'
         />
+        
+        <!-- Login Button -->
         <van-button :loading='loginShow'
                     :loading-text="$t('login.Logging')"
-                    class='save-btn' type='success' @click='onSubmit'>
+                    class='login-submit-btn' type='primary' @click='onSubmit'>
           {{ $t('login.Login') }}
         </van-button>
-        <div class='forgot' @click="goForgot">Forgot Password?</div>
-        <div class='sign' @click="goRegister">{{ $t('login.Sign') }}</div>
+
+        <!-- Register Button (Distinct, Colorful & High Contrast) -->
+        <van-button class='register-btn' type='default' @click='goRegister'>
+          Register New Account
+        </van-button>
+
+        <!-- Forgot Password Link -->
+        <div class='forgot-wrapper'>
+          <span class='forgot-link' @click="goForgot">Forgot Password?</span>
+        </div>
       </van-form>
     </div>
   </div>
@@ -61,11 +71,16 @@ const onSubmit = () => {
 
   Request.post({ url: '/index/user/do_login', data: param, withCredentials: true }).then(res => {
     sessionStorage.setItem('token', '111111')
-    router.push('/home')
-    showSuccessToast(res.info)
+    showSuccessToast(res.info || 'Login successful!')
     loginShow.value = false
-  }).catch(() => {
+    setTimeout(() => {
+      router.push('/home')
+    }, 400)
+  }).catch((err) => {
     loginShow.value = false
+    if (err?.info) {
+      showFailToast(err.info)
+    }
   })
 }
 
@@ -81,7 +96,7 @@ const goForgot = () => {
 <style lang='less' scoped>
 .Login {
   width: 100%;
-  height: 86vh;
+  min-height: 100vh;
   background: #ffffff;
   padding: 35px 0;
   overflow: hidden;
@@ -90,63 +105,85 @@ const goForgot = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
 
     div {
       font-weight: 700 !important;
-      font-size: 17px;
+      font-size: 18px;
       margin-top: 10px;
+      color: #333333;
     }
   }
 
   .logo {
-    background: url("../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg") 100%/contain;
-    width: 80px;
-    height: 80px;
+    background: url("../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg") 100%/contain no-repeat;
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
   }
 
   .btns {
-    width: 92%;
+    width: 90%;
     margin: 0 auto;
   }
 
   .btn {
     width: 100%;
-    background: #f7f8fa;
-    border-radius: 30px;
-    padding: 16px !important;
-    margin-bottom: 20px;
+    background: #f4f6f8;
+    border: 1px solid #e2e8f0;
+    border-radius: 25px;
+    padding: 14px 20px !important;
+    margin-bottom: 16px;
 
-    :deep(.van-cell) {
-      padding: 20px !important;
+    :deep(.van-field__control) {
+      font-size: 14px;
+      color: #1a202c;
     }
   }
 
-  .save-btn {
+  .login-submit-btn {
     width: 100%;
-    background-color: var(--second-color);
-    border: 0.05px solid var(--main-color);
-    color: var(--main-color);
-    border-radius: 30px;
+    background: linear-gradient(135deg, #108ee9 0%, #0066cc 100%);
+    border: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 25px;
+    height: 48px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(16, 142, 233, 0.35);
   }
 
-  .forgot {
+  .register-btn {
     width: 100%;
-    text-align: right;
-    margin-top: 12px;
-    font-size: 12.5px;
-    color: #888;
-    cursor: pointer;
-    padding-right: 4px;
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+    border: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 25px;
+    height: 48px;
+    margin-top: 14px;
+    box-shadow: 0 4px 12px rgba(237, 137, 54, 0.35);
   }
 
-  .sign {
+  .forgot-wrapper {
     width: 100%;
     text-align: center;
-    font-weight: 700 !important;
-    margin-top: 16px;
-    font-size: 13.2px;
-    cursor: pointer;
+    margin-top: 20px;
+
+    .forgot-link {
+      font-size: 13.5px;
+      color: #4a5568;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #108ee9;
+      }
+    }
   }
 }
 </style>

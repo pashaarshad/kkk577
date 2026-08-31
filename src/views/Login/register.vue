@@ -48,10 +48,13 @@
         />
         <van-button :loading='loginShow'
                     :loading-text="$t('login.Sign')"
-                    class='save-btn' type='success' @click='onSubmit'>
+                    class='register-submit-btn' type='primary' @click='onSubmit'>
           {{ $t('login.Sign') }}
         </van-button>
-        <div class='sign' @click="goLogin">{{ $t('login.Login') }}</div>
+        
+        <div class='login-link-wrapper'>
+          <span class='login-link' @click="goLogin">Already have an account? Log in</span>
+        </div>
       </van-form>
     </div>
   </div>
@@ -122,60 +125,78 @@ const goLogin = () => {
   width: 100%;
   min-height: 100vh;
   background: #ffffff;
-  padding: 10px 0 35px;
+  padding: 20px 0 35px;
   overflow: hidden;
 
   .top {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 
     div {
       font-weight: 700 !important;
-      font-size: 17px;
+      font-size: 18px;
       margin-top: 10px;
+      color: #333333;
     }
   }
 
   .logo {
-    background: url("../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg") 100%/contain;
-    width: 40px;
-    height: 40px;
+    background: url("../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg") 100%/contain no-repeat;
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
   }
 
   .btns {
-    width: 92%;
+    width: 90%;
     margin: 0 auto;
   }
 
   .btn {
     width: 100%;
-    background: #f7f8fa;
-    border-radius: 30px;
-    padding: 16px !important;
-    margin-bottom: 20px;
+    background: #f4f6f8;
+    border: 1px solid #e2e8f0;
+    border-radius: 25px;
+    padding: 13px 20px !important;
+    margin-bottom: 14px;
 
-    :deep(.van-cell) {
-      padding: 20px !important;
+    :deep(.van-field__control) {
+      font-size: 14px;
+      color: #1a202c;
     }
   }
 
-  .save-btn {
+  .register-submit-btn {
     width: 100%;
-    background-color: var(--second-color);
-    border: 0.05px solid var(--main-color);
-    color: var(--main-color);
-    border-radius: 30px;
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+    border: none;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 15px;
+    border-radius: 25px;
+    height: 48px;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(237, 137, 54, 0.35);
   }
 
-  .sign {
+  .login-link-wrapper {
     width: 100%;
     text-align: center;
-    font-weight: 700 !important;
     margin-top: 20px;
-    font-size: 13.2px;
-    cursor: pointer;
+
+    .login-link {
+      font-size: 13.5px;
+      color: #3182ce;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+
+      &:hover {
+        color: #2b6cb0;
+      }
+    }
   }
 }
 </style>
