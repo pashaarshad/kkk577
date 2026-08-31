@@ -36,7 +36,7 @@
             <div class="metrics-grid">
               <div class="metric-item">
                 <span class="lbl">The total profit</span>
-                <span class="val green-text">{{ (item.num * 3.6).toFixed(2) }} USDT</span>
+                <span class="val green-text">{{ (Number(item.num || 0) * 3.6).toFixed(2) }} USDT</span>
               </div>
               <div class="metric-item">
                 <span class="lbl">Invest cycle</span>
@@ -60,7 +60,7 @@
 
         <!-- Buy button -->
         <button class="buy-button" @click="toGrab(item)">
-          $ {{ (item.num_min || item.num / 2).toFixed(2) }} - {{ item.num.toFixed(2) }} USDT Buy now
+          $ {{ Number(item.num_min || Number(item.num || 0) / 2 || 0).toFixed(2) }} - {{ Number(item.num || 0).toFixed(2) }} USDT Buy now
         </button>
       </div>
     </div>
