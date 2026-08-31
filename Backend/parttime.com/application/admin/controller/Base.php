@@ -25,7 +25,7 @@ class Base extends Controller
         if (!$this->adminId) {
             \think\facade\Session::clear();
             \think\facade\Session::destroy();
-            return $this->redirect('/');
+            return $this->redirect('@admin/login');
         }
     }
 }
