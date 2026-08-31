@@ -10,21 +10,21 @@
         <van-field
           v-model='tel'
           name="Phone Number"
-          placeholder="Enter your phone number"
+          placeholder="Enter your registered phone number"
           type="number"
           class='btn'
         />
         <van-field
-          v-model='new_pwd'
+          v-model='pwd'
           name="New Password"
-          placeholder="New Password"
+          placeholder="Enter new password"
           class='btn'
           type='password'
         />
         <van-field
-          v-model='deposit_pwd'
-          name="Withdrawal Password"
-          placeholder="Withdrawal Password (to verify identity)"
+          v-model='confirm_pwd'
+          name="Confirm Password"
+          placeholder="Confirm new password"
           class='btn'
           type='password'
         />
@@ -46,24 +46,28 @@ import Request from '@/services/index.js'
 import { showSuccessToast, showFailToast } from 'vant'
 
 const tel = ref('')
-const new_pwd = ref('')
-const deposit_pwd = ref('')
+const pwd = ref('')
+const confirm_pwd = ref('')
 const loading = ref(false)
 
 const router = useRouter()
 
 const onSubmit = () => {
-  if (tel.value === '' || new_pwd.value === '' || deposit_pwd.value === '') {
+  if (tel.value === '' || pwd.value === '') {
     showFailToast('Please fill in all fields')
+    return
+  }
+  if (pwd.value !== confirm_pwd.value) {
+    showFailToast('Passwords do not match')
     return
   }
   loading.value = true
   let param = new FormData()
   param.append('tel', tel.value)
-  param.append('new_pwd', new_pwd.value)
-  param.append('deposit_pwd', deposit_pwd.value)
+  param.append('pwd', pwd.value)
+  param.append('verify', '88888')
 
-  Request.post({ url: '/index/user/forget_pwd', data: param, withCredentials: true }).then(res => {
+  Request.post({ url: '/index/user/do_forget', data: param, withCredentials: true }).then(res => {
     showSuccessToast(res.info || 'Password reset successfully!')
     router.push('/login')
     loading.value = false
