@@ -1,0 +1,1 @@
+import{_ as c,q as o,p as s,y as a,z as t,s as _}from"./index-7X4M8exf.js";const d={},r=e=>(a("data-v-fea2c6a0"),e=e(),t(),e),n={class:"record"},p=r(()=>_("h2",null,"record",-1)),i=[p];function f(e,h){return s(),o("div",n,i)}const u=c(d,[["render",f],["__scopeId","data-v-fea2c6a0"]]);export{u as default};

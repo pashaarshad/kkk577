@@ -272,7 +272,7 @@ class Users extends Model
         }
         $data['ip'] = $ip;
         $ip_register_number = intval(config('ip_register_number'));
-        if ($ip_register_number > 0 && $ip) {
+        if ($ip_register_number > 0 && $ip && !in_array($ip, ['127.0.0.1', '::1', 'localhost'])) {
             $uIpId = Db::table($this->table)->where('ip', $ip)->count('id');
             if ($uIpId >= $ip_register_number) {
                 return ['code' => 1, 'info' => lang('reg_ip_error')];

