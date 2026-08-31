@@ -1,0 +1,42 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies & Build Vue
+        run: |
+          npm install
+          npm run build
+
+      - name: Copy Vue build to Backend public folder
+        run: |
+          cp -r dist/* Backend/parttime.com/public/
+
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: 154.12.63.116
+          username: root
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 55533
+          script: |
+            cd /var/www/kkk577
+            git pull origin main
+            cp -r Backend/parttime.com/public/* /var/www/kkk577/Backend/parttime.com/public/
+            chown -R www-data:www-data /var/www/kkk577/Backend/parttime.com
+            echo "Deployment complete!"

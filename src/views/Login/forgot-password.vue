@@ -1,35 +1,39 @@
-<!-- Login -->
+<!-- Forgot Password -->
 <template>
   <div class='Login'>
     <div class='top'>
       <div class='logo'></div>
-      <div>{{ $t('login.title') }}</div>
+      <div>Forgot Password</div>
     </div>
     <div class='btns'>
       <van-form>
         <van-field
-          v-model='username'
-          :name="$t('login.Phone')"
-          :placeholder="$t('login.Phone')"
-          :rules="[{ required: true, message: $t('login.PhoneMsg') }]"
+          v-model='tel'
+          name="Phone Number"
+          placeholder="Enter your phone number"
           type="number"
           class='btn'
         />
         <van-field
-          v-model='password'
-          :name="$t('login.Password')"
-          :placeholder="$t('login.Password')"
-          :rules="[{ required: true, message: $t('login.PasswordMsg') }]"
+          v-model='new_pwd'
+          name="New Password"
+          placeholder="New Password"
           class='btn'
           type='password'
         />
-        <van-button :loading='loginShow'
-                    :loading-text="$t('login.Logging')"
+        <van-field
+          v-model='deposit_pwd'
+          name="Withdrawal Password"
+          placeholder="Withdrawal Password (to verify identity)"
+          class='btn'
+          type='password'
+        />
+        <van-button :loading='loading'
+                    loading-text="Resetting..."
                     class='save-btn' type='success' @click='onSubmit'>
-          {{ $t('login.Login') }}
+          Reset Password
         </van-button>
-        <div class='forgot' @click="goForgot">Forgot Password?</div>
-        <div class='sign' @click="goRegister">{{ $t('login.Sign') }}</div>
+        <div class='sign' @click="goLogin">Back to Login</div>
       </van-form>
     </div>
   </div>
@@ -38,50 +42,45 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { i18n } from '@/lang/index.js'
 import Request from '@/services/index.js'
 import { showSuccessToast, showFailToast } from 'vant'
 
-const username = ref('')
-const password = ref('')
-const loginShow = ref(false)
+const tel = ref('')
+const new_pwd = ref('')
+const deposit_pwd = ref('')
+const loading = ref(false)
 
 const router = useRouter()
-const { t } = i18n.global
 
 const onSubmit = () => {
-  if (username.value === '' || password.value === '') {
-    showFailToast(t('utils.paramError'))
+  if (tel.value === '' || new_pwd.value === '' || deposit_pwd.value === '') {
+    showFailToast('Please fill in all fields')
     return
   }
-  loginShow.value = true
+  loading.value = true
   let param = new FormData()
-  param.append('tel', username.value)
-  param.append('pwd', password.value)
+  param.append('tel', tel.value)
+  param.append('new_pwd', new_pwd.value)
+  param.append('deposit_pwd', deposit_pwd.value)
 
-  Request.post({ url: '/index/user/do_login', data: param, withCredentials: true }).then(res => {
-    sessionStorage.setItem('token', '111111')
-    router.push('/home')
-    showSuccessToast(res.info)
-    loginShow.value = false
+  Request.post({ url: '/index/user/forget_pwd', data: param, withCredentials: true }).then(res => {
+    showSuccessToast(res.info || 'Password reset successfully!')
+    router.push('/login')
+    loading.value = false
   }).catch(() => {
-    loginShow.value = false
+    loading.value = false
   })
 }
 
-const goRegister = () => {
-  router.push('/register')
-}
-
-const goForgot = () => {
-  router.push('/forgot-password')
+const goLogin = () => {
+  router.push('/login')
 }
 </script>
 
 <style lang='less' scoped>
 .Login {
   width: 100%;
-  height: 86vh;
+  min-height: 86vh;
   background: #ffffff;
   padding: 35px 0;
   overflow: hidden;
@@ -130,21 +129,11 @@ const goForgot = () => {
     border-radius: 30px;
   }
 
-  .forgot {
-    width: 100%;
-    text-align: right;
-    margin-top: 12px;
-    font-size: 12.5px;
-    color: #888;
-    cursor: pointer;
-    padding-right: 4px;
-  }
-
   .sign {
     width: 100%;
     text-align: center;
     font-weight: 700 !important;
-    margin-top: 16px;
+    margin-top: 20px;
     font-size: 13.2px;
     cursor: pointer;
   }

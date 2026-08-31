@@ -537,8 +537,7 @@ const getProfit = (item) => {
         max-width: 90%;
         max-height: 80%;
         object-fit: contain;
-        filter: grayscale(100%) brightness(1.5);
-        opacity: 0.85;
+        opacity: 1;
       }
     }
   }

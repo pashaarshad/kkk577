@@ -1,3 +1,4 @@
+<!-- Register -->
 <template>
   <div class='Login'>
     <div class='top'>
@@ -5,85 +6,92 @@
       <div>{{ $t('login.title') }}</div>
     </div>
     <div class='btns'>
-		<van-form>
-			<van-field
-			  v-model='invite_code'
-			  :name="$t('register.invite_code')"
-			  :placeholder="$t('register.invite_code')"
-			  :rules="[{ required: true, message: $t('register.inviteCodeError') }]"
-			  class='btn'
-			/>
-		  <van-field
-			v-model='tel'
-			:name="$t('login.Phone')"
-			:placeholder="$t('login.Phone')"
-			:rules="[{ required: true, message: $t('register.telError') }]"
-			type="number"
-			class='btn'
-		  />
-		  <van-field
-			v-model='pwd'
-			:name="$t('login.Password')"
-			:placeholder="$t('login.Password')"
-			:rules="[{ required: true, message: $t('login.PasswordMsg') }]"
-			class='btn'
-			type='password'
-		  />
-		  <van-field
-			v-model='confirm_pwd'
-			:name="$t('password.confirmpwd')"
-			:placeholder="$t('password.confirmpwd')"
-			:rules="[{ required: true, message: $t('login.PasswordMsg') }]"
-			class='btn'
-			type='password'
-		  />
-		  <van-field
-			v-model='deposit_pwd'
-			:name="$t('register.withdraw_pwd')"
-			:placeholder="$t('register.withdraw_pwd')"
-			:rules="[{ required: true, message: $t('register.withdrawPwdError') }]"
-			class='btn'
-			type='password'
-		  />
-		  <van-button :loading='loginShow'
-					  :loading-text="$t('login.Sign')"
-					  class='save-btn' type='success' @click='onSubmit'>
-			{{ $t('login.Sign') }}
-		  </van-button>
-		  <div class='sign' @click="goLogin">{{ $t('login.Logging') }}</div>
-	  </van-form>
+      <van-form>
+        <van-field
+          v-model='invite_code'
+          :name="$t('register.invite_code')"
+          :placeholder="$t('register.invite_code')"
+          :rules="[{ required: true, message: $t('register.inviteCodeError') }]"
+          class='btn'
+        />
+        <van-field
+          v-model='tel'
+          :name="$t('login.Phone')"
+          :placeholder="$t('login.Phone')"
+          :rules="[{ required: true, message: $t('register.telError') }]"
+          type="number"
+          class='btn'
+        />
+        <van-field
+          v-model='pwd'
+          :name="$t('login.Password')"
+          :placeholder="$t('login.Password')"
+          :rules="[{ required: true, message: $t('login.PasswordMsg') }]"
+          class='btn'
+          type='password'
+        />
+        <van-field
+          v-model='confirm_pwd'
+          :name="$t('password.confirmpwd')"
+          :placeholder="$t('password.confirmpwd')"
+          :rules="[{ required: true, message: $t('login.PasswordMsg') }]"
+          class='btn'
+          type='password'
+        />
+        <van-field
+          v-model='deposit_pwd'
+          :name="$t('register.withdraw_pwd')"
+          :placeholder="$t('register.withdraw_pwd')"
+          :rules="[{ required: true, message: $t('register.withdrawPwdError') }]"
+          class='btn'
+          type='password'
+        />
+        <van-button :loading='loginShow'
+                    :loading-text="$t('login.Sign')"
+                    class='save-btn' type='success' @click='onSubmit'>
+          {{ $t('login.Sign') }}
+        </van-button>
+        <div class='sign' @click="goLogin">{{ $t('login.Login') }}</div>
+      </van-form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { i18n } from '@/lang/index.js'
 import Request from '@/services/index.js'
-import { showSuccessToast,showFailToast } from 'vant'
+import { showSuccessToast, showFailToast } from 'vant'
 
 const invite_code = ref('')
 const tel = ref('')
 const pwd = ref('')
 const confirm_pwd = ref('')
 const deposit_pwd = ref('')
-
 const loginShow = ref(false)
 
 const router = useRouter()
+const route = useRoute()
 const { t } = i18n.global
-const onSubmit = () => {
-	if (tel.value === '' || pwd.value === '' || invite_code.value === '' || deposit_pwd.value === '') {
-	  showFailToast(t('utils.paramError'))
-	  return;
-	}
-	if (new_pwd.value !== confirm_pwd.value) {
-		showFailToast(t('password.pwdDiff'))
-		return;
-	}
-  loginShow.value = true
 
+// Auto-fill invite code from URL query param (?invite_code=XXXX)
+onMounted(() => {
+  if (route.query.invite_code) {
+    invite_code.value = route.query.invite_code
+  }
+})
+
+const onSubmit = () => {
+  if (tel.value === '' || pwd.value === '' || invite_code.value === '' || deposit_pwd.value === '') {
+    showFailToast(t('utils.paramError'))
+    return
+  }
+  if (pwd.value !== confirm_pwd.value) {
+    showFailToast(t('password.pwdDiff'))
+    return
+  }
+  loginShow.value = true
   let param = new FormData()
   param.append('tel', tel.value)
   param.append('pwd', pwd.value)
@@ -94,19 +102,20 @@ const onSubmit = () => {
     router.push('/login')
     showSuccessToast(res.info)
     loginShow.value = false
-  }).catch(err => {
+  }).catch(() => {
     loginShow.value = false
   })
 }
+
 const goLogin = () => {
-	router.push('/login')
+  router.push('/login')
 }
 </script>
 
 <style lang='less' scoped>
 .Login {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background: #ffffff;
   padding: 10px 0 35px;
   overflow: hidden;
@@ -139,14 +148,12 @@ const goLogin = () => {
     width: 100%;
     background: #f7f8fa;
     border-radius: 30px;
-
     padding: 16px !important;
     margin-bottom: 20px;
 
     :deep(.van-cell) {
       padding: 20px !important;
     }
-
   }
 
   .save-btn {
@@ -163,6 +170,7 @@ const goLogin = () => {
     font-weight: 700 !important;
     margin-top: 20px;
     font-size: 13.2px;
+    cursor: pointer;
   }
 }
 </style>

@@ -176,15 +176,31 @@ const getReferralLink = computed(() => {
   return window.location.origin + '/#/register?invite_code=' + (userData.value.invite_code || '')
 })
 
+const copyToClipboard = (text) => {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text)
+  }
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+  textArea.style.position = 'fixed'
+  textArea.style.opacity = '0'
+  document.body.appendChild(textArea)
+  textArea.focus()
+  textArea.select()
+  try { document.execCommand('copy') } catch(e) {}
+  document.body.removeChild(textArea)
+  return Promise.resolve()
+}
+
 const copyCode = () => {
   const code = userData.value.invite_code || ''
-  navigator.clipboard.writeText(code)
+  copyToClipboard(code)
   showSuccessToast('Copy invite code successfully: ' + code)
 }
 
 const copyLink = () => {
   const link = getReferralLink.value
-  navigator.clipboard.writeText(link)
+  copyToClipboard(link)
   showSuccessToast('Copy referral link successfully')
 }
 
