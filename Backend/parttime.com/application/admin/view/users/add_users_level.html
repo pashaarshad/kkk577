@@ -1,0 +1,76 @@
+<form class="layui-form layui-card" action="{:request()->url()}" data-auto="true" method="post" autocomplete="off">
+    <div class="layui-card-body">
+        <div class="layui-form-item">
+            <label class="layui-form-label">等级名称</label>
+            <div class="layui-input-block">
+                <input name="name" placeholder="等级名称 (如 VIP1)" value="" class="layui-input" required>
+                <input type="hidden" name="_csrf_" value="{:systoken('add_users_level')}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">会员等级(数字)</label>
+            <div class="layui-input-block">
+                <input name="level" required value="1" placeholder="如 1, 2, 3" class="layui-input" type="number">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">解锁/升级价格</label>
+            <div class="layui-input-block">
+                <input name="num_min" required value="10.00" placeholder="解锁限制金额" class="layui-input">
+                <p class="help-block">如：10.00</p>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">接单限制/数量</label>
+            <div class="layui-input-block">
+                <input name="order_num" required value="3" placeholder="请输入接单限制数量" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">佣金比例</label>
+            <div class="layui-input-block">
+                <input name="bili" required value="0.05" placeholder="请输入佣金比例 (如 0.05 代表 5%)" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">下级返利比例</label>
+            <div class="layui-input-block">
+                <input name="tj_bili" required value="0.1/0.03/0.01" placeholder="如 0.1/0.03/0.01" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">等级图标/图片</label>
+            <div class="layui-input-block">
+                <input name="pic" value="" placeholder="图片URL" class="layui-input">
+                <a class="layui-btn layui-btn-xs margin-top-5" data-file="btn" data-type="png,jpg,jpeg" data-field="pic">上传图片</a>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">有效天数</label>
+            <div class="layui-input-block">
+                <input name="days" required value="365" placeholder="有效天数" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label label-required">排序值</label>
+            <div class="layui-input-block">
+                <input name="sort" required value="0" placeholder="数字越大越靠前" class="layui-input">
+            </div>
+        </div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="layui-form-item text-center">
+        <button class="layui-btn" type='submit'>确认保存</button>
+        <button class="layui-btn layui-btn-danger" type='button' data-close>取消</button>
+    </div>
+</form>

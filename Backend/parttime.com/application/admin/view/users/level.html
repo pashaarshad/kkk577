@@ -1,11 +1,7 @@
 {extend name='main'}
 
 {block name="button"}
-
-{if auth("add_users")}
-<!--<button data-modal='{:url("add_users")}' data-title="添加等级" class='layui-btn'>添加等级</button>-->
-{/if}
-
+<button data-modal='{:url("add_users_level")}' data-title="添加VIP等级" class='layui-btn layui-btn-sm'>+ 添加VIP等级</button>
 {/block}
 
 {block name="content"}
@@ -30,7 +26,7 @@
             <th lay-data="{field:'tixian_shouxu',width:110}" class='text-left nowrap'>提现手续费</th>
             <th lay-data="{field:'is_invite',width:110}" class='text-left nowrap'>邀请权限</th>
             <!--<th lay-data="{field:'addtime',width:200}" class='text-left nowrap'>注册时间</th>-->
-            <th lay-data="{field:'edit',width:80,fixed: 'right'}" class='text-left nowrap'>操作</th>
+            <th lay-data="{field:'edit',width:140,fixed: 'right'}" class='text-left nowrap'>操作</th>
         </tr>
         </thead>
         {/notempty}
@@ -59,9 +55,8 @@
             </td>
             <!--<td class='text-left nowrap'>{$vo.addtime|format_datetime}</td>-->
             <td class='text-left nowrap'>
-                <a data-dbclick class="layui-btn layui-btn-xs" data-title="会员等级" data-modal='{:url("users/edit_users_level")}?id={$vo.id}'>编辑</a>
-                <!--<a class="layui-btn layui-btn-xs layui-btn" onClick="del_user({$vo.id})" style='background:red;'>删除</a>-->
-
+                <a data-dbclick class="layui-btn layui-btn-xs" data-title="编辑会员等级" data-modal='{:url("users/edit_users_level")}?id={$vo.id}'>编辑</a>
+                <a class="layui-btn layui-btn-xs layui-btn-danger" data-confirm="确认删除该等级吗？" data-load='{:url("users/del_users_level")}' data-value="id#{$vo.id}">删除</a>
             </td>
         </tr>
         {/foreach}

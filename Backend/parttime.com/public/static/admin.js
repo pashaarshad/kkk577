@@ -182,14 +182,90 @@ $(function () {
                 });
             });
         };
-        // 在内容区显示视图
+        // 在内容区显示视图 (Multi-Tab Enabled)
         this.show = function (html) {
-            $(this.selecter).html(html);
-            this.reInit($(this.selecter));
-            setTimeout(function () {
-                that.reInit($(that.selecter));
-            }, 500);
-        };
+            var $tabList = $('#admin-tab-list');
+            var $tabPanels = $('#admin-tab-panels');
+            
+            if ($tabList.length && $tabPanels.length) {
+                var currentUri = $.menu.getUri(window.location.href) || 'admin/index/main';
+                var cleanUri = currentUri.replace(/.*#/, '').replace(/^\//, '');
+                if (!cleanUri) cleanUri = 'admin/index/main';
+                var safeId = 'tab_' + cleanUri.replace(/[^a-zA-Z0-9]/g, '_');
+                
+                // Get page title from active menu or fallback
+                var tabTitle = $('[data-menu-node][data-open*="' + cleanUri.split('.')[0] + '"]').text().trim() 
+                    || $('[data-open*="' + cleanUri.split('.')[0] + '"]').text().trim() 
+                    || $(html).find('legend').text().trim() 
+                    || $(html).find('title').text().trim() 
+                    || '页面';
+                
+                if (tabTitle.length > 15) tabTitle = tabTitle.substring(0, 15) + '...';
+
+                // Deactivate current active tab & panel
+                $tabList.find('.admin-tab-item').css({
+                    'background': '#f7f8fa',
+                    'color': '#595959',
+                    'font-weight': 'normal',
+                    'border': '1px solid #e8e8e8',
+                    'border-bottom': 'none'
+                }).removeClass('active');
+                $tabPanels.find('.admin-tab-panel').hide().removeClass('active');
+
+                // Check if tab already exists
+                var $existTab = $tabList.find('[data-tab-id="' + safeId + '"]');
+                var $existPanel = $tabPanels.find('[data-tab-id="' + safeId + '"]');
+
+                if ($existPanel.length) {
+                    $existPanel.html(html).show().addClass('active');
+                    $existTab.css({
+                        'background': '#ffffff',
+                        'color': '#1890ff',
+                        'font-weight': '600',
+                        'border': '1px solid #e8e8e8',
+                        'border-bottom': '2px solid #1890ff'
+                    }).addClass('active');
+                    this.reInit($existPanel);
+                } else {
+                    // Create new tab item
+                    var isHome = (cleanUri.indexOf('index/main') > -1);
+                    var closeBtnHtml = isHome ? '' : '<span class="admin-tab-close" style="margin-left:6px; font-size:14px; color:#8c8c8c; cursor:pointer; font-weight:bold;">&times;</span>';
+                    
+                    var $newTab = $('<li class="admin-tab-item active" data-tab-id="' + safeId + '" data-uri="' + cleanUri + '" style="display:inline-flex; align-items:center; padding:6px 14px; font-size:13px; background:#ffffff; color:#1890ff; font-weight:600; border:1px solid #e8e8e8; border-bottom:2px solid #1890ff; border-radius:6px 6px 0 0; cursor:pointer; user-select:none; transition:all 0.2s;"><span>' + tabTitle + '</span>' + closeBtnHtml + '</li>');
+                    
+                    var $newPanel = $('<div class="admin-tab-panel active" data-tab-id="' + safeId + '"></div>').html(html);
+                    
+                    $tabList.append($newTab);
+                    $tabPanels.append($newPanel);
+                    this.reInit($newPanel);
+
+                    // Tab Click Event
+                    $newTab.on('click', function(e) {
+                        if ($(e.target).hasClass('admin-tab-close')) return;
+                        var targetUri = $(this).attr('data-uri');
+                        window.location.href = '#' + targetUri;
+                    });
+
+                    // Tab Close Event
+                    $newTab.find('.admin-tab-close').on('click', function(e) {
+                        e.stopPropagation();
+                        var $tab = $(this).closest('.admin-tab-item');
+                        var tabId = $tab.attr('data-tab-id');
+                        var $prevTab = $tab.prev('.admin-tab-item');
+                        
+                        $tab.remove();
+                        $tabPanels.find('[data-tab-id="' + tabId + '"]').remove();
+                        
+                        if ($prevTab.length) {
+                            var prevUri = $prevTab.attr('data-uri');
+                            window.location.href = '#' + prevUri;
+                        }
+                    });
+                }
+            } else {
+                $(this.selecter).html(html);
+                this.reInit($(this.selecter));
+            }
         // 以HASH打开新网页
         this.href = function (url, obj) {
             if (url !== '#') {

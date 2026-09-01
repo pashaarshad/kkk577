@@ -152,7 +152,14 @@
 
 
     <!-- 主体内容 开始 -->
-    <div class="layui-body layui-bg-gray">{block name='content'}{/block}</div>
+    <div class="layui-body layui-bg-gray">
+        <div class="admin-tabs-bar" id="admin-tabs-bar" style="background:#ffffff; border-bottom:1px solid #e8e8e8; padding:8px 16px 0; display:flex; align-items:center; box-shadow: 0 1px 4px rgba(0,0,0,0.05); overflow-x:auto;">
+            <ul class="admin-tab-list" id="admin-tab-list" style="display:flex; gap:6px; list-style:none; margin:0; padding:0;"></ul>
+        </div>
+        <div class="admin-tab-panels" id="admin-tab-panels" style="padding:15px;">
+            {block name='content'}{/block}
+        </div>
+    </div>
     <!-- 主体内容 结束 -->
 
 </div>

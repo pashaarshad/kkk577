@@ -1227,6 +1227,74 @@ class Users extends Base
         return $this->fetch();
     }
 
+    /**
+     * 添加会员等级
+     * @auth true
+     * @menu true
+     */
+    public function add_users_level()
+    {
+        if (request()->isPost()) {
+            $this->applyCsrfToken();
+            $name = input('post.name/s', '');
+            $level = input('post.level/d', 0);
+            $num = input('post.num/s', '0');
+            $order_num = input('post.order_num/s', '0');
+            $bili = input('post.bili/s', '0');
+            $tj_bili = input('post.tj_bili/s', '0');
+            $tixian_ci = input('post.tixian_ci/s', '1');
+            $tixian_min = input('post.tixian_min/s', '0');
+            $tixian_max = input('post.tixian_max/s', '999999');
+            $auto_vip_xu_num = input('post.auto_vip_xu_num/s', '0');
+            $num_min = input('post.num_min/s', '0');
+            $pic = input('post.pic/s', '');
+            $days = input('post.days/d', 365);
+            $sort = input('post.sort/d', 0);
+
+            $res = Db::name('xy_level')->insert([
+                'name' => $name,
+                'level' => $level,
+                'num' => $num,
+                'order_num' => $order_num,
+                'bili' => $bili,
+                'tj_bili' => $tj_bili,
+                'tixian_ci' => $tixian_ci,
+                'tixian_min' => $tixian_min,
+                'tixian_max' => $tixian_max,
+                'num_min' => $num_min,
+                'auto_vip_xu_num' => $auto_vip_xu_num,
+                'pic' => $pic,
+                'days' => $days,
+                'sort' => $sort,
+                'addtime' => time()
+            ]);
+            if ($res) {
+                sysoplog('添加会员等级', json_encode($_POST, JSON_UNESCAPED_UNICODE));
+                return $this->success('添加成功');
+            } else {
+                return $this->error('添加失败');
+            }
+        }
+        return $this->fetch();
+    }
+
+    /**
+     * 删除会员等级
+     * @auth true
+     */
+    public function del_users_level()
+    {
+        $this->applyCsrfToken();
+        $id = input('post.id/d', 0);
+        $res = Db::name('xy_level')->where('id', $id)->delete();
+        if ($res) {
+            sysoplog('删除会员等级', "ID: {$id}");
+            return $this->success('删除成功');
+        } else {
+            return $this->error('删除失败');
+        }
+    }
+
 
     /**
      * 导出xls
