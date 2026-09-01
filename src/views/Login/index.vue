@@ -20,33 +20,18 @@
 
     <!-- White Auth Card -->
     <div class="auth-card">
-      <!-- Tabs: Email Login | Phone Login -->
-      <div class="tab-header">
-        <span 
-          :class="['tab-item', activeTab === 'phone' ? 'active' : '']" 
-          @click="activeTab = 'phone'"
-        >
-          Phone Login
-        </span>
-        <span class="tab-divider">|</span>
-        <span 
-          :class="['tab-item', activeTab === 'email' ? 'active' : '']" 
-          @click="activeTab = 'email'"
-        >
-          Email Login
-        </span>
-      </div>
+      <div class="card-header-title">Phone Login</div>
 
       <!-- Login Form -->
       <form class="auth-form" @submit.prevent="onSubmit">
         <!-- Account Input Field -->
         <div class="form-group">
-          <label class="field-label">{{ activeTab === 'phone' ? 'Phone number' : 'E-mail' }}</label>
+          <label class="field-label">Phone number</label>
           <div class="input-wrapper">
             <input 
               v-model="username" 
-              :type="activeTab === 'phone' ? 'tel' : 'email'" 
-              :placeholder="activeTab === 'phone' ? 'Please enter phone number' : 'Please enter email address'"
+              type="tel" 
+              placeholder="Please enter phone number"
               class="underline-input"
               required
             />
@@ -235,32 +220,13 @@ const goRegister = () => {
     box-sizing: border-box;
   }
 
-  /* Tabs Header */
-  .tab-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 28px;
-
-    .tab-item {
-      font-size: 15.5px;
-      font-weight: 600;
-      color: #927c67;
-      cursor: pointer;
-
-      &.active {
-        color: #543415;
-        font-weight: 800;
-        font-size: 16px;
-      }
+    .card-header-title {
+      font-size: 16.5px;
+      font-weight: 800;
+      color: #543415;
+      text-align: center;
+      margin-bottom: 24px;
     }
-
-    .tab-divider {
-      color: #d8c4ad;
-      margin: 0 16px;
-      font-size: 14px;
-    }
-  }
 
   /* Form Fields */
   .form-group {
