@@ -266,6 +266,7 @@ $(function () {
                 $(this.selecter).html(html);
                 this.reInit($(this.selecter));
             }
+        };
         // 以HASH打开新网页
         this.href = function (url, obj) {
             if (url !== '#') {
