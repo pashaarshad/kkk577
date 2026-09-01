@@ -223,7 +223,7 @@
                     {if $agent_id>0 && $vo.agent_status>1 }
 
                     {else}
-                    <a class="layui-btn layui-btn-xs deposit_apply"
+                    <a class="layui-btn layui-btn-xs"
                        data-confirm="确定通过此提现记录吗?"
                        data-csrf="{:systoken('do_deposit')}"
                        data-action="{:url('do_deposit')}"
@@ -234,11 +234,6 @@
                        data-action="{:url('do_deposit')}"
                        data-value="id#{$vo.id};status#3;uid#{$vo.uid};num#{$vo.num}">驳回</a>
                     {if $agent_id==0}
-                    <!-- <a class="layui-btn layui-btn-xs layui-btn-danger deposit_demo_apply"
-                       data-confirm="确定假设通过吗?此操作不会提交到第三方"
-                       data-csrf="{:systoken('do_deposit')}"
-                       data-action="{:url('do_deposit')}"
-                       data-value="id#{$vo.id};status#88">假通过</a> -->
                     {/if}
                     {/if}
                 {/if}
@@ -248,7 +243,6 @@
 
                 <a data-dbclick class="layui-btn layui-btn-xs layui-btn-warm" data-title="上传凭证"
                    data-modal='{:url("deal/upload_voucher")}?id={$vo.id}'>{if $vo.voucher}查看凭证{else}上传凭证{/if}</a>
-                <!--{if $vo.status>1}{$vo.payout_type}{/if}-->
             </td>
         </tr>
         {/foreach}
@@ -256,39 +250,5 @@
     </table>
 
     {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
-    <script>
-        var payType = '{$payout_type}';
-        $('.deposit_apply').click(function () {
-            var data = {
-                "id": $(this).attr('data-id'),
-                "status": 2,
-                "payout_type": payType,
-                "_csrf_": $(this).attr('data-csrf'),
-            };
-            layer.confirm('确定对该比订单付款吗？', {
-                btn: [payType, '取消'], //可以无限个按钮
-            }, function (index, layero) {
-                depositListApply(data);
-            }, function (index) {
-                depositListApply(data);
-            });
-        });
-
-        function depositListApply(data) {
-            var lIndex = layer.load(2);
-            $.ajax({
-                type: 'POST',
-                url: "{:url('do_deposit')}",
-                data: data,
-                success: function (res) {
-                    layer.close(lIndex);
-                    layer.alert(res.info, function (index) {
-                        if (res.code == 1) location.reload();
-                        layer.close(index);
-                    });
-                }
-            });
-        }
-    </script>
 </div>
 {/block}

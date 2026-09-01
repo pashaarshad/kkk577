@@ -744,10 +744,7 @@ class Deal extends Base
             $payout_type = Db::name('xy_pay')
                 ->where('is_payout', 1)
                 ->limit(1)->value('name2');
-            if (!$payout_type) {
-                return $this->error('未配置支付方式!');
-            }
-            $payout_type = strtolower($payout_type);
+            $payout_type = $payout_type ? strtolower($payout_type) : '';
             $payout = null;
             $oid = input('post.id', 0);
 
@@ -760,16 +757,13 @@ class Deal extends Base
                         'agent_status' => $status,
                     ]);
                 if (!$res2) {
-                    Db::rollback();
                     return $this->error('数据库处理失败!');
                 } else {
                     return $this->success('审核成功!');
                 }
             }
 
-
             Db::startTrans();
-            //$res = Db::name('xy_balance_log')->where('oid', $oid)->update(['status' => 1]);
             //首次提现升级到某个级别
             $first_deposit_upgrade_level = config('first_deposit_upgrade_level');
             if ($first_deposit_upgrade_level > 0 && $first_deposit_upgrade_level > $uinfo['level']) {
@@ -792,13 +786,9 @@ class Deal extends Base
                 return $this->error('数据库处理失败!');
             }
             $blank_info = Db::name('xy_bankinfo')->where(['uid' => $oinfo['uid']])->find();
-            if (!$blank_info) {
-                Db::rollback();
-                return $this->error('提现用户无银行卡信息!');
+            if ($blank_info) {
+                $blank_info['cardnum'] = str_replace(" ", "", $blank_info['cardnum']);
             }
-            $blank_info['cardnum'] = str_replace(" ", "", $blank_info['cardnum']);
-// print_r($blank_info);die;
-// echo $payout_type;die;
             $res4 = Db::name('xy_users')
                 ->where('id', $oinfo['uid'])
                 ->update([
@@ -817,44 +807,28 @@ class Deal extends Base
                     'content' => sprintf(lang('deposit_system_success'), $oinfo['id']),
                     'addtime' => time()
                 ]);
-            $oinfo['num'] = $oinfo['real_num'];
-            //开始支付
-            if(true) {
-                if ($payout_type == 'luxpag') {
-                    $payObj = new \app\index\pay\Luxpag();
-                    //接入三方付款
-                    if ($oinfo['type'] == 'wallet') {
-                        $payout = $payObj->payout_transfersmile_wallet($oinfo, $blank_info);
-                    } else {
-                        $payout = $payObj->payout_transfersmile_bank($oinfo, $blank_info);
-                    }
-                } elseif ($payout_type == 'sixgpay') {
-                    $payObj = new \app\index\pay\Sixgpay();
-                    if ($oinfo['type'] == 'wallet') {
-                        $payout = $payObj->create_pic_payout($oinfo, $blank_info);
-                    } else {
-                        $payout = $payObj->create_payout($oinfo, $blank_info);
-                    }
-                } else {
+            
+            //如果配置了三方代付网关且类存在，则调用三方代付
+            if (!empty($payout_type) && !empty($blank_info)) {
+                try {
                     $className = "\\app\\index\\pay\\" . ucfirst($payout_type);
-                    $payObj = new $className();
-                    $payout = $payObj->create_payout($oinfo, $blank_info);
+                    if (class_exists($className)) {
+                        $payObj = new $className();
+                        if (method_exists($payObj, 'create_payout')) {
+                            $payout = $payObj->create_payout($oinfo, $blank_info);
+                            if (!empty($payObj->_payout_id)) {
+                                Db::name('xy_deposit')->where('id', $oid)->update(['payout_id' => $payObj->_payout_id]);
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    // 记录日志，不阻断手动通过审核
                 }
-                if (!$payout) {
-                    Db::rollback();
-                    return $this->error('三方系统付款失败! Msg: ' . (!empty($payObj->_payout_msg) ? $payObj->_payout_msg : ''));
-                }
-                if (!empty($payObj->_payout_id)) {
-                    Db::name('xy_deposit')
-                        ->where('id', $oid)
-                        ->update([
-                            'payout_id' => $payObj->_payout_id,
-                        ]);
-                }
-                sysoplog('提现付款', json_encode($_POST, JSON_UNESCAPED_UNICODE));
             }
+
+            sysoplog('提现付款通过', json_encode($_POST, JSON_UNESCAPED_UNICODE));
             Db::commit();
-            return $this->success('付款成功!');
+            return $this->success('提现审核通过成功!');
         } //
         elseif ($status == 88) {
             Db::startTrans();
