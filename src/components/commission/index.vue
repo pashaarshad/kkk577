@@ -1,64 +1,40 @@
-<!-- Commission / Activities -->
+<!-- Member list / User commission income dynamics -->
 <template>
-  <div class='commission'>
-    <div class="header-row">
-      <div class="title-with-icon">
-        <span class="icon-pulse">🔥</span>
-        <h2 class='section-title'>Latest Activities</h2>
+  <div class="member-dynamics-container">
+    <!-- Top Ribbon Header -->
+    <div class="header-ribbon-wrapper">
+      <div class="header-ribbon">
+        <span>Member list</span>
       </div>
     </div>
 
-    <div class="activity-list">
-      <!-- Colorful Activity Card 1 -->
-      <div class='activity-card gradient-1'>
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" fill="none" stroke-width="2" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="card-content">
-          <div class="user-id">User 183****921</div>
-          <div class="task-desc">Completed Elite Bot Task</div>
-        </div>
-        <div class="card-action">
-          <div class='profit'>+$45.00 USDT</div>
-          <button class='view-btn' @click='router.push("/work")'>Join Now</button>
-        </div>
-      </div>
-
-      <!-- Colorful Activity Card 2 -->
-      <div class='activity-card gradient-2'>
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="white" fill="none" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="white" fill="none" stroke-width="2"/></svg>
-        </div>
-        <div class="card-content">
-          <div class="user-id">User 192****384</div>
-          <div class="task-desc">VIP Upgrade Reward</div>
-        </div>
-        <div class="card-action">
-          <div class='profit'>+$120.00 USDT</div>
-          <button class='view-btn' @click='router.push("/recharge")'>Upgrade</button>
-        </div>
-      </div>
-
-      <!-- Colorful Activity Card 3 -->
-      <div class='activity-card gradient-3'>
-        <div class="card-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="5" stroke="white" fill="none" stroke-width="2"/><path d="M3 21v-2a7 7 0 0114 0v2" stroke="white" fill="none" stroke-width="2"/></svg>
-        </div>
-        <div class="card-content">
-          <div class="user-id">User 155****099</div>
-          <div class="task-desc">Team Referral Bonus</div>
-        </div>
-        <div class="card-action">
-          <div class='profit'>+$9.00 USDT</div>
-          <button class='view-btn' @click='router.push("/team")'>Invite</button>
-        </div>
-      </div>
+    <!-- Golden Card Frame -->
+    <div class="gold-card-body">
+      <van-swipe 
+        :autoplay="2000" 
+        :show-indicators="false" 
+        :touchable="false"
+        vertical 
+        class="member-swipe"
+      >
+        <van-swipe-item v-for="(group, gIdx) in dynamicGroups" :key="gIdx" class="swipe-group">
+          <div v-for="(item, idx) in group" :key="idx" class="member-row">
+            <div class="row-left">
+              <span class="level-pill">{{ item.levelText }}</span>
+              <span class="user-email">{{ item.email }}</span>
+            </div>
+            <div class="row-right">
+              <span class="commission-val">+${{ item.amount }}</span>
+            </div>
+          </div>
+        </van-swipe-item>
+      </van-swipe>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
 
 const props = defineProps({
   list: {
@@ -67,145 +43,175 @@ const props = defineProps({
   }
 })
 
-const router = useRouter()
+// Generate dynamic member earnings list
+const defaultEmails = [
+  'facai1188@gmail.com',
+  'qwe880@gmail.com',
+  '535asd@gmail.com',
+  'mario992@gmail.com',
+  'david_k@gmail.com',
+  'lucas88@gmail.com',
+  'albert77@gmail.com',
+  'sandra_v@gmail.com',
+  'kevin2024@gmail.com',
+  'emma_trade@gmail.com',
+  'robert99@gmail.com',
+  'sofia_gold@gmail.com'
+]
+
+const levelTypes = ['VIP 1', 'VIP 2', 'VIP 3', 'Task', 'VIP 1', 'VIP 2']
+
+const dynamicList = computed(() => {
+  if (props.list && props.list.length > 0) {
+    return props.list.map((item, idx) => {
+      const email = defaultEmails[idx % defaultEmails.length]
+      const levelText = levelTypes[idx % levelTypes.length]
+      const numVal = Number(item.num || 100)
+      const amount = (numVal * (idx % 2 === 0 ? 15.6 : 3.4) + (idx * 27)).toFixed(2)
+      return {
+        email,
+        levelText,
+        amount: Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      }
+    })
+  }
+
+  return defaultEmails.map((email, idx) => ({
+    email,
+    levelText: levelTypes[idx % levelTypes.length],
+    amount: (Number([5656, 340, 2568, 1290, 4820, 890, 3150, 620, 7430, 1980, 4520, 2800][idx] || 500)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }))
+})
+
+// Chunk into groups of 3 for smooth multi-row page scrolling
+const dynamicGroups = computed(() => {
+  const chunks = []
+  const items = dynamicList.value
+  for (let i = 0; i < items.length; i += 3) {
+    chunks.push(items.slice(i, i + 3))
+  }
+  return chunks
+})
 </script>
 
-<style lang='less' scoped>
-.commission {
-  margin: 20px 0;
+<style lang="less" scoped>
+.member-dynamics-container {
+  width: 100%;
+  margin: 25px 0 20px;
+  position: relative;
+  box-sizing: border-box;
 
-  .header-row {
+  .header-ribbon-wrapper {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    justify-content: center;
+    position: relative;
+    z-index: 3;
+    margin-bottom: -16px;
 
-    .title-with-icon {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .header-ribbon {
+      background: #543415;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 8px 38px 10px;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      letter-spacing: 0.5px;
+      position: relative;
 
-      .icon-pulse {
-        font-size: 18px;
-        animation: pulse 1.5s infinite;
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        border-style: solid;
       }
 
-      .section-title {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 700;
-        color: #ffffff;
+      &::before {
+        left: -8px;
+        border-width: 0 8px 8px 0;
+        border-color: transparent #341e0a transparent transparent;
+      }
+
+      &::after {
+        right: -8px;
+        border-width: 0 0 8px 8px;
+        border-color: transparent transparent transparent #341e0a;
       }
     }
   }
 
-  .activity-list {
+  .gold-card-body {
+    background: linear-gradient(180deg, #d3ab79 0%, #ba8e55 100%);
+    border-radius: 12px;
+    padding: 26px 14px 14px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    border: 2px solid #e5c396;
+    overflow: hidden;
+  }
+
+  .member-swipe {
+    height: 186px;
+    overflow: hidden;
+  }
+
+  .swipe-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    justify-content: space-around;
+    height: 100%;
   }
 
-  .activity-card {
+  .member-row {
     display: flex;
     align-items: center;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    position: relative;
-    overflow: hidden;
+    justify-content: space-between;
+    padding: 10px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 
-    &::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 100px;
-      height: 100px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
+    &:last-child {
+      border-bottom: none;
     }
 
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 50%;
+    .row-left {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin-right: 14px;
-      flex-shrink: 0;
-      backdrop-filter: blur(4px);
-
-      svg {
-        width: 22px;
-        height: 22px;
-      }
-    }
-
-    .card-content {
+      gap: 12px;
       flex: 1;
+      overflow: hidden;
 
-      .user-id {
-        font-size: 14px;
-        font-weight: 600;
-        color: #ffffff;
-        margin-bottom: 4px;
-      }
-
-      .task-desc {
-        font-size: 12px;
-        color: rgba(255,255,255,0.8);
-      }
-    }
-
-    .card-action {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-
-      .profit {
-        font-size: 14px;
-        font-weight: 700;
-        color: #ffffff;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-      }
-
-      .view-btn {
-        border: none;
-        padding: 6px 14px;
-        border-radius: 20px;
-        color: #333;
+      .level-pill {
         background: #ffffff;
+        color: #2c2a29;
         font-size: 11px;
         font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        transition: transform 0.1s;
+        padding: 4px 9px;
+        border-radius: 6px;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      }
 
-        &:active {
-          transform: scale(0.95);
-        }
+      .user-email {
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       }
     }
-  }
 
-  /* Vibrant Gradients */
-  .gradient-1 {
-    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-  }
-  .gradient-2 {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  }
-  .gradient-3 {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  }
+    .row-right {
+      flex-shrink: 0;
+      margin-left: 10px;
 
-  @keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.2); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+      .commission-val {
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      }
+    }
   }
 }
 </style>

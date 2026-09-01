@@ -71,14 +71,14 @@
       </van-swipe>
     </section>
 
-    <!-- MEMBER LIST -->
+    <!-- PROJECT HALL -->
     <section class="project-hall">
-      <h3 class="section-title">Member list</h3>
+      <h3 class="section-title">Project hall</h3>
       <div class="project-list">
-        <div v-for="item in vipList" :key="item.id" class="project-card" @click="toGrab(item)">
+        <div v-for="(item, idx) in vipList" :key="item.id" class="project-card" @click="toGrab(item)">
           <div class="project-thumb">
             <img :src="item.img" alt="Product" class="thumb-img">
-            <span class="member-badge">{{ item.name }}</span>
+            <span class="member-badge">{{ idx === 0 ? 'Free' : (item.name || ('VIP' + idx)) }}</span>
           </div>
           <div class="project-info">
             <div class="metric-row">
@@ -90,7 +90,7 @@
               <span class="lbl-gray">Price</span>
             </div>
             <div class="desc-text">
-              {{ item.id === 1 ? 'ELITE BOT' : (item.name || 'Member Product') }}
+              {{ idx === 0 ? 'ELITE BOT' : (item.name || ('VIP' + idx)) }}
             </div>
           </div>
           <div class="project-arrow-bar">
