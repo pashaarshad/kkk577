@@ -5,39 +5,33 @@
     <div class="header notselect layui-hide-xs">
         <a href="{:url('@')}" class="title">{:sysconf('app_name')}<span class="padding-left-5 font-s10">{:sysconf('app_version')}</span></a>
     </div>
-    <form data-login-form onsubmit="return false" method="post" class="layui-anim layui-anim-upbit" autocomplete="off">
-        <h2 class="notselect">系统管理</h2>
+    <form data-login-form onsubmit="return false" action="{:url('@admin/login/index')}" method="post" class="layui-anim layui-anim-upbit" autocomplete="off">
+        <h2 class="notselect">System Management</h2>
         <ul>
             <li class="username">
                 <label>
                     <i class="layui-icon layui-icon-username"></i>
-                    <input class="layui-input" required pattern="^\S{4,}$" name="username" autofocus autocomplete="off" placeholder="登录账号" title="请输入登录账号">
+                    <input class="layui-input" required name="username" autofocus autocomplete="off" placeholder="登录账号 / Username" title="请输入登录账号">
                 </label>
             </li>
             <li class="password">
                 <label>
                     <i class="layui-icon layui-icon-password"></i>
-                    <input class="layui-input" required pattern="^\S{4,}$" name="password" maxlength="32" type="password" autocomplete="off" placeholder="登录密码" title="请输入登录密码">
+                    <input class="layui-input" required name="password" maxlength="32" type="password" autocomplete="off" placeholder="登录密码 / Password" title="请输入登录密码">
                 </label>
             </li>
-            <!-- <li class="password">
-                <label>
-                    <i class="layui-icon layui-icon-auz"></i>
-                    <input class="layui-input" name="google_code" maxlength="6" type="text" autocomplete="off" placeholder="谷歌令牌/未绑定不填写" title="请输入谷歌令牌">
-                </label>
-            </li> -->
             <li class="verify">
                 <label class="inline-block relative">
                     <i class="layui-icon layui-icon-picture-fine"></i>
-                    <input class="layui-input" required pattern="^\S{4,}$" name="verify" value="" maxlength="4" autocomplete="off" placeholder="验证码" title="请输入验证码">
+                    <input class="layui-input" required name="verify" value="" maxlength="6" autocomplete="off" placeholder="验证码 / Captcha" title="请输入验证码">
                 </label>
-                <img data-refresh-captcha alt="img" src="{$captcha->getData()}">
+                <img data-refresh-captcha alt="img" src="{$captcha->getData()}" style="cursor:pointer;">
                 <input type="hidden" name="uniqid" value="{$captcha->getUniqid()}">
             </li>
             <li class="text-center padding-top-20">
                 <input type="hidden" name="_csrf_" value="{:systoken('index')}">
                 <input type="hidden" name="skey" value="{$loginskey|default=''}">
-                <button type="submit" class="layui-btn full-width" data-form-loaded="立即登录">立即登录</button>
+                <button type="submit" class="layui-btn full-width" style="cursor:pointer; position:relative; z-index:10; font-size:16px; height:44px; line-height:44px;">Log in now</button>
             </li>
         </ul>
     </form>
