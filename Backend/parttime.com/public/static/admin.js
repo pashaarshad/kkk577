@@ -898,20 +898,38 @@ $(function () {
     /*! 后台加密登录处理 */
     $body.find('[data-login-form]').map(function (that) {
         that = this;
-        var $btn = $(that).find('button[type=submit]');
+        var $form = $(that);
+        var $btn = $form.find('button[type=submit]');
         $btn.removeClass('layui-disabled');
         if ($btn.text() === '正在载入') $btn.text($btn.attr('data-form-loaded') || '立即登录');
-        require(["md5"], function (md5) {
-            $("form").vali(function (data) {
-                data['password'] = md5.hash(md5.hash(data['password']) + data['skey']);
-                if (data['skey']) delete data['skey'];
-                $.form.load(location.href, data, "post", function (ret) {
+
+        $form.vali(function (data) {
+            var submitForm = function(postData) {
+                $.form.load(location.href, postData, "post", function (ret) {
                     if (parseInt(ret.code) !== 1) {
-                        $(that).find('.verify.layui-hide').removeClass('layui-hide');
-                        $(that).find('[data-refresh-captcha]').trigger('click');
+                        $form.find('.verify.layui-hide').removeClass('layui-hide');
+                        $form.find('[data-refresh-captcha]').trigger('click');
                     }
                 }, null, null, 'false');
-            });
+            };
+
+            if (typeof require === 'function' && data['skey']) {
+                try {
+                    require(["md5"], function (md5) {
+                        if (md5 && typeof md5.hash === 'function') {
+                            data['password'] = md5.hash(md5.hash(data['password']) + data['skey']);
+                            delete data['skey'];
+                        }
+                        submitForm(data);
+                    }, function() {
+                        submitForm(data);
+                    });
+                } catch(e) {
+                    submitForm(data);
+                }
+            } else {
+                submitForm(data);
+            }
         });
     });
 
