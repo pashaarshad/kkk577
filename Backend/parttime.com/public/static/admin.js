@@ -898,6 +898,9 @@ $(function () {
     /*! 后台加密登录处理 */
     $body.find('[data-login-form]').map(function (that) {
         that = this;
+        var $btn = $(that).find('button[type=submit]');
+        $btn.removeClass('layui-disabled');
+        if ($btn.text() === '正在载入') $btn.text($btn.attr('data-form-loaded') || '立即登录');
         require(["md5"], function (md5) {
             $("form").vali(function (data) {
                 data['password'] = md5.hash(md5.hash(data['password']) + data['skey']);
