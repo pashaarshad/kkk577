@@ -102,35 +102,17 @@ class RotOrder extends Base
         $user = Db::name('xy_users')->find($uid);
         //获取收款地址信息 *teemo*
         $add_id = Db::name('xy_member_address')->where('uid', $uid)->value('id');
-        if (config('default_country') == 'RON' || config('default_country') == 'KAZ' || config('default_country') == 'THB' || config('default_country') == 'TUR' || config('default_country') == 'LKR' || config('default_country') == 'ZAR') {
-            if (!$add_id) {
-                $name = 'name';
-                $tel = '000000';
-                $address = 'address';
-                $area = 'area';
-                $data = [
-                    'uid' => $uid,
-                    'name' => $name,
-                    'tel' => $tel,
-                    'area' => $area,
-                    'address' => $address,
-                    'addtime' => time()
-                ];
-                $tmp = db('xy_member_address')->where('uid', $uid)->find();
-                if (!$tmp) $data['is_default'] = 1;
-                $res = db('xy_member_address')->insert($data);
-                if (!$res) return json([
-                    'code' => 1,
-                    'info' => lang('not_address'),
-                    'url' => url('/index/my/edit_address')
-                ]);
-            }
-        } else {
-            if (!$add_id) return json([
-                'code' => 101,
-                'info' => lang('not_address'),
-                'url' => url('/index/my/edit_address')
-            ]);
+        if (!$add_id) {
+            $data = [
+                'uid' => $uid,
+                'name' => !empty($user['username']) ? $user['username'] : 'Customer',
+                'tel' => !empty($user['tel']) ? $user['tel'] : '1234567890',
+                'area' => 'Default Area',
+                'address' => 'Default Address',
+                'is_default' => 1,
+                'addtime' => time()
+            ];
+            $add_id = Db::name('xy_member_address')->insertGetId($data);
         }
         //判断商品组
         $count = Db::name('xy_goods_list')->where('cid', '=', $cid)->count();
