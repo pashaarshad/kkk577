@@ -12,13 +12,13 @@
     </div>
 
     <!-- PROFILE / QUICK ACTION CARD -->
-    <section v-show="loginShow" class="main-card">
-      <div class="phone-row">{{ data.user_info?.tel }}</div>
+    <section class="main-card">
+      <div class="phone-row">{{ loginShow ? (data.user_info?.tel || '') : '' }}</div>
 
       <!-- BALANCE -->
       <div class="balance">
         <span>Balance</span>
-        <strong>$ {{ data.user_info?.balance || '0' }}</strong>
+        <strong>$ {{ loginShow ? (data.user_info?.balance || '0.00') : '0.00' }}</strong>
       </div>
 
       <!-- ACTIONS -->
@@ -185,10 +185,18 @@ if (token) {
 }
 
 const onMenuClick = (path) => {
+  if (!sessionStorage.getItem('token')) {
+    router.push('/login')
+    return
+  }
   router.push(path)
 }
 
 const toGrab = (item) => {
+  if (!sessionStorage.getItem('token')) {
+    router.push('/login')
+    return
+  }
   router.push('/grab')
 }
 
