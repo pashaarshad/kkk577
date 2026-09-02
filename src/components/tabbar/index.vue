@@ -122,7 +122,7 @@ window.onresize = function() {
     justify-content: space-around;
     align-items: center;
     height: 56px;
-    background-color: #00b983;
+    background-color: #B83A2E;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.08);

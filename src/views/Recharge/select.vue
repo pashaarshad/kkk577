@@ -125,11 +125,11 @@ onMounted(() => {
 <style lang="less" scoped>
 .select-currency-page {
   min-height: 100vh;
-  background-color: #f5faf8;
+  background-color: #fff9f8;
   padding-bottom: 20px;
 
   .header {
-    background-color: #00b983;
+    background-color: #B83A2E;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -155,22 +155,22 @@ onMounted(() => {
   .currency-container {
     margin: 16px;
     background: #ffffff;
-    border: 1.5px solid #00b983;
+    border: 1.5px solid #E86C3F;
     border-radius: 12px;
     padding: 6px 12px;
-    box-shadow: 0 2px 8px rgba(0, 185, 131, 0.08);
+    box-shadow: 0 2px 8px rgba(184, 58, 46, 0.08);
 
     .currency-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 14px 8px;
-      border-bottom: 1px dashed #e2f4ed;
+      border-bottom: 1px dashed #fdece8;
       cursor: pointer;
       transition: background 0.15s;
 
       &:hover, &:active {
-        background-color: #f2faf6;
+        background-color: #fdf5f3;
       }
 
       &:last-child {

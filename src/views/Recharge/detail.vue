@@ -118,11 +118,11 @@ onMounted(() => {
 <style lang="less" scoped>
 .recharge-detail-page {
   min-height: 100vh;
-  background-color: #f5faf8;
+  background-color: #fff9f8;
   padding-bottom: 90px;
 
   .header {
-    background-color: #00b983;
+    background-color: #B83A2E;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -148,7 +148,7 @@ onMounted(() => {
   .card-container {
     margin: 16px;
     background: #ffffff;
-    border: 1.5px solid #00b983;
+    border: 1.5px solid #E86C3F;
     border-radius: 12px;
     padding: 24px 16px;
     text-align: center;
@@ -160,7 +160,7 @@ onMounted(() => {
       gap: 8px;
       font-size: 16px;
       font-weight: 700;
-      color: #1d2129;
+      color: #1f1a1a;
       margin-bottom: 20px;
 
       .channel-icon {
@@ -175,9 +175,9 @@ onMounted(() => {
       height: 180px;
       padding: 10px;
       background: #ffffff;
-      border: 1px solid #e5f7f2;
+      border: 1px solid #fdece8;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 185, 131, 0.08);
+      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.08);
 
       .qr-img {
         width: 100%;
@@ -192,7 +192,7 @@ onMounted(() => {
       .address-label {
         font-size: 14px;
         font-weight: 700;
-        color: #1d2129;
+        color: #1f1a1a;
         display: block;
         margin-bottom: 10px;
       }
@@ -200,23 +200,23 @@ onMounted(() => {
       .address-bar {
         display: flex;
         align-items: center;
-        border: 1.5px solid #00b983;
+        border: 1.5px solid #E86C3F;
         border-radius: 20px;
         padding: 4px 6px 4px 14px;
-        background: #f7fcf9;
+        background: #fff5f3;
 
         .address-input {
           flex: 1;
           border: none;
           background: transparent;
           font-size: 12px;
-          color: #1d2129;
+          color: #1f1a1a;
           font-family: monospace;
           outline: none;
         }
 
         .copy-btn {
-          background: #000000;
+          background: #1f1a1a;
           color: #ffffff;
           border: none;
           border-radius: 16px;
@@ -249,7 +249,7 @@ onMounted(() => {
 
     .completed-btn {
       width: 100%;
-      background-color: #00b983;
+      background-color: #B83A2E;
       color: #ffffff;
       border: none;
       border-radius: 8px;
@@ -258,10 +258,10 @@ onMounted(() => {
       font-size: 16px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0, 185, 131, 0.3);
+      box-shadow: 0 4px 12px rgba(184, 58, 46, 0.3);
 
       &:active {
-        background-color: #00966b;
+        background-color: #962d23;
       }
     }
   }

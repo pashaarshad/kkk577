@@ -122,7 +122,7 @@ onMounted(() => {
 <style lang="less" scoped>
 .vip-container {
   min-height: 100vh;
-  background-color: #f5faf8;
+  background-color: #fff9f8;
   padding-bottom: 70px;
 
   .vip-header {
@@ -130,7 +130,7 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     padding: 14px 16px;
-    background-color: #00b983;
+    background-color: #B83A2E;
     color: #ffffff;
 
     .app-title {
@@ -140,7 +140,7 @@ onMounted(() => {
 
     .upgrade-log {
       font-size: 13px;
-      color: #e8fef5;
+      color: #ffe6e0;
       text-decoration: underline;
       cursor: pointer;
     }
@@ -154,10 +154,10 @@ onMounted(() => {
 
     .vip-card {
       background: #ffffff;
-      border: 1.5px solid #00b983;
+      border: 1.5px solid #E86C3F;
       border-radius: 12px;
       padding: 12px 14px;
-      box-shadow: 0 2px 6px rgba(0, 185, 131, 0.08);
+      box-shadow: 0 2px 6px rgba(184, 58, 46, 0.08);
 
       .card-top {
         display: flex;
@@ -175,7 +175,7 @@ onMounted(() => {
             height: 44px;
             object-fit: cover;
             border-radius: 8px;
-            border: 1px solid #e5f7f2;
+            border: 1px solid #fdece8;
           }
 
           .grade-info {
@@ -188,7 +188,7 @@ onMounted(() => {
             .grade-name {
               font-size: 15px;
               font-weight: 700;
-              color: #1d2129;
+              color: #1f1a1a;
               margin: 0;
 
               .fuel-icon {
@@ -199,7 +199,7 @@ onMounted(() => {
         }
 
         .join-btn {
-          background-color: #00b983;
+          background-color: #B83A2E;
           color: #ffffff;
           border: none;
           border-radius: 20px;
@@ -210,7 +210,7 @@ onMounted(() => {
           transition: background 0.2s;
 
           &:active {
-            background-color: #00966b;
+            background-color: #962d23;
           }
         }
       }
@@ -218,7 +218,7 @@ onMounted(() => {
       .card-body {
         display: flex;
         justify-content: space-between;
-        background: #f7fcf9;
+        background: #fff5f3;
         border-radius: 8px;
         padding: 8px 12px;
 
@@ -228,13 +228,13 @@ onMounted(() => {
 
           .info-label {
             font-size: 11px;
-            color: #4e5969;
+            color: #6b5c5a;
           }
 
           .info-val {
             font-size: 13px;
             font-weight: 700;
-            color: #1d2129;
+            color: #1f1a1a;
             margin-top: 2px;
           }
         }

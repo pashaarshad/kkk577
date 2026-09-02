@@ -1225,7 +1225,7 @@ label.think-radio {
     padding-right: 15px;
 }
 .layui-layout-admin .layui-header .layui-logo {
-    color: #1890ff !important;
+    color: #B83A2E !important;
     font-weight: 700;
     font-size: 18px;
     background-color: #ffffff !important;
@@ -1270,7 +1270,7 @@ label.think-radio {
 }
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item.layui-this a,
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
-    color: #1890ff !important;
+    color: #B83A2E !important;
     background: transparent !important;
 }
 .layui-layout-admin .layui-header .layui-nav-bar {
@@ -1298,13 +1298,13 @@ label.think-radio {
     user-select: none;
 }
 .admin-tab-item:hover {
-    color: #1890ff !important;
-    background: #e8f4ff;
+    color: #B83A2E !important;
+    background: #fdf5f3;
 }
 .admin-tab-item.active {
-    color: #1890ff !important;
+    color: #B83A2E !important;
     background: #ffffff !important;
-    border-color: #1890ff !important;
+    border-color: #B83A2E !important;
     border-bottom-color: #ffffff !important;
     font-weight: 600;
 }
@@ -1341,24 +1341,24 @@ label.think-radio {
 .layui-side .layui-nav-item a .layui-icon,
 .layui-side .layui-nav-child dd a,
 .layui-side .layui-nav-child dd a span {
-    color: #1d2129 !important;
+    color: #1f1a1a !important;
 }
 
-/* SIDEBAR HOVER STATE: Blue background with white text */
+/* SIDEBAR HOVER STATE: Brand primary fill with white text */
 .layui-side .layui-nav-tree .layui-nav-item a:hover,
 .layui-side .layui-nav-tree .layui-nav-item a:hover *,
 .layui-side .layui-nav-tree .layui-nav-item a:hover .nav-text,
 .layui-side .layui-nav-tree .layui-nav-item a:hover .layui-icon {
-    background-color: #1890ff !important;
+    background-color: #B83A2E !important;
     color: #ffffff !important;
 }
 
-/* SIDEBAR ACTIVE STATE: Blue background with white text */
+/* SIDEBAR ACTIVE STATE: Brand primary fill with white text */
 .layui-side .layui-nav-tree .layui-nav-item.layui-this a,
 .layui-side .layui-nav-tree .layui-nav-item.layui-this a *,
 .layui-side .layui-nav-tree .layui-nav-item.layui-this a .nav-text,
 .layui-side .layui-nav-tree .layui-nav-item.layui-this a .layui-icon {
-    background-color: #1890ff !important;
+    background-color: #B83A2E !important;
     color: #ffffff !important;
     font-weight: 600 !important;
 }
@@ -1386,9 +1386,9 @@ label.think-radio {
     font-size: 12px;
 }
 
-/* Colorful Operation Pills Matching Reference Site */
+/* Operation Pills - Brand Logo Color System */
 .btn-op-blue {
-    background-color: #1890ff !important;
+    background-color: #B83A2E !important;
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
@@ -1398,7 +1398,7 @@ label.think-radio {
     margin: 2px;
 }
 .btn-op-green {
-    background-color: #52c41a !important;
+    background-color: #E86C3F !important;
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
@@ -1408,7 +1408,7 @@ label.think-radio {
     margin: 2px;
 }
 .btn-op-red {
-    background-color: #ff4d4f !important;
+    background-color: #DC2626 !important;
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
@@ -1418,7 +1418,7 @@ label.think-radio {
     margin: 2px;
 }
 .btn-op-cyan {
-    background-color: #13c2c2 !important;
+    background-color: #D97706 !important;
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
@@ -1428,8 +1428,8 @@ label.think-radio {
     margin: 2px;
 }
 .btn-op-orange {
-    background-color: #fa8c16 !important;
-    color: #ffffff !important;
+    background-color: #EEA68D !important;
+    color: #1f1a1a !important;
     border: none;
     padding: 3px 10px;
     border-radius: 3px;
