@@ -139,7 +139,9 @@
             ref="videoPlayer"
             :src="data.intro_video || 'https://www.w3schools.com/html/mov_bbb.mp4'" 
             class="video-9-16-player"
-            controls
+            autoplay
+            muted
+            loop
             playsinline
             @loadedmetadata="onVideoLoaded"
           ></video>
@@ -217,7 +219,9 @@ const youtubeEmbedUrl = computed(() => {
   if (!url) return null
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/
   const match = url.match(regExp)
-  return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null
+  const videoId = (match && match[2].length === 11) ? match[2] : null
+  if (!videoId) return null
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&loop=1&playlist=${videoId}`
 })
 
 const isYoutubeVideo = computed(() => !!youtubeEmbedUrl.value)
