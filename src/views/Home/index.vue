@@ -642,10 +642,10 @@ const onWaClick = (e) => {
     margin: 14px 0 18px;
 
     .banner-swipe {
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      height: 145px;
+      box-shadow: 0 4px 14px rgba(184, 58, 46, 0.12);
+      height: 235px;
     }
 
     .banner {
