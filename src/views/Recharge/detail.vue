@@ -58,25 +58,12 @@ const fetchPayDetail = async () => {
     const res = await request.get('/index/pay/get_pay_list')
     if (res && res.code === 0 && res.data) {
       const match = res.data.find(item => String(item.id) === String(payId))
-      if (match) {
-        payInfo.value = match
-      } else {
-        payInfo.value = res.data[0] || getFallbackInfo()
-      }
-    } else {
-      payInfo.value = getFallbackInfo()
+      payInfo.value = match || res.data[0] || null
     }
   } catch (e) {
-    payInfo.value = getFallbackInfo()
+    console.error('Failed to load payment detail:', e)
   }
 }
-
-const getFallbackInfo = () => ({
-  id: payId || 1,
-  name: 'POLYGON-USDC',
-  usercode: '0x4f85459F610376Ee6Ad77216785582c55817d5bc',
-  ewm: ''
-})
 
 const generateQrUrl = (text) => {
   return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`

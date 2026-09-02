@@ -83,23 +83,9 @@ const fetchLevels = async () => {
     const res = await request.get('/index/pay/get_level_list')
     if (res && res.code === 0 && res.data) {
       levelList.value = res.data
-    } else {
-      // Fallback VIP levels
-      levelList.value = [
-        { id: 1, name: 'jiqirenbot', level: 0, order_num: 0, daily_profit: 0, num: 500 },
-        { id: 2, name: 'VIP2', level: 2, order_num: 3, daily_profit: 33, num: 30 },
-        { id: 3, name: 'STARLINK10MB', level: 3, order_num: 30, daily_profit: 3, num: 100 },
-        { id: 4, name: '初级任务', level: 4, order_num: 2, daily_profit: 4, num: 9 },
-        { id: 5, name: '高端商品任务', level: 5, order_num: 6, daily_profit: 66, num: 600 },
-        { id: 6, name: '大宗商品任务', level: 6, order_num: 10, daily_profit: 40, num: 1500 }
-      ]
     }
   } catch (e) {
-    levelList.value = [
-      { id: 1, name: 'jiqirenbot', level: 0, order_num: 0, daily_profit: 0, num: 500 },
-      { id: 2, name: 'VIP2', level: 2, order_num: 3, daily_profit: 33, num: 30 },
-      { id: 3, name: 'STARLINK10MB', level: 3, order_num: 30, daily_profit: 3, num: 100 }
-    ]
+    console.error('Failed to load VIP levels:', e)
   }
 }
 

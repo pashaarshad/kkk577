@@ -65,44 +65,11 @@ const getChannelIcon = (item) => {
 const fetchPayList = async () => {
   try {
     const res = await request.get('/index/pay/get_pay_list')
-    if (res && res.code === 0 && res.data && res.data.length > 0) {
+    if (res && res.code === 0 && res.data) {
       payList.value = res.data.sort((a, b) => (b.sort || 0) - (a.sort || 0))
-    } else {
-      // Default fallback channels matching media_1788351479051.png
-      payList.value = [
-        { id: 1, name: 'TRC20-USDT', sort: 13 },
-        { id: 2, name: 'TRX', sort: 12 },
-        { id: 3, name: 'BEP20-USDT', sort: 11 },
-        { id: 4, name: 'BNB', sort: 10 },
-        { id: 5, name: 'BEP20-USDC', sort: 9 },
-        { id: 6, name: 'POLYGON-USDT', sort: 8 },
-        { id: 7, name: 'ETH-USDT', sort: 7 },
-        { id: 8, name: 'POLYGON-USDC', sort: 6 },
-        { id: 9, name: 'ETH-USDC', sort: 5 },
-        { id: 10, name: 'ETH', sort: 4 },
-        { id: 11, name: 'POLYGON', sort: 3 },
-        { id: 12, name: 'ETH-PYUSD', sort: 2 },
-        { id: 13, name: 'PHP', sort: 1 },
-        { id: 14, name: 'UPI', sort: 0 }
-      ]
     }
   } catch (e) {
-    payList.value = [
-      { id: 1, name: 'TRC20-USDT', sort: 13 },
-      { id: 2, name: 'TRX', sort: 12 },
-      { id: 3, name: 'BEP20-USDT', sort: 11 },
-      { id: 4, name: 'BNB', sort: 10 },
-      { id: 5, name: 'BEP20-USDC', sort: 9 },
-      { id: 6, name: 'POLYGON-USDT', sort: 8 },
-      { id: 7, name: 'ETH-USDT', sort: 7 },
-      { id: 8, name: 'POLYGON-USDC', sort: 6 },
-      { id: 9, name: 'ETH-USDC', sort: 5 },
-      { id: 10, name: 'ETH', sort: 4 },
-      { id: 11, name: 'POLYGON', sort: 3 },
-      { id: 12, name: 'ETH-PYUSD', sort: 2 },
-      { id: 13, name: 'PHP', sort: 1 },
-      { id: 14, name: 'UPI', sort: 0 }
-    ]
+    console.error('Failed to fetch payment channels:', e)
   }
 }
 

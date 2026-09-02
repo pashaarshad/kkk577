@@ -53,10 +53,16 @@ class Request {
   }
 
   get(config) {
+    if (typeof config === 'string') {
+      return this.request({ url: config, method: 'get' })
+    }
     return this.request({ ...config, method: 'get' })
   }
 
   post(config) {
+    if (typeof config === 'string') {
+      return this.request({ url: config, method: 'post' })
+    }
     return this.request({ ...config, method: 'post' })
   }
 
