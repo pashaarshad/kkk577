@@ -127,7 +127,7 @@ class Pay extends Base
             sysoplog('添加支付方式', json_encode($data, JSON_UNESCAPED_UNICODE));
             $this->success('添加成功');
         }
-        $this->info = ['id' => 0, 'name' => '', 'min' => 0, 'max' => 0, 'ewm' => '', 'username' => '', 'usercode' => '', 'secret' => '', 'mch_id' => '', 'pay_commission' => 0];
+        $this->info = ['id' => 0, 'name' => '', 'name2' => '', 'username' => '', 'usercode' => '', 'ico' => '', 'min' => 0, 'max' => 0, 'ewm' => '', 'secret' => '', 'mch_id' => '', 'pay_commission' => 0];
         return $this->fetch('edit');
     }
 
