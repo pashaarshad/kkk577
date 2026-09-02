@@ -348,11 +348,14 @@ class Help extends Base
         $this->title = 'Homepage Video Management';
         if (request()->isPost()) {
             $video_url = input('post.video_url/s', '');
+            $video_ratio = input('post.video_ratio/s', 'auto');
             sysconf('home_video_url', $video_url);
-            sysoplog('Homepage Video Settings', "Video URL updated: {$video_url}");
+            sysconf('home_video_ratio', $video_ratio);
+            sysoplog('Homepage Video Settings', "Video URL updated: {$video_url}, Ratio: {$video_ratio}");
             $this->success('Video settings saved successfully!');
         }
         $this->video_url = sysconf('home_video_url');
+        $this->video_ratio = sysconf('home_video_ratio') ?: 'auto';
         return $this->fetch();
     }
 

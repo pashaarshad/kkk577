@@ -45,8 +45,12 @@ class Plugs extends Controller
     public function check()
     {
         $diff1 = explode(',', strtolower(input('exts', '')));
-        $diff2 = explode(',', strtolower(sysconf('storage_local_exts')));
+        $localExts = sysconf('storage_local_exts') ?: 'doc,gif,ico,jpg,mp3,mp4,png,rar,zip,mov,webm,mkv,avi,flv,wmv,ts,m4v,3gp,mpeg';
+        $diff2 = explode(',', strtolower($localExts));
         $exts = array_intersect($diff1, $diff2);
+        if (empty($exts) && !empty($diff1)) {
+            $exts = $diff1;
+        }
         $this->success('获取文件上传参数', [
             'exts' => join('|', $exts),
             'mime' => File::mine($exts),
@@ -69,7 +73,8 @@ class Plugs extends Controller
         if (!($file = $this->getUploadFile()) || empty($file)) {
             return json(['uploaded' => false, 'error' => ['message' => '文件上传异常，文件可能过大或未上传']]);
         }
-        if (!$file->checkExt(strtolower(sysconf('storage_local_exts')))) {
+        $allowed = strtolower(sysconf('storage_local_exts') ?: 'doc,gif,ico,jpg,mp3,mp4,png,rar,zip,mov,webm,mkv,avi,flv,wmv,ts,m4v,3gp,mpeg');
+        if (!$file->checkExt($allowed)) {
             return json(['uploaded' => false, 'error' => ['message' => '文件上传类型受限，请在后台配置']]);
         }
         

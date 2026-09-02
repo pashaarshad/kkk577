@@ -125,7 +125,7 @@
       <h3 class="section-title">{{ data.intro_title || 'Platform Introduction' }}</h3>
       <div class="intro-box">
         <p class="intro-desc">{{ data.intro_desc || 'Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.' }}</p>
-        <div class="intro-video-wrapper">
+        <div class="intro-video-wrapper" :style="computedVideoStyle">
           <iframe 
             v-if="isYoutubeVideo" 
             :src="youtubeEmbedUrl" 
@@ -141,6 +141,7 @@
             class="video-9-16-player"
             controls
             playsinline
+            @loadedmetadata="onVideoLoaded"
           ></video>
         </div>
       </div>
@@ -220,6 +221,35 @@ const youtubeEmbedUrl = computed(() => {
 })
 
 const isYoutubeVideo = computed(() => !!youtubeEmbedUrl.value)
+
+const detectedRatio = ref(null)
+
+const onVideoLoaded = (e) => {
+  const video = e.target
+  if (video && video.videoWidth && video.videoHeight) {
+    if (video.videoHeight > video.videoWidth) {
+      detectedRatio.value = '9-16'
+    } else {
+      detectedRatio.value = '16-9'
+    }
+  }
+}
+
+const computedVideoStyle = computed(() => {
+  const adminRatio = data.value?.intro_ratio || 'auto'
+  const activeRatio = (adminRatio === 'auto') ? (detectedRatio.value || '9-16') : adminRatio
+
+  if (activeRatio === '16-9') {
+    return {
+      aspectRatio: '16 / 9',
+      maxHeight: '280px'
+    }
+  }
+  return {
+    aspectRatio: '9 / 16',
+    maxHeight: '520px'
+  }
+})
 
 const token = sessionStorage.getItem('token')
 const loginShow = ref(false)

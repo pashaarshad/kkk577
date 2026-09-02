@@ -55,6 +55,7 @@ class Index extends Controller
         $data->intro_title = ($intro_msg && !empty($intro_msg['title'])) ? $intro_msg['title'] : 'Platform Introduction';
         $data->intro_desc = ($intro_msg && !empty($intro_msg['content'])) ? strip_tags($intro_msg['content']) : 'Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.';
         $data->intro_video = sysconf('home_video_url') ?: sysconf('intro_video_url') ?: 'https://www.w3schools.com/html/mov_bbb.mp4';
+        $data->intro_ratio = sysconf('home_video_ratio') ?: 'auto';
         $data->chats_link = sysconf('chats_link') ?: 'https://wa.me/553588236216?text=Hello';
         return json(['code'=> 0, 'data' => $data]);
 
