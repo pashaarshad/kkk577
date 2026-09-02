@@ -1,48 +1,101 @@
 {extend name='main'}
 
 {block name="button"}
-
-{if auth("add_users")}
-<button data-modal='{:url("add_users")}' data-title="添加会员" class='layui-btn layui-btn-sm layui-btn-primary'>添加会员</button>
-{/if}
-
+<div class="layui-btn-container">
+    {if auth("add_users")}
+    <button data-modal='{:url("add_users")}' data-title="添加会员" class='layui-btn layui-btn-sm btn-op-blue'>+ 添加</button>
+    {/if}
+    <button class='layui-btn layui-btn-sm btn-op-red' data-action='{:url("users/batch_op")}'>批量操作</button>
+    <button class='layui-btn layui-btn-sm btn-op-green' data-action='{:url("users/export_user")}'>导出会员</button>
+    <button class='layui-btn layui-btn-sm btn-op-orange' data-action='{:url("users/batch_ban")}'>批量封禁</button>
+    <button class='layui-btn layui-btn-sm btn-op-cyan' data-action='{:url("users/set_group")}'>设置分组</button>
+</div>
 {/block}
 
 {block name="content"}
 
+<style>
+.vip-filter-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+.vip-filter-tab {
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1px solid #fdece8;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1f1a1a;
+    cursor: pointer;
+    text-decoration: none;
+
+    &.active, &:hover {
+        background: #B83A2E;
+        color: #ffffff;
+        border-color: #B83A2E;
+    }
+}
+.user-card-table td {
+    vertical-align: top !important;
+    padding: 12px 10px !important;
+}
+.info-cell-box {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+}
+.info-cell-box .sub-link {
+    color: #00b25e;
+    font-weight: bold;
+    margin-left: 6px;
+}
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+.op-pill-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    max-width: 240px;
+}
+</style>
+
+<!-- VIP Level Tabs Bar -->
+<div class="vip-filter-tabs">
+    <a href="{:url('users/index')}?level=-1" class="vip-filter-tab {if $level==-1}active{/if}">全部 ({$vip_counts.all|default=0})</a>
+    <a href="{:url('users/index')}?level=0" class="vip-filter-tab {if $level==0}active{/if}">VIP0 ({$vip_counts.0|default=0})</a>
+    <a href="{:url('users/index')}?level=1" class="vip-filter-tab {if $level==1}active{/if}">VIP1 ({$vip_counts.1|default=0})</a>
+    <a href="{:url('users/index')}?level=2" class="vip-filter-tab {if $level==2}active{/if}">VIP2 ({$vip_counts.2|default=0})</a>
+    <a href="{:url('users/index')}?level=3" class="vip-filter-tab {if $level==3}active{/if}">VIP3 ({$vip_counts.3|default=0})</a>
+    <a href="{:url('users/index')}?level=4" class="vip-filter-tab {if $level==4}active{/if}">VIP4 ({$vip_counts.4|default=0})</a>
+    <a href="{:url('users/index')}?level=5" class="vip-filter-tab {if $level==5}active{/if}">VIP5 ({$vip_counts.5|default=0})</a>
+    <a href="{:url('users/index')}?level=20" class="vip-filter-tab {if $level==20}active{/if}">VIP20 ({$vip_counts.20|default=0})</a>
+</div>
+
 <div class="think-box-shadow">
     {include file='users/index_search'}
-    <table class="layui-table margin-top-15" id="userTable" lay-filter="tab" lay-skin="line">
+    <table class="layui-table margin-top-15 user-card-table" id="userTable" lay-filter="tab" lay-skin="line">
         {notempty name='list'}
         <thead>
         <tr>
-            <th lay-data="{type:'checkbox',width:40,fixed:'left'}" class='list-table-check-td think-checkbox'>
+            <th class='list-table-check-td think-checkbox' style="width: 30px;">
                 <label><input data-auto-none data-check-target='.list-check-box' type='checkbox'></label>
             </th>
-            <th lay-data="{field:'id',width:80,fixed:'left'}" class='text-left nowrap'>UID</th>
-            <th lay-data="{field:'addtime',width:170}" class='text-left nowrap'>注册时间</th>
-            <th lay-data="{field:'agent',width:90}" class='text-left nowrap'>一级代理</th>
-            <th lay-data="{field:'service',width:120}" class='text-left nowrap'>二级代理</th>
-            <th lay-data="{field:'tel'}" class='text-left nowrap'>账号</th>
-            <th lay-data="{field:'username',width:140}" class='text-left nowrap'>用户名</th>
-            <th lay-data="{field:'level',width:80}" class='text-left nowrap'>等级</th>
-            <th lay-data="{field:'group_id',width:150}" class='text-left nowrap'>规则组</th>
-            <th lay-data="{field:'balance'}" class='text-left nowrap'>账户余额</th>
-            <th lay-data="{field:'credit_score',width:90}" class='text-left nowrap'>信用分</th>
-            <th lay-data="{field:'risk_score',width:90}" class='text-left nowrap'>风险分</th>
-            <th lay-data="{field:'com'}" class='text-left nowrap'>佣金</th>
-            <th lay-data="{field:'tj_com'}" class='text-left nowrap'>下级佣金</th>
-            <th lay-data="{field:'all_recharge_num'}" class='text-left nowrap'>累计充值金额</th>
-            <th lay-data="{field:'all_recharge_count'}" class='text-left nowrap'>累计充值次数</th>
-            <th lay-data="{field:'all_deposit_num'}" class='text-left nowrap'>累计提现金额</th>
-            <th lay-data="{field:'all_deposit_count'}" class='text-left nowrap'>累计提现次数</th>
-            <th lay-data="{field:'freeze_balance'}" class='text-left nowrap'>冻结金额</th>
-<!--            <th lay-data="{field:'lixibao_balance'}" class='text-left nowrap'>利息宝金额</th>-->
-            <th lay-data="{field:'parent_name'}" class='text-left nowrap'>上级用户</th>
-            <th lay-data="{field:'invite_code'}" class='text-left nowrap'>邀请码</th>
-            <th lay-data="{field:'ip'}" class='text-left nowrap'>最后登录ip</th>
-            <th lay-data="{field:'is_jia',width:80}" class='text-left nowrap'>状态</th>
-            <th lay-data="{field:'edit',width:250,fixed: 'right'}" class='text-left nowrap'>操作</th>
+            <th class='text-left nowrap' style="width: 180px;">用户信息</th>
+            <th class='text-left nowrap' style="width: 160px;">状态设置</th>
+            <th class='text-left nowrap' style="width: 140px;">余额</th>
+            <th class='text-left nowrap' style="width: 180px;">充提/钱包</th>
+            <th class='text-left nowrap' style="width: 220px;">钱包信息2</th>
+            <th class='text-left nowrap'>操作</th>
         </tr>
         </thead>
         {/notempty}
@@ -52,146 +105,123 @@
             <td class='list-table-check-td think-checkbox'>
                 <label><input class="list-check-box" value='{$vo.id}' type='checkbox'></label>
             </td>
-            <td class='text-left nowrap'>{$vo.id}</td>
-            <td class='text-left nowrap'>{$vo.addtime|format_datetime}</td>
-            <td class='text-left nowrap'>{$vo.agent}</td>
-            <td class='text-left nowrap'>{$vo.service}</td>
-            <td class='text-left nowrap'>{$vo.tel}</td>
-            <td class='text-left nowrap'>{$vo.username}{if $vo.remark}<span style="color:#f00">（{$vo.remark}）</span>{/if}</td>
-            <td class='text-left nowrap'>VIP{$vo.level}</td>
-            <td class='text-left nowrap'>{if $vo.group_id}{$groupAllList[$vo.group_id]}{else}-{/if}</td>
-            <td class='text-left nowrap'>{$vo.balance}</td>
-            <td class='text-left nowrap'>{$vo.credit_score|default=0}</td>
-            <td class='text-left nowrap'>{$vo.risk_score|default=0}</td>
-            <td class='text-left nowrap'>{$vo.com}</td>
-            <td class='text-left nowrap'>{$vo.tj_com}</td>
-            <td class='text-left nowrap'>{$vo.all_recharge_num}</td>
-            <td class='text-left nowrap'>{$vo.all_recharge_count}</td>
-            <td class='text-left nowrap'>{$vo.all_deposit_num}</td>
-            <td class='text-left nowrap'>{$vo.all_deposit_count}</td>
-            <td class='text-left nowrap'>{$vo.freeze_balance}</td>
-<!--            <td class='text-left nowrap'>{$vo.lixibao_balance}</td>-->
-            <td class='text-left nowrap'>{$vo.parent_name}</td>
-            <td class='text-left nowrap'>{$vo.invite_code}</td>
-            <td class='text-left nowrap'>{$vo.ip}</td>
             <td class='text-left nowrap'>
-                {if $vo.is_jia>0}
-                <a class="layui-btn layui-btn-danger layui-btn-xs">假人</a>
-                {else}
-                <a class="layui-btn layui-btn-normal layui-btn-xs">真人</a>
-                {/if}
+                <div class="info-cell-box">
+                    <div><strong>ID:{$vo.id}</strong> <a href="{:url('users/index')}?parent_id={$vo.id}" class="sub-link">查看下级</a></div>
+                    <div>账号: {$vo.username|default=$vo.tel}</div>
+                    <div>等级: VIP{$vo.level} ({if $vo.status==1}在线{else}离线{/if})</div>
+                    <div>语言: - | <span style="color:#d9363e;">禁提({$vo.id})</span></div>
+                    <div>分组: {if $vo.group_id}{$groupAllList[$vo.group_id]|default='-'}{else}-{/if}</div>
+                </div>
             </td>
             <td class='text-left nowrap'>
-                <a data-csrf="{:systoken('do_user_orders')}" class="layui-btn layui-btn-xs layui-btn-danger"
-                   data-confirm="确定将该用户所有待付款订单强制付款吗?"
-                   data-action="{:url('do_user_orders')}" data-value="id#{$vo.id}" style='background:red;'>强制付款</a>
-                {if auth("edit_users")}
-                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-danger" data-title="编辑用户信息" style='background:red;'
-                   data-modal='{:url("users/edit_users")}?id={$vo.id}'>编辑</a>
-                {/if}
-
-                {if auth("edit_level")}
-                <a data-dbclick class="layui-btn layui-btn-xs" data-title="编辑等级"
-                   data-modal='{:url("users/edit_level")}?id={$vo.id}'>等级</a>
-                {/if}
-                {if auth("edit_money")}
-                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-danger" data-title="编辑余额信息"
-                   style='background:red;'
-                   data-modal='{:url("users/edit_money")}?id={$vo.id}'>余额</a>
-                {/if}
-                <a data-dbclick class="layui-btn layui-btn-xs" data-title="用户备注"
-                   data-modal='{:url("users/edit_users_remark")}?id={$vo.id}'>备注</a>
-                {if auth("edit_users_ankou")}
-                <!--<a data-dbclick class="layui-btn layui-btn-xs layui-btn-danger" data-title="暗扣设置"
-                   data-modal='{:url("users/edit_users_ankou")}?id={$vo.id}'>暗扣设置</a>-->
-                {/if}
-                {if auth("inyectar/index")}
-                <!--<a data-dbclick class="layui-btn layui-btn-xs layui-btn-danger" data-title="打针计划"-->
-                <!--   data-open='{:url("inyectar/index")}?uid={$vo.id}'>打针</a>-->
-                {/if}
-                {if auth("usetting/index")}
-                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-normal" data-title="做单设置"
-                   data-open='{:url("usetting/index")}?uid={$vo.id}'>做单</a>
-                {/if}
-                {if auth("edit_users_bk")}
-                <a data-dbclick class="layui-btn layui-btn-xs" data-title="银行卡信息"
-                   data-modal='{:url("users/edit_users_bk")}?id={$vo.id}'>银行卡信息</a>
-                {/if}
-                <!--{if auth("edit_users_address")}
-                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-danger" data-title="收货地址信息"
-                   data-modal='{:url("users/edit_users_address")}?id={$vo.id}'>地址信息</a>
-                {/if}-->
-                {if auth("edit_users_ewm")}
-                <!--<a class="layui-btn layui-btn-xs layui-btn"
-                   data-action="{:url('edit_users_ewm',['status'=>2,'id'=>$vo.id])}"
-                   data-value="id#{$vo.id};status#{$vo.invite_code}" style='background:red;'>刷新二维码</a>-->
-                {/if}
-                {if auth("tuandui")}
-                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-danger" data-title="查看团队" data-reload="true"
-                   data-open='{:url("users/tuandui")}?id={$vo.id}'>查看团队</a>
-                <a data-dbclick class="layui-btn layui-btn-xs layui-btn-normal" data-title="查看账变" data-reload="true"
-                   data-open='{:url("users/caiwu")}?id={$vo.id}'>账变</a>
-                {/if}
-                {if ($vo.status == 1) and auth("edit_users_status")}
-                <a class="layui-btn layui-btn-xs layui-btn-warm"
-                   data-action="{:url('edit_users_status',['status'=>2,'id'=>$vo.id])}"
-                   data-value="id#{$vo.id};status#2" style='background:red;'>禁用</a>
-                {elseif ($vo.status == 2) and auth("edit_users_status") /}
-                <a class="layui-btn layui-btn-xs layui-btn-warm"
-                   data-action="{:url('edit_users_status',['status'=>1,'id'=>$vo.id])}"
-                   data-value="id#{$vo.id};status#1" style='background:green;'>启用</a>
-                {/if}
-                {if auth("delete_user")}
-                <a class="layui-btn layui-btn-xs layui-btn" onClick="del_user({$vo.id})" style='background:red;'>删除</a>
-                {/if}
-                {if auth("edit_users_status")}
-                {if ($vo.is_jia == 1)}
-                <a class="layui-btn layui-btn-xs layui-btn-warm"
-                   data-action="{:url('edit_users_status2',['status'=>-1,'id'=>$vo.id])}"
-                   data-value="id#{$vo.id};status#-1" style='background:red;'>设为真人</a>
-                {else/}
-                <a class="layui-btn layui-btn-xs layui-btn-warm"
-                   data-action="{:url('edit_users_status2',['status'=>1,'id'=>$vo.id])}"
-                   data-value="id#{$vo.id};status#1" style='background:green;'>设为假人</a>
-                {/if}
-                {/if}
+                <div class="toggle-row">
+                    <span>用户状态:</span>
+                    <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" {if $vo.status==1}checked{/if} 
+                           lay-filter="status-switch" data-id="{$vo.id}" data-action="{:url('users/edit_status')}">
+                </div>
+                <div class="toggle-row">
+                    <span>提现状态:</span>
+                    <input type="checkbox" lay-skin="switch" lay-text="开启|关闭" {if $vo.deposit_status==1}checked{/if} 
+                           lay-filter="deposit-switch" data-id="{$vo.id}" data-action="{:url('users/edit_deposit_status')}">
+                </div>
+                <div class="toggle-row">
+                    <span>任务开关:</span>
+                    <input type="checkbox" lay-skin="switch" lay-text="开启|关闭" {if $vo.deal_status==1}checked{/if} 
+                           lay-filter="deal-switch" data-id="{$vo.id}" data-action="{:url('users/edit_deal_status')}">
+                </div>
+                <div class="toggle-row">
+                    <span>升级提现:</span>
+                    <input type="checkbox" lay-skin="switch" lay-text="开启|关闭" {if $vo.up_status==1}checked{/if} 
+                           lay-filter="up-switch" data-id="{$vo.id}" data-action="{:url('users/edit_up_status')}">
+                </div>
+                <div class="toggle-row">
+                    <span>邀请码:</span>
+                    <input type="checkbox" lay-skin="switch" lay-text="启用|禁用" {if $vo.show_invite==1}checked{/if} 
+                           lay-filter="invite-switch" data-id="{$vo.id}" data-action="{:url('users/edit_show_invite')}">
+                </div>
+            </td>
+            <td class='text-left nowrap'>
+                <div class="info-cell-box">
+                    <div>基础: <strong>{$vo.balance}</strong></div>
+                    <div>佣金: {$vo.com|default='0.000000'}</div>
+                    <div>体验: 0.000000</div>
+                    <div>能量: 0.00</div>
+                </div>
+            </td>
+            <td class='text-left nowrap'>
+                <div class="info-cell-box">
+                    <div>充值: {$vo.all_recharge_num|default='0.000000'}</div>
+                    <div>提现: {$vo.all_deposit_num|default='0.000000'}</div>
+                    <div>trx/usdt: 0/0</div>
+                    <div>bnb/usdt/usdc: 0/0</div>
+                </div>
+            </td>
+            <td class='text-left nowrap'>
+                <div class="info-cell-box" style="font-size: 11px; color: #86909c;">
+                    <div>eth: 0.000000</div>
+                    <div>eth-usdt/usdc: 0/0</div>
+                    <div>eth-pyusd: 0</div>
+                    <div>polygon: 0.000000</div>
+                    <div>pol-usdt/usdc: 0/0</div>
+                </div>
+            </td>
+            <td class='text-left nowrap'>
+                <div class="op-pill-grid">
+                    <!-- 详情 (Blue) -->
+                    <a data-modal='{:url("users/edit_users")}?id={$vo.id}' data-title="详情" class="btn-op-blue">详情</a>
+                    <!-- 补单 (Green) -->
+                    <a data-modal='{:url("users/edit_money")}?id={$vo.id}' data-title="补单" class="btn-op-green">补单</a>
+                    <!-- 查钱 (Blue) -->
+                    <a data-modal='{:url("deal/user_recharge")}?tel={$vo.tel}' data-title="查钱" class="btn-op-blue">查钱</a>
+                    <!-- 改钱 (Red) -->
+                    <a data-modal='{:url("users/edit_money")}?id={$vo.id}' data-title="改钱" class="btn-op-red">改钱</a>
+                    <!-- 下级充值 (Blue) -->
+                    <a data-modal='{:url("deal/user_recharge")}?parent_id={$vo.id}' data-title="下级充值" class="btn-op-blue">下级充值</a>
+                    <!-- 下线 (Green) -->
+                    <a href="{:url('users/index')}?parent_id={$vo.id}" class="btn-op-green">下线</a>
+                    <!-- 模拟登录 (Red) -->
+                    <a href="{:url('users/login_user')}?id={$vo.id}" target="_blank" class="btn-op-red">模拟登录</a>
+                </div>
             </td>
         </tr>
         {/foreach}
         </tbody>
     </table>
-    <script>
-        function del_user(id) {
-            layer.confirm("确认要删除吗，删除后不能恢复", {title: "删除确认"}, function (index) {
-                $.ajax({
-                    type: 'POST',
-                    url: "{:url('delete_user')}",
-                    data: {
-                        'id': id,
-                        '_csrf_': "{:systoken('delete_user')}"
-                    },
-                    success: function (res) {
-                        layer.msg(res.info, {time: 2500});
-                        location.reload();
-                    }
-                });
-            }, function () {
-            });
-        }
-    </script>
-    <script>
-        var table = layui.table;
-        //转换静态表格
-        var limit = Number('{$Think.get.limit}');
-        if (limit == 0) limit = 20;
-        table.init('tab', {
-            cellMinWidth: 120,
-            skin: 'line,row',
-            size: 'lg',
-            limit: limit
-        });
-    </script>
     {empty name='list'}<span class="notdata">没有记录哦</span>{else}{$pagehtml|raw|default=''}{/empty}
-
 </div>
+
+<script>
+layui.use(['form'], function () {
+    var form = layui.form;
+    form.render('checkbox');
+
+    // Switch Listeners
+    form.on('switch(status-switch)', function (data) {
+        var id = $(this).data('id');
+        var url = $(this).data('action');
+        $.post(url, {id: id, status: data.elem.checked ? 1 : 0});
+    });
+    form.on('switch(deposit-switch)', function (data) {
+        var id = $(this).data('id');
+        var url = $(this).data('action');
+        $.post(url, {id: id, status: data.elem.checked ? 1 : 0});
+    });
+    form.on('switch(deal-switch)', function (data) {
+        var id = $(this).data('id');
+        var url = $(this).data('action');
+        $.post(url, {id: id, status: data.elem.checked ? 1 : 0});
+    });
+    form.on('switch(up-switch)', function (data) {
+        var id = $(this).data('id');
+        var url = $(this).data('action');
+        $.post(url, {id: id, status: data.elem.checked ? 1 : 0});
+    });
+    form.on('switch(invite-switch)', function (data) {
+        var id = $(this).data('id');
+        var url = $(this).data('action');
+        $.post(url, {id: id, status: data.elem.checked ? 1 : 0});
+    });
+});
+</script>
 {/block}

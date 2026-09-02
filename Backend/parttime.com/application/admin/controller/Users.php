@@ -138,10 +138,21 @@ class Users extends Base
         if ($this->agent_service_id) {
             $query->where('u.agent_service_id', $this->agent_service_id);
         }
+        $this->vip_counts = [
+            'all' => Db::name('xy_users')->count(),
+            '0' => Db::name('xy_users')->where('level', 0)->count(),
+            '1' => Db::name('xy_users')->where('level', 1)->count(),
+            '2' => Db::name('xy_users')->where('level', 2)->count(),
+            '3' => Db::name('xy_users')->where('level', 3)->count(),
+            '4' => Db::name('xy_users')->where('level', 4)->count(),
+            '5' => Db::name('xy_users')->where('level', 5)->count(),
+            '20' => Db::name('xy_users')->where('level', 20)->count(),
+        ];
+
         $query->field('u.id,u.level,u.agent_id,u.tel,u.username,u.group_id,u.remark,
         u.lixibao_balance,u.id_status,u.ip,u.is_jia,u.addtime,u.invite_code,
         u.all_recharge_num,u.all_deposit_num,u.all_recharge_count,u.all_deposit_count,
-        u.freeze_balance,u.status,u.balance,u.credit_score,u.risk_score,u1.username as parent_name')
+        u.freeze_balance,u.status,u.deposit_status,u.deal_status,u.up_status,u.show_invite,u.balance,u.credit_score,u.risk_score,u1.username as parent_name')
             ->leftJoin('xy_users u1', 'u.parent_id=u1.id')
             ->where($where)
             ->order($order)
@@ -1380,5 +1391,63 @@ class Users extends Base
         exit;
     }
 
+    /**
+     * 模拟登录用户前台
+     */
+    public function login_user()
+    {
+        $id = input('id/d', 0);
+        $user = Db::name('xy_users')->where('id', $id)->find();
+        if (!$user) return $this->error('用户不存在');
+        
+        $token = md5($user['id'] . time() . rand(1000, 9999));
+        Db::name('xy_users')->where('id', $id)->update(['token' => $token]);
+        
+        $url = request()->domain() . '/#/home?token=' . $token;
+        return redirect($url);
+    }
+
+    /**
+     * 快捷修改状态
+     */
+    public function edit_status()
+    {
+        $id = input('id/d', 0);
+        $status = input('status/d', 0);
+        Db::name('xy_users')->where('id', $id)->update(['status' => $status]);
+        return json(['code' => 1, 'info' => '状态修改成功']);
+    }
+
+    public function edit_deposit_status()
+    {
+        $id = input('id/d', 0);
+        $status = input('status/d', 0);
+        Db::name('xy_users')->where('id', $id)->update(['deposit_status' => $status]);
+        return json(['code' => 1, 'info' => '提现状态修改成功']);
+    }
+
+    public function edit_deal_status()
+    {
+        $id = input('id/d', 0);
+        $status = input('status/d', 0);
+        Db::name('xy_users')->where('id', $id)->update(['deal_status' => $status]);
+        return json(['code' => 1, 'info' => '任务开关修改成功']);
+    }
+
+    public function edit_up_status()
+    {
+        $id = input('id/d', 0);
+        $status = input('status/d', 0);
+        Db::name('xy_users')->where('id', $id)->update(['up_status' => $status]);
+        return json(['code' => 1, 'info' => '升级提现修改成功']);
+    }
+
+    public function edit_show_invite()
+    {
+        $id = input('id/d', 0);
+        $status = input('status/d', 0);
+        Db::name('xy_users')->where('id', $id)->update(['show_invite' => $status]);
+        return json(['code' => 1, 'info' => '邀请码状态修改成功']);
+    }
 
 }
