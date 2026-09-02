@@ -2,28 +2,44 @@
 <template>
   <van-sticky>
     <div class='navbar'>
+      <!-- Home Route: Clean White Header with Logo, Subtitle, US Flag & Bell -->
       <div v-if='$route.path === "/home"' class='navbar-left'>
-        <img :src='iconImg' alt='' class='navbar-img'>
-        <div style='margin-left: 8px; font-weight: bold; font-size: 15px;'>环字出海任务商城演示站</div>
+        <img src='https://cdn-icons-png.flaticon.com/512/3081/3081559.png' alt='Logo' class='navbar-img'>
+        <div class='brand-text-box'>
+          <span class='brand-title'>环宇出海任务商城演示站</span>
+          <span class='brand-sub'>Global Business • Global Success</span>
+        </div>
       </div>
-      <div v-else-if='$route.path === "/order" || $route.path === "/mine" ' class='navbar-left'
-           @click='$router.go(-1)'>
-        <img :src='iconImg' alt='' class='navbar-img'>
-        <div style='margin-left: 15px;'>{{ $t('main.' + $route.name) }}</div>
+
+      <!-- Other Main Routes (Order, Mine) -->
+      <div v-else-if='$route.path === "/order" || $route.path === "/mine"' class='navbar-left' @click='$router.go(-1)'>
+        <img src='https://cdn-icons-png.flaticon.com/512/3081/3081559.png' alt='Logo' class='navbar-img'>
+        <div class='page-title-text'>{{ $t('main.' + $route.name) }}</div>
       </div>
+
+      <!-- Inner Sub-Pages (With Back Arrow) -->
       <div v-else class='navbar-left' @click='$router.go(-1)'>
-        <van-icon :name='arrowLeft' size='22' class='white-arrow' />
-        <div style='margin-left: 10px; color: #ffffff; font-weight: 600; font-size: 16px;'>{{ $t('main.' + $route.name) }}</div>
+        <van-icon name='arrow-left' size='20' color='#B83A2E' class='back-arrow' />
+        <div class='page-title-text'>{{ $t('main.' + $route.name) }}</div>
       </div>
-      <div class='navber-right'>
+
+      <!-- Right Header Actions (US Flag + Bell Icon) -->
+      <div class='navbar-right'>
         <slot name='right'>
-          <img :src='langImg' alt='' class='langImg' @click='showBottom = true'>
-		   <!-- badge='1' -->
-          <van-icon class='clockImg' name='bell' size='24px' @click="$router.push('/message')" />
+          <span class="flag-icon" @click="showBottom = true">🇺🇸</span>
+          <div class="bell-box" @click="$router.push('/message')">
+            <svg viewBox="0 0 24 24" class="bell-svg">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="red-badge"></span>
+          </div>
         </slot>
       </div>
     </div>
   </van-sticky>
+
+  <!-- Language Selection Modal -->
   <van-popup
     v-model:show='showBottom'
     :style="{ height: '42%' }"
@@ -31,13 +47,13 @@
     position='bottom'
   >
     <div class='nation'>
-      <div v-for='(item, index) in nationList' class='nation-list' @click='clickNation(item, index)'>
+      <div v-for='(item, index) in nationList' :key="index" class='nation-list' @click='clickNation(item, index)'>
         <div class='nation-left'>
           <img :src='item.icon' alt='' class=''>
-          <span :style="nationIndex === index ? 'color: var(--main-color);' : ''">{{ item.title }}</span>
+          <span :style="nationIndex === index ? 'color: #B83A2E;' : ''">{{ item.title }}</span>
         </div>
         <div v-if='nationIndex === index'>
-          <van-icon color='var(--main-color)' name='success' size='26' />
+          <van-icon color='#B83A2E' name='success' size='26' />
         </div>
       </div>
     </div>
@@ -46,42 +62,29 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n'
-import iconImg from '../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg'
 import { ref } from 'vue'
-import arrowLeft from '@/assets/img/main/arrow-left.svg'
 import { getAssetURL } from '@/utils/get_assets_img.js'
 
-
 const { t, locale } = useI18n()
-
 const langImg = ref(getAssetURL('main/en-US.png'))
-
-const nationIndex = ref(2)
+const nationIndex = ref(0)
 
 const nationList = [
-  // {
-  //   title: 'Guatemala',
-  //   lang: 'es_GT',
-  //   icon: getAssetURL('main/es-GT.png')
-  // },
   {
-    title: 'English',
+    title: 'English (US)',
     lang: 'en_US',
     icon: getAssetURL('main/en-US.png')
-  },
-  // {
-  //   title: '简体中文',
-  //   lang: 'zh_CN',
-  //   icon: getAssetURL('main/zh-CN.png')
-  // }
+  }
 ]
 
 if (localStorage.getItem('lang')) {
   const index = nationList.findIndex(item => item.lang === localStorage.getItem('lang'))
-  langImg.value = nationList[index].icon
-  nationIndex.value = index
+  if (index !== -1) {
+    langImg.value = nationList[index].icon
+    nationIndex.value = index
+  }
 } else {
-	localStorage.setItem('lang', 'en_US')
+  localStorage.setItem('lang', 'en_US')
 }
 
 const showBottom = ref(false)
@@ -93,111 +96,145 @@ const clickNation = (item, index) => {
   changeLanguage(item.lang)
 }
 
-//切换语言
 const changeLanguage = (lang) => {
   locale.value = lang
   localStorage.setItem('lang', lang)
   location.reload()
 }
-
-function setRem() {
-  const scale = document.documentElement.clientWidth
-  if (scale > 750) {
-    document.documentElement.style.fontSize = '41.4px'
-  }
-}
-
-// 初始化
-setRem()
-
-window.onresize = function() {
-  setRem()
-}
-
 </script>
 
 <style lang='less' scoped>
 .navbar {
   position: sticky;
-  z-index: 9;
+  z-index: 99;
   top: 0;
   width: 100%;
-  height: 50px;
-  background-color: #222222;
+  height: 52px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #fdece8;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 14px;
   box-sizing: border-box;
-
-  .navber-right {
-    display: flex;
-    align-items: center;
-  }
-
-  .navbar-img {
-    width: 32px;
-    height: 32px;
-  }
-
-  .langImg {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-  }
-
-  .clockImg {
-    margin-left: 10px;
-  }
+  box-shadow: 0 2px 8px rgba(184, 58, 46, 0.05);
 
   .navbar-left {
     display: flex;
     align-items: center;
-    font-size: 17px;
+    gap: 10px;
 
+    .navbar-img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    .brand-text-box {
+      display: flex;
+      flex-direction: column;
+
+      .brand-title {
+        font-size: 14px;
+        font-weight: 800;
+        color: #B83A2E;
+        line-height: 1.2;
+      }
+
+      .brand-sub {
+        font-size: 9.5px;
+        color: #86909c;
+        font-weight: 500;
+      }
+    }
+
+    .page-title-text {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1f1a1a;
+      margin-left: 4px;
+    }
+
+    .back-arrow {
+      cursor: pointer;
+    }
+  }
+
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .flag-icon {
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .bell-box {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      background: #fff9f8;
+      border: 1px solid #fdece8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      .bell-svg {
+        width: 18px;
+        height: 18px;
+        stroke: #1f1a1a;
+        fill: none;
+        stroke-width: 2;
+      }
+
+      .red-badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 6px;
+        height: 6px;
+        background-color: #ff3b30;
+        border-radius: 50%;
+      }
+    }
   }
 }
 
 .nation {
   width: 380px;
-  margin: 60px auto;
+  margin: 40px auto;
 
   .nation-list {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 58px;
-    padding: 16px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 10px 0 rgba(0, 0, 0, .3);
-    background-color: var(--bg-color);
-    border: 1px solid var(--second-color);
-    overflow: hidden;
+    height: 54px;
+    padding: 14px;
+    margin-bottom: 12px;
+    background-color: #ffffff;
+    border: 1px solid #fdece8;
     border-radius: 10px;
-    box-sizing: border-box;
 
     .nation-left {
       display: flex;
       align-items: center;
-      font-size: 13.2px;
-    }
+      font-size: 14px;
 
-    img {
-      width: 25px;
-      height: 25px;
-      object-fit: contain;
-    }
+      img {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+      }
 
-    span {
-      margin-left: 10px;
+      span {
+        margin-left: 10px;
+        font-weight: 600;
+      }
     }
-  }
-
-  :deep(.van-badge) {
-    font-size: 8px !important;
   }
 }
-
-
 </style>

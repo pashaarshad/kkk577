@@ -1,24 +1,6 @@
 <!-- Home  -->
 <template>
   <div class="Home">
-    <!-- TOP BRAND HEADER WITH LOGO, TITLE, US FLAG & BELL -->
-    <header class="top-brand-header">
-      <div class="header-brand-left">
-        <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" alt="Logo" class="brand-logo-img">
-        <div class="brand-title-box">
-          <h2 class="brand-name">环宇出海任务商城演示站</h2>
-          <span class="brand-subtitle">Global Business • Global Success</span>
-        </div>
-      </div>
-      <div class="header-right-tools">
-        <span class="flag-icon">🇺🇸</span>
-        <div class="bell-icon-box">
-          <svg viewBox="0 0 24 24" class="bell-svg"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-          <span class="red-dot"></span>
-        </div>
-      </div>
-    </header>
-
     <!-- USER WELCOME & VIP MEMBER BADGE BANNER -->
     <section class="welcome-banner" v-if="loginShow">
       <div class="user-info-left">
