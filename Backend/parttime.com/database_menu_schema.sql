@@ -20,6 +20,7 @@ INSERT INTO `system_menu` (`id`, `pid`, `title`, `icon`, `url`, `sort`, `status`
 (17, 1001, 'VIP Configuration', 'layui-icon layui-icon-diamond', '/admin/users/level', 8, 1),
 (18, 1001, 'Product Settings', 'layui-icon layui-icon-goods', '/admin/deal/goods_list', 9, 1),
 (19, 1001, 'Language Settings', 'layui-icon layui-icon-engine', '/admin/config/info', 10, 1),
+(103, 1001, 'Homepage Video Management', 'layui-icon layui-icon-video', '/admin/help/video', 11, 1),
 
 (20, 1002, 'Member List', 'layui-icon layui-icon-group', '/admin/users/index', 1, 1),
 (21, 1002, 'Group Settings', 'layui-icon layui-icon-tree', '/admin/group/index', 2, 1),

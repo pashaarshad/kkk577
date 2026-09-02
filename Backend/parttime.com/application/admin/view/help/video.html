@@ -1,0 +1,37 @@
+{extend name='admin@main'}
+
+{block name="content"}
+<div class="layui-card think-box-shadow">
+    <div class="layui-card-header layui-bg-gray font-w700">
+        Homepage Video Management (Upload, Edit, Replace, or Delete Video)
+    </div>
+    <div class="layui-card-body padding-30">
+        <form onsubmit="return false;" data-auto="true" action="{:url('video')}" method="post" class='layui-form'>
+            <div class="layui-form-item layui-row layui-col-space15">
+                <label class="layui-col-xs12 relative">
+                    <span class="color-green font-w700">Video File URL or Click Upload Button</span>
+                    <div class="margin-top-10">
+                        <input name="video_url" class="layui-input" placeholder="Enter video URL or upload file (e.g. /upload/video.mp4)" value="{$video_url|default=''}">
+                    </div>
+                    <p class="help-block margin-top-5">Enter video file URL or upload MP4 / WebM video for homepage platform introduction</p>
+                </label>
+            </div>
+
+            <!-- Active Video Preview -->
+            {notempty name="video_url"}
+            <div class="layui-form-item margin-top-20">
+                <span class="color-blue font-w700 block margin-bottom-10">Active Homepage Video Preview:</span>
+                <video controls width="520" style="border-radius:8px; border:1px solid #e8e8e8; background:#000;" src="{$video_url}"></video>
+            </div>
+            {/notempty}
+
+            <div class="layui-form-item padding-top-20">
+                <button class="layui-btn btn-op-blue" type="submit"><i class="layui-icon">&#xe681;</i> Save Video Settings</button>
+                {notempty name="video_url"}
+                <a data-confirm="Are you sure you want to delete/remove the homepage video?" data-load="{:url('del_video')}" class="layui-btn btn-op-red"><i class="layui-icon">&#xe640;</i> Delete Video</a>
+                {/notempty}
+            </div>
+        </form>
+    </div>
+</div>
+{/block}

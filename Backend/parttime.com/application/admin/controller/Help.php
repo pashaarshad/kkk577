@@ -338,5 +338,32 @@ class Help extends Base
             $this->error('删除失败!');
     }
 
+    /**
+     * 首页视频管理 (Homepage Video Management)
+     * @auth true
+     * @menu true
+     */
+    public function video()
+    {
+        $this->title = 'Homepage Video Management';
+        if (request()->isPost()) {
+            $video_url = input('post.video_url/s', '');
+            sysconf('home_video_url', $video_url);
+            sysoplog('Homepage Video Settings', "Video URL updated: {$video_url}");
+            $this->success('Video settings saved successfully!');
+        }
+        $this->video_url = sysconf('home_video_url');
+        return $this->fetch();
+    }
 
+    /**
+     * 删除/清除首页视频 (Delete Homepage Video)
+     * @auth true
+     */
+    public function del_video()
+    {
+        sysconf('home_video_url', '');
+        sysoplog('Delete Homepage Video', 'Homepage video removed');
+        $this->success('Homepage video deleted successfully!');
+    }
 }
