@@ -202,8 +202,34 @@ const getPay = () => {
 }
 
 const getQeapay = (num) => {
-  const url = baseURL + activeList.value.url + `?num=${money.value}&type=${activeList.value.type}`
-  window.open(url)
+  if (!money.value || money.value <= 0) {
+    showNotify({ type: 'warning', message: t('recharge.RechargeAmount') })
+    return
+  }
+
+  const endpoint = activeList.value.url + `?num=${money.value}&type=${activeList.value.type}&id=${activeList.value.id}`
+  Request.get({ url: endpoint }).then(res => {
+    if (res && res.data && res.data.payInfo && res.data.payInfo.startsWith('http')) {
+      window.location.href = res.data.payInfo
+    } else {
+      router.push({
+        path: '/recharge-detail',
+        query: {
+          id: activeList.value.id,
+          amount: money.value,
+          sn: res?.data?.sn || ''
+        }
+      })
+    }
+  }).catch(() => {
+    router.push({
+      path: '/recharge-detail',
+      query: {
+        id: activeList.value.id,
+        amount: money.value
+      }
+    })
+  })
 }
 </script>
 

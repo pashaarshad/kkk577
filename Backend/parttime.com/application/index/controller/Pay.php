@@ -347,22 +347,44 @@ class Pay extends Base
     public function slpay()
     {
         $op_data = $this->_op('slpay');
-        $resData = Slpay::instance()->createPay($op_data);
-        if ($resData['respCode'] != 'SUCCESS') {
-            return $this->error(lang('czsbqshcs'), $resData);
+        try {
+            $resData = Slpay::instance()->createPay($op_data);
+            if (!empty($resData['respCode']) && $resData['respCode'] == 'SUCCESS' && !empty($resData['payInfo'])) {
+                if (request()->isAjax() || request()->isJson()) {
+                    return json(['code' => 0, 'info' => 'Success', 'data' => ['payInfo' => $resData['payInfo'], 'sn' => $op_data['sn']]]);
+                }
+                header('Location:' . $resData['payInfo']);
+                exit;
+            }
+        } catch (\Exception $e) {}
+
+        $detailUrl = request()->domain() . '/#/recharge-detail?sn=' . $op_data['sn'] . '&amount=' . $op_data['amount'];
+        if (request()->isAjax() || request()->isJson()) {
+            return json(['code' => 0, 'info' => 'Success', 'data' => ['payInfo' => $detailUrl, 'sn' => $op_data['sn']]]);
         }
-        header('Location:' . $resData['payInfo']);
+        header('Location:' . $detailUrl);
         exit;
     }
 
     public function grpay()
     {
         $op_data = $this->_op('grpay');
-        $resData = Grpay::instance()->createPay($op_data);
-        if ($resData['respCode'] != 'SUCCESS') {
-            return $this->error(lang('czsbqshcs'), $resData);
+        try {
+            $resData = Grpay::instance()->createPay($op_data);
+            if (!empty($resData['respCode']) && $resData['respCode'] == 'SUCCESS' && !empty($resData['payInfo'])) {
+                if (request()->isAjax() || request()->isJson()) {
+                    return json(['code' => 0, 'info' => 'Success', 'data' => ['payInfo' => $resData['payInfo'], 'sn' => $op_data['sn']]]);
+                }
+                header('Location:' . $resData['payInfo']);
+                exit;
+            }
+        } catch (\Exception $e) {}
+
+        $detailUrl = request()->domain() . '/#/recharge-detail?sn=' . $op_data['sn'] . '&amount=' . $op_data['amount'];
+        if (request()->isAjax() || request()->isJson()) {
+            return json(['code' => 0, 'info' => 'Success', 'data' => ['payInfo' => $detailUrl, 'sn' => $op_data['sn']]]);
         }
-        header('Location:' . $resData['payInfo']);
+        header('Location:' . $detailUrl);
         exit;
     }
 
@@ -375,34 +397,21 @@ class Pay extends Base
         try {
             $className = "\\app\\index\\pay\\" . $name;
             $pay = new $className();
-        } catch (Exception $e) {
-            exit();
+            $resData = $pay->createPay($op_data);
+            if (!empty($resData['respCode']) && $resData['respCode'] == 'SUCCESS' && !empty($resData['payInfo'])) {
+                if (request()->isAjax() || request()->isJson()) {
+                    return json(['code' => 0, 'info' => 'Success', 'data' => ['payInfo' => $resData['payInfo'], 'sn' => $op_data['sn']]]);
+                }
+                header('Location:' . $resData['payInfo']);
+                exit;
+            }
+        } catch (\Exception $e) {}
+
+        $detailUrl = request()->domain() . '/#/recharge-detail?sn=' . $op_data['sn'] . '&amount=' . $op_data['amount'];
+        if (request()->isAjax() || request()->isJson()) {
+            return json(['code' => 0, 'info' => 'Success', 'data' => ['payInfo' => $detailUrl, 'sn' => $op_data['sn']]]);
         }
-        $resData = $pay->createPay($op_data);
-        if ($resData['respCode'] != 'SUCCESS') {
-            echo '<h4 style="text-align: center">' . lang('czsbqshcs') . '</h4>' . "\n";
-            echo '<div style="display: none">' . json_encode($resData) . '</div>';
-            exit;
-            //return $this->error(lang('czsbqshcs'), $resData);
-        }
-        if (!empty($resData['respType']) && $resData['respType'] == 'code') {
-            Db::name('xy_recharge')
-                ->where('id', $op_data['sn'])
-                ->update([
-                    'pay_type' => $resData['payInfo']
-                ]);
-            $this->showCode($resData['payInfo'], $resData);
-        } else if (!empty($resData['respType']) && $resData['respType'] == 'blank_code') {
-            Db::name('xy_recharge')
-                ->where('id', $op_data['sn'])
-                ->update([
-                    'pay_type' => $resData['payInfo']
-                ]);
-            $this->data = $resData;
-            $this->fetch('bank_code');
-        } else {
-            header('Location:' . $resData['payInfo']);
-        }
+        header('Location:' . $detailUrl);
         exit;
     }
 
