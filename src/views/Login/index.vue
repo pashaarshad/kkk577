@@ -137,10 +137,16 @@ const onSubmit = async () => {
         router.push('/home')
       }, 600)
     } else {
-      showFailToast(res.info || 'Login failed')
+      showFailToast(res?.info || 'Login failed')
     }
   } catch (e) {
-    showFailToast('Network error')
+    if (e && e.info) {
+      showFailToast(e.info)
+    } else if (e && e.msg) {
+      showFailToast(e.msg)
+    } else {
+      showFailToast('Login failed. Please check phone number and password.')
+    }
   } finally {
     loginLoading.value = false
   }

@@ -63,7 +63,17 @@ class Request {
     if (typeof config === 'string') {
       return this.request({ url: config, method: 'post' })
     }
-    return this.request({ ...config, method: 'post' })
+    let data = config.data
+    if (data && typeof data === 'object' && !(data instanceof FormData) && !(data instanceof URLSearchParams)) {
+      const params = new URLSearchParams()
+      for (const key in data) {
+        if (data[key] !== undefined && data[key] !== null) {
+          params.append(key, data[key])
+        }
+      }
+      data = params
+    }
+    return this.request({ ...config, data, method: 'post' })
   }
 
   formData(config) {
