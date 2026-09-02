@@ -50,6 +50,20 @@ class Users extends Base
     public function index()
     {
         $this->title = '会员列表';
+
+        try {
+            $fields = Db::getTableFields($this->table);
+            if (!in_array('deposit_status', $fields)) {
+                Db::execute("ALTER TABLE xy_users ADD COLUMN deposit_status TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'Withdrawal Status'");
+            }
+            if (!in_array('up_status', $fields)) {
+                Db::execute("ALTER TABLE xy_users ADD COLUMN up_status TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'Upgrade Withdrawal'");
+            }
+            if (!in_array('show_invite', $fields)) {
+                Db::execute("ALTER TABLE xy_users ADD COLUMN show_invite TINYINT(1) NOT NULL DEFAULT 1 COMMENT 'Show Invite Code'");
+            }
+        } catch (\Exception $e) {}
+
         $query = $this->_query($this->table)->alias('u');
         $where = [];
         if (input('tel/s', '')) $where[] = ['u.tel', 'like', '%' . input('tel/s', '') . '%'];

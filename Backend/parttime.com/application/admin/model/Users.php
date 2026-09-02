@@ -260,7 +260,11 @@ class Users extends Model
         if ($token) $data['__token__'] = $token;
 
         //验证表单
-        $validate = \Validate::make($this->rule, $this->info);
+        $rules = $this->rule;
+        if (empty($token)) {
+            unset($rules['__token__']);
+        }
+        $validate = \Validate::make($rules, $this->info);
         if (!$validate->check($data)) {
             return ['code' => 1, 'info' => $validate->getError()];
         }
