@@ -9,11 +9,18 @@
         <form onsubmit="return false;" data-auto="true" action="{:url('video')}" method="post" class='layui-form'>
             <div class="layui-form-item layui-row layui-col-space15">
                 <label class="layui-col-xs12 relative">
-                    <span class="color-green font-w700">Video File URL or Click Upload Button</span>
-                    <div class="margin-top-10">
-                        <input name="video_url" class="layui-input" placeholder="Enter video URL or upload file (e.g. /upload/video.mp4)" value="{$video_url|default=''}">
+                    <span class="color-green font-w700">Video File URL or Click Upload Button (YouTube or Direct Video File)</span>
+                    <div class="margin-top-10 flex" style="display:flex; gap:10px; align-items:center;">
+                        <input name="video_url" class="layui-input" placeholder="Paste YouTube Link (e.g. https://www.youtube.com/watch?v=...) OR upload local video file" value="{$video_url|default=''}">
+                        <button type="button" class="layui-btn btn-op-green" data-file="btn" data-type="mp4,mov,webm,mkv,avi,flv" data-field="video_url">
+                            <i class="layui-icon">&#xe67c;</i> Upload Video File
+                        </button>
                     </div>
-                    <p class="help-block margin-top-5">Enter video file URL or upload MP4 / WebM video for homepage platform introduction</p>
+                    <p class="help-block margin-top-5">
+                        <i class="layui-icon color-blue">&#xe60b;</i> <strong>Supported Formats:</strong><br>
+                        1. <strong>YouTube Links:</strong> Paste any YouTube video link (e.g., <code>https://www.youtube.com/watch?v=XXXX</code>, <code>https://youtu.be/XXXX</code>, <code>https://www.youtube.com/shorts/XXXX</code>). It will automatically be converted to a 9:16 responsive video player on the homepage.<br>
+                        2. <strong>Direct Video Upload:</strong> Click <strong>Upload Video File</strong> above to choose any MP4 / WebM / MOV file directly from your computer folders.
+                    </p>
                 </label>
             </div>
 
@@ -21,7 +28,9 @@
             {notempty name="video_url"}
             <div class="layui-form-item margin-top-20">
                 <span class="color-blue font-w700 block margin-bottom-10">Active Homepage Video Preview:</span>
-                <video controls width="520" style="border-radius:8px; border:1px solid #e8e8e8; background:#000;" src="{$video_url}"></video>
+                <div id="adminVideoPreview" style="max-width:320px; aspect-ratio: 9 / 16; height:480px; border-radius:12px; overflow:hidden; background:#000; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+                    <!-- JavaScript will dynamically render either <video> or <iframe> preview -->
+                </div>
             </div>
             {/notempty}
 
@@ -34,4 +43,26 @@
         </form>
     </div>
 </div>
+
+<script>
+(function() {
+    var videoUrl = '{$video_url|default=""}';
+    var previewContainer = document.getElementById('adminVideoPreview');
+    if (!previewContainer || !videoUrl) return;
+
+    function parseYoutubeEmbed(url) {
+        if (!url) return null;
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (match && match[2].length === 11) ? 'https://www.youtube.com/embed/' + match[2] : null;
+    }
+
+    var ytEmbed = parseYoutubeEmbed(videoUrl);
+    if (ytEmbed) {
+        previewContainer.innerHTML = '<iframe src="' + ytEmbed + '" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>';
+    } else {
+        previewContainer.innerHTML = '<video controls style="width:100%; height:100%; object-fit:cover;" src="' + videoUrl + '"></video>';
+    }
+})();
+</script>
 {/block}

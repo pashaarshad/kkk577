@@ -126,13 +126,21 @@
       <div class="intro-box">
         <p class="intro-desc">{{ data.intro_desc || 'Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.' }}</p>
         <div class="intro-video-wrapper">
+          <iframe 
+            v-if="isYoutubeVideo" 
+            :src="youtubeEmbedUrl" 
+            class="video-9-16-player"
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen
+          ></iframe>
           <video 
+            v-else
             ref="videoPlayer"
             :src="data.intro_video || 'https://www.w3schools.com/html/mov_bbb.mp4'" 
             class="video-9-16-player"
             controls
             playsinline
-            poster="https://cdn-icons-png.flaticon.com/512/3081/3081559.png"
           ></video>
         </div>
       </div>
@@ -178,7 +186,7 @@ import { i18n } from '@/lang'
 import Commission from '@/components/commission/index.vue'
 import { getAssetURL } from '@/utils/get_assets_img.js'
 import Request from '@/services/index.js'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 const { t } = i18n.global
@@ -202,6 +210,16 @@ const data = ref({})
 Request.get({ url: 'index/index/home' }).then(res => {
   data.value = res.data
 })
+
+const youtubeEmbedUrl = computed(() => {
+  const url = data.value?.intro_video
+  if (!url) return null
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/
+  const match = url.match(regExp)
+  return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null
+})
+
+const isYoutubeVideo = computed(() => !!youtubeEmbedUrl.value)
 
 const token = sessionStorage.getItem('token')
 const loginShow = ref(false)
