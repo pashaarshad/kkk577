@@ -4,7 +4,7 @@
     <!-- Top Bar with Logo & Language Switcher -->
     <div class="top-header">
       <div class="brand-logo-row">
-        <div class="brand-logo"></div>
+        <img src="../../assets/img/main/official_logo.png" alt="Logo" class="brand-logo-img">
         <span class="brand-name">Global Task</span>
       </div>
 
@@ -50,8 +50,8 @@
               required
             />
             <span class="eye-toggle" @click="showPwd = !showPwd">
-              <svg v-if="!showPwd" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="#7a6652"/></svg>
-              <svg v-else viewBox="0 0 24 24" width="20" height="20"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z" fill="#7a6652"/></svg>
+              <svg v-if="!showPwd" viewBox="0 0 24 24" width="20" height="20"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" fill="#B83A2E"/></svg>
+              <svg v-else viewBox="0 0 24 24" width="20" height="20"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.17c0-1.66-1.34-3-3-3l-.17.02z" fill="#B83A2E"/></svg>
             </span>
           </div>
         </div>
@@ -73,7 +73,7 @@
 
         <!-- Secondary Sign Up Link -->
         <div class="signup-link-container">
-          <span class="signup-link" @click="goRegister">Sign Up</span>
+          <span class="signup-link" @click="goRegister">Don't have an account? Sign Up</span>
         </div>
       </form>
     </div>
@@ -96,7 +96,6 @@ import { showSuccessToast, showFailToast } from 'vant'
 
 const router = useRouter()
 
-const activeTab = ref('phone') // 'phone' | 'email'
 const username = ref('')
 const password = ref('')
 const showPwd = ref(false)
@@ -106,41 +105,41 @@ const loginLoading = ref(false)
 const currentLangName = ref('English')
 
 const toggleLang = () => {
-  if (currentLangName.value === 'English') {
-    currentLangName.value = 'Español'
-  } else {
-    currentLangName.value = 'English'
-  }
+  showSuccessToast('Language selected')
 }
 
-const onSubmit = () => {
-  if (!username.value || !password.value) {
-    showFailToast('Please fill in all required fields')
-    return
-  }
+const onSubmit = async () => {
   if (!agreed.value) {
-    showFailToast('Please agree to the Terms of use and Privacy agreement')
+    showFailToast('Please agree to terms')
     return
   }
 
   loginLoading.value = true
-  let param = new FormData()
-  param.append('tel', username.value)
-  param.append('pwd', password.value)
+  try {
+    const res = await Request.post({
+      url: 'index/user/do_login',
+      data: {
+        tel: username.value,
+        pwd: password.value
+      }
+    })
 
-  Request.post({ url: '/index/user/do_login', data: param, withCredentials: true }).then(res => {
-    sessionStorage.setItem('token', '111111')
-    showSuccessToast(res.info || 'Login successful!')
-    loginLoading.value = false
-    setTimeout(() => {
-      router.push('/home')
-    }, 300)
-  }).catch((err) => {
-    loginLoading.value = false
-    if (err?.info) {
-      showFailToast(err.info)
+    if (res && res.code === 0) {
+      showSuccessToast('Login successful!')
+      if (res.token) {
+        sessionStorage.setItem('token', res.token)
+      }
+      setTimeout(() => {
+        router.push('/home')
+      }, 800)
+    } else {
+      showFailToast(res.info || 'Login failed')
     }
-  })
+  } catch (e) {
+    showFailToast('Network error')
+  } finally {
+    loginLoading.value = false
+  }
 }
 
 const goRegister = () => {
@@ -151,201 +150,194 @@ const goRegister = () => {
 <style lang="less" scoped>
 .login-page-container {
   min-height: 100vh;
-  width: 100%;
-  background: linear-gradient(180deg, #f5e3c3 0%, #e8cb9b 50%, #d8b47e 100%);
-  padding: 16px 16px 40px;
+  background: #fff9f8;
+  padding: 16px 20px 40px;
   box-sizing: border-box;
-  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-  /* Top Bar */
   .top-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    margin-bottom: 24px;
 
     .brand-logo-row {
       display: flex;
       align-items: center;
       gap: 8px;
 
-      .brand-logo {
+      .brand-logo-img {
         width: 32px;
         height: 32px;
-        background: url("../../assets/img/main/fbdb7d08a0b0413fb4d95f214770967b_.jpg") center/cover no-repeat;
-        border-radius: 8px;
+        object-fit: contain;
       }
 
       .brand-name {
-        font-size: 15px;
-        font-weight: 700;
-        color: #543415;
+        font-size: 17px;
+        font-weight: 800;
+        color: #1f1a1a;
       }
     }
 
     .lang-selector {
-      background: rgba(255, 255, 255, 0.7);
-      padding: 5px 12px;
-      border-radius: 20px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
+      padding: 6px 12px;
+      background: #ffffff;
+      border: 1px solid #fdece8;
+      border-radius: 20px;
       font-size: 12.5px;
-      font-weight: 600;
-      color: #543415;
+      color: #1f1a1a;
       cursor: pointer;
-      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 6px rgba(184, 58, 46, 0.06);
     }
   }
 
-  /* Subtitle */
   .platform-title {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 800;
-    color: #543415;
+    color: #1f1a1a;
     text-align: center;
-    margin: 26px 0 22px;
-    letter-spacing: 0.3px;
+    margin: 10px 0 24px;
   }
 
-  /* White Auth Card */
   .auth-card {
     background: #ffffff;
-    border-radius: 18px;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 28px 22px 32px;
-    box-shadow: 0 10px 30px rgba(84, 52, 21, 0.12);
+    border: 1.5px solid #E86C3F;
+    border-radius: 16px;
+    padding: 28px 22px 24px;
+    box-shadow: 0 4px 16px rgba(184, 58, 46, 0.12);
     box-sizing: border-box;
-  }
 
     .card-header-title {
-      font-size: 16.5px;
+      font-size: 18px;
       font-weight: 800;
-      color: #543415;
+      color: #B83A2E;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 26px;
     }
 
-  /* Form Fields */
-  .form-group {
-    margin-bottom: 22px;
+    .form-group {
+      margin-bottom: 22px;
 
-    .field-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #543415;
-      margin-bottom: 6px;
-    }
+      .field-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #1f1a1a;
+        margin-bottom: 6px;
+      }
 
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
+      .input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
 
-      .underline-input {
-        width: 100%;
-        border: none;
-        border-bottom: 1.5px solid #e5d7c4;
-        padding: 10px 0;
-        font-size: 14.5px;
-        color: #2a1a0a;
-        background: transparent;
-        outline: none;
+        .underline-input {
+          width: 100%;
+          border: none;
+          border-bottom: 2px solid #fdece8;
+          padding: 10px 0;
+          font-size: 15px;
+          color: #1f1a1a;
+          background: transparent;
+          outline: none;
+          transition: border-color 0.2s;
 
-        &::placeholder {
-          color: #b5a491;
-          font-size: 13.5px;
+          &::placeholder {
+            color: #86909c;
+            font-size: 13.5px;
+          }
+
+          &:focus {
+            border-bottom-color: #B83A2E;
+          }
         }
 
-        &:focus {
-          border-bottom-color: #543415;
+        .eye-toggle {
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          padding: 4px;
+        }
+      }
+    }
+
+    .agree-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 22px 0 26px;
+      cursor: pointer;
+
+      .custom-checkbox {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 1.5px solid #B83A2E;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        &.checked {
+          background: #B83A2E;
+          color: #ffffff;
+          font-size: 11px;
+          font-weight: bold;
         }
       }
 
-      .eye-toggle {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
+      .agree-text {
+        font-size: 12px;
+        color: #4e5969;
+
+        a {
+          color: #E86C3F;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .submit-btn {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, #B83A2E, #E86C3F);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(184, 58, 46, 0.25);
+      transition: transform 0.1s;
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &:disabled {
+        opacity: 0.7;
+      }
+    }
+
+    .signup-link-container {
+      text-align: center;
+      margin-top: 20px;
+
+      .signup-link {
+        font-size: 14px;
+        font-weight: 700;
+        color: #B83A2E;
         cursor: pointer;
-        padding: 4px;
-      }
-    }
-  }
-
-  /* Agreement Row */
-  .agree-row {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    margin: 22px 0 26px;
-    cursor: pointer;
-
-    .custom-checkbox {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 1.5px solid #543415;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-
-      &.checked {
-        background: #543415;
-        color: #ffffff;
-        font-size: 11px;
-        font-weight: bold;
-      }
-    }
-
-    .agree-text {
-      font-size: 12px;
-      color: #6e5843;
-
-      a {
-        color: #c09159;
         text-decoration: underline;
       }
     }
   }
 
-  /* Primary Button */
-  .submit-btn {
-    width: 100%;
-    height: 48px;
-    background: #543415;
-    color: #ffffff;
-    font-size: 16px;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(84, 52, 21, 0.25);
-
-    &:disabled {
-      opacity: 0.7;
-    }
-  }
-
-  /* Secondary Link */
-  .signup-link-container {
-    text-align: center;
-    margin-top: 18px;
-
-    .signup-link {
-      font-size: 14px;
-      font-weight: 700;
-      color: #543415;
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  }
-
-  /* WhatsApp Float */
   .whatsapp-float-btn {
     position: fixed;
     top: 60px;
