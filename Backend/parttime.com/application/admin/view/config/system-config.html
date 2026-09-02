@@ -23,13 +23,21 @@
             <p class="help-block">管理程序版本，在后台左上角标题处理显示</p>
         </div>
         <div class="layui-form-item">
-            <span class="color-green font-w7">浏览器图标 Browser</span>
+            <span class="color-green font-w7">浏览器图标 Browser Icon</span>
             <div class="relative block">
                 <img alt="icon" data-tips-image style="height:auto;max-height:42px;min-width:42px" src="{:sysconf('site_icon')}"/>
                 <input type="hidden" name="site_icon" onchange="$(this).prev('img').attr('src', this.value)" value="{:sysconf('site_icon')}" class="layui-input">
                 <a class="margin-left-10" data-file="btn" data-type="ico,png" data-field="site_icon">上传图片</a>
                 <p class="help-block">建议上传 ICO 图标的尺寸为 128x128 <a href="http://www.favicon-icon-generator.com" target="_blank">ICON在线制作</a></p>
             </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="relative block">
+                <span class="color-green font-w7">Platform Introduction Video URL (首页介绍视频链接)</span>
+                <input name="intro_video_url" placeholder="请输入视频 URL 链接或点击右侧上传" value="{:sysconf('intro_video_url')}" class="layui-input">
+                <a class="margin-left-10 layui-btn layui-btn-xs btn-op-green" data-file="btn" data-type="mp4,mov,webm,avi" data-field="intro_video_url">上传视频 / Upload Video</a>
+            </label>
+            <p class="help-block">设置前台首页【Platform Introduction】展示的 9:16 / 16:9 视频文件地址（支持 mp4, mov, webm 等格式）</p>
         </div>
         <!--<div class="layui-form-item">
             <label class="relative block">

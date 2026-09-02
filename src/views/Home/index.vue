@@ -122,13 +122,18 @@
 
     <!-- PLATFORM INTRODUCTION -->
     <section class="platform-intro">
-      <h3 class="section-title">Platform Introduction</h3>
+      <h3 class="section-title">{{ data.intro_title || 'Platform Introduction' }}</h3>
       <div class="intro-box">
-        <p class="intro-desc">Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.</p>
-        <div class="intro-video-mock">
-          <div class="play-button-circle">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="white"></path></svg>
-          </div>
+        <p class="intro-desc">{{ data.intro_desc || 'Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.' }}</p>
+        <div class="intro-video-wrapper">
+          <video 
+            ref="videoPlayer"
+            :src="data.intro_video || 'https://www.w3schools.com/html/mov_bbb.mp4'" 
+            class="video-9-16-player"
+            controls
+            playsinline
+            poster="https://cdn-icons-png.flaticon.com/512/3081/3081559.png"
+          ></video>
         </div>
       </div>
     </section>
@@ -743,34 +748,24 @@ const onWaClick = (e) => {
       margin-bottom: 12px;
     }
 
-    .intro-video-mock {
-      background: #1f1a1a;
-      height: 120px;
-      border-radius: 8px;
+    .intro-video-wrapper {
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      max-height: 520px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000000;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
 
-      .play-button-circle {
-        position: relative;
-        z-index: 2;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        background: #B83A2E;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-
-        svg {
-          width: 20px;
-          height: 20px;
-          margin-left: 2px;
-        }
+      .video-9-16-player {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+        display: block;
       }
     }
   }

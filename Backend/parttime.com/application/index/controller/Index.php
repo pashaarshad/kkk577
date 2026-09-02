@@ -51,7 +51,10 @@ class Index extends Controller
         $yes1 = strtotime(date("Y-m-d 00:00:00", strtotime("-1 day")));
         $yes2 = strtotime(date("Y-m-d 23:59:59", strtotime("-1 day")));
         $data->today_commission = Db::name('xy_convey')->where('uid', $uid)->where('status', 1)->where('addtime', 'between', [strtotime('Y-m-d 00:00:00'), time()])->sum('commission');
-        $data->yestarday_commission = Db::name('xy_convey')->where('uid', $uid)->where('status', 1)->where('addtime', 'between', [$yes1, $yes2])->sum('commission');
+        $intro_msg = Db::name('xy_index_msg')->where('id', 16)->find();
+        $data->intro_title = ($intro_msg && !empty($intro_msg['title'])) ? $intro_msg['title'] : 'Platform Introduction';
+        $data->intro_desc = ($intro_msg && !empty($intro_msg['content'])) ? strip_tags($intro_msg['content']) : 'Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.';
+        $data->intro_video = sysconf('intro_video_url') ?: 'https://www.w3schools.com/html/mov_bbb.mp4';
         $data->chats_link = sysconf('chats_link') ?: 'https://wa.me/553588236216?text=Hello';
         return json(['code'=> 0, 'data' => $data]);
 
