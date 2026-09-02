@@ -61,11 +61,17 @@ import { ref } from 'vue'
 import { useMitt } from '@/utils/mitt.js'
 
 const navList = [
-  { path: '/bankCard', icon: 'card', title: 'Account', bgClass: 'bg-crimson' },
-  { path: '/recharge', icon: 'gold-coin', title: 'Recharge', bgClass: 'bg-orange' },
-  { path: '/withdraw', icon: 'balance-pay', title: 'Withdraw', bgClass: 'bg-crimson' },
-  { path: '/billList', icon: 'description-o', title: 'Financial records', bgClass: 'bg-orange' },
-  { path: '/password', icon: 'setting', title: 'Change Password', bgClass: 'bg-crimson' }
+  { path: '/bankCard', icon: 'card', title: 'Account Binding', bgClass: 'bg-crimson' },
+  { path: '/recharge', icon: 'gold-coin', title: 'Recharge / Deposit', bgClass: 'bg-orange' },
+  { path: '/withdraw', icon: 'balance-pay', title: 'Withdrawal', bgClass: 'bg-crimson' },
+  { path: '/order', icon: 'orders-o', title: 'Task & Order History', bgClass: 'bg-orange' },
+  { path: '/vip', icon: 'gem-o', title: 'VIP Levels & Benefits', bgClass: 'bg-crimson' },
+  { path: '/team', icon: 'friends-o', title: 'Team & Agency Data', bgClass: 'bg-orange' },
+  { path: '/poster/detail/13', icon: 'share-o', title: 'Invite Friends / Referral Link', bgClass: 'bg-crimson' },
+  { path: '/billList', icon: 'description-o', title: 'Financial Records / Balance Log', bgClass: 'bg-orange' },
+  { path: '/rechargeRecord', icon: 'records', title: 'Recharge History', bgClass: 'bg-crimson' },
+  { path: '/withdrawRecord', icon: 'bill-o', title: 'Withdrawal History', bgClass: 'bg-orange' },
+  { path: '/password', icon: 'setting', title: 'Security & Password', bgClass: 'bg-crimson' }
 ]
 
 const router = useRouter()
