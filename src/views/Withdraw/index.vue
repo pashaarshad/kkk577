@@ -242,15 +242,17 @@ const handleConfirm = async () => {
 
   submitting.value = true
   try {
-    const param = new FormData()
-    param.append('num', amount.value)
-    param.append('paypassword', password.value)
-    param.append('address', address.value.trim())
-    param.append('USDT_code', address.value.trim())
-    param.append('type', 'USDT')
-    param.append('method', selectedMethod.value)
-
-    const res = await Request.post({ url: 'index/ctrl/do_deposit', data: param })
+    const res = await Request.post({ 
+      url: 'index/ctrl/do_deposit', 
+      data: {
+        num: amount.value,
+        paypassword: password.value,
+        address: address.value.trim(),
+        USDT_code: address.value.trim(),
+        type: 'USDT',
+        method: selectedMethod.value
+      }
+    })
 
     if (res && res.code === 0) {
       showDialog({
@@ -270,7 +272,8 @@ const handleConfirm = async () => {
       })
     }
   } catch (e) {
-    showNotify({ type: 'danger', message: e?.info || 'Network connection failed' })
+    const errorMsg = e?.info || e?.message || (typeof e === 'string' ? e : 'Withdrawal submission failed')
+    showNotify({ type: 'danger', message: errorMsg })
   } finally {
     submitting.value = false
   }

@@ -26,7 +26,7 @@ class Request {
       return res
     }, err => {
       mainStore.isLoading = false
-      return err
+      return Promise.reject(err)
     })
   }
 
@@ -36,18 +36,18 @@ class Request {
         .request(config)
         .then((res) => {
           if (res?.data?.code !== 0) {
-            // Only show toast if explicitly requested via config or non-empty user-facing error
             if (config.showToast && res?.data?.info) {
               showFailToast(res.data.info)
             }
-            reject(res.data)
+            reject(res?.data || { info: 'Operation failed' })
           } else {
             resolve(res.data)
           }
         })
         .catch((err) => {
           console.log('request err:', err)
-          reject(err)
+          const errData = err?.response?.data || err?.data || err || {}
+          reject(errData.info ? errData : { info: errData.message || err?.message || 'Network request failed' })
         })
     })
   }
