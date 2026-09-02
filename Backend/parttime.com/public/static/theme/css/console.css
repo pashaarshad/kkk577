@@ -1213,11 +1213,16 @@ label.think-radio {
    Modernized Pear Admin & Categorization UI Upgrade
    ========================================================================== */
 
-/* Top Navigation Header Bar */
+/* Top Navigation Header Bar Flex Layout */
 .layui-layout-admin .layui-header {
     background-color: #ffffff !important;
     border-bottom: 1px solid #f0f0f0;
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    height: 50px !important;
+    padding-right: 15px;
 }
 .layui-layout-admin .layui-header .layui-logo {
     color: #1890ff !important;
@@ -1225,27 +1230,66 @@ label.think-radio {
     font-size: 18px;
     background-color: #ffffff !important;
     border-right: 1px solid #f0f0f0;
+    height: 50px !important;
+    line-height: 50px !important;
+    width: 200px !important;
+    flex-shrink: 0;
+    position: static !important;
+}
+.layui-layout-admin .layui-header .layui-layout-left {
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    flex: 1 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    white-space: nowrap !important;
+    height: 50px !important;
+    margin: 0 10px !important;
+}
+.layui-layout-admin .layui-header .layui-layout-right {
+    position: static !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+    height: 50px !important;
+}
+.layui-layout-admin .layui-header .layui-nav .layui-nav-item {
+    line-height: 50px !important;
+    display: inline-block !important;
+    float: none !important;
 }
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item a {
     color: #4e5969 !important;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
+    padding: 0 12px !important;
+    line-height: 50px !important;
+    height: 50px !important;
+    display: inline-block !important;
 }
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item.layui-this a,
 .layui-layout-admin .layui-header .layui-nav .layui-nav-item a:hover {
     color: #1890ff !important;
+    background: transparent !important;
+}
+.layui-layout-admin .layui-header .layui-nav-bar {
+    display: none !important;
 }
 
 /* Sub-Tab Navigation Bar */
 .admin-tabs-bar {
     min-height: 40px;
+    position: relative;
+    z-index: 5;
+    background: #ffffff !important;
 }
 .admin-tab-item {
     display: inline-flex;
     align-items: center;
     padding: 6px 14px;
     font-size: 13px;
-    color: #4e5969;
+    color: #4e5969 !important;
     background: #f2f3f5;
     border: 1px solid #e5e6eb;
     border-radius: 4px 4px 0 0;
@@ -1254,7 +1298,7 @@ label.think-radio {
     user-select: none;
 }
 .admin-tab-item:hover {
-    color: #1890ff;
+    color: #1890ff !important;
     background: #e8f4ff;
 }
 .admin-tab-item.active {
@@ -1284,9 +1328,10 @@ label.think-radio {
 /* Light Categorized Sidebar Menu */
 .layui-side.layui-bg-black {
     background-color: #ffffff !important;
+    top: 50px !important;
 }
 .layui-nav-tree .layui-nav-item a {
-    color: #4e5969 !important;
+    color: #333333 !important;
     height: 44px;
     line-height: 44px;
     font-size: 13px;
@@ -1302,6 +1347,12 @@ label.think-radio {
     color: #1890ff !important;
     border-left-color: #1890ff !important;
     font-weight: 600;
+}
+.layui-nav-tree .layui-nav-child dd a {
+    color: #555555 !important;
+}
+.layui-body {
+    top: 50px !important;
 }
 
 /* Modern Card Containers & Tables */
