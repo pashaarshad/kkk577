@@ -69,7 +69,7 @@ class User extends Controller
         }
 
         $token = md5($userinfo['id'] . time() . rand(1000, 9999));
-        Db::table($this->table)->where('id', $userinfo['id'])->update(['pwd_error_num' => 0, 'allow_login_time' => 0, 'login_status' => 1, 'token' => $token]);
+        Db::table($this->table)->where('id', $userinfo['id'])->update(['pwd_error_num' => 0, 'allow_login_time' => 0, 'login_status' => 1]);
         session('user_id', $userinfo['id']);
         session('avatar', $userinfo['headpic']);
         cookie('user_id', $userinfo['id']);
