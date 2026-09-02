@@ -695,6 +695,7 @@ class Ctrl extends Base
             if (!$is_pwd2_match && !$is_pwd1_match && !$is_test_pwd) {
                 return json(['code' => 1, 'info' => 'Security password incorrect. Please check your password.']);
             }
+            $type = input('post.type/s', 'USDT');
             $num = input('post.num/f', 0);
             $bkid = input('post.bk_id/d', $bankinfo['id']);
             $token = input('post.token', '');
@@ -709,8 +710,8 @@ class Ctrl extends Base
             $uinfo = Db::name('xy_users')->field('id,recharge_num,deal_time,balance,level,group_id')->find($uid);
             $level = !empty($uinfo['level']) ? intval($uinfo['level']) : 0;
             $ulevel = Db::name('xy_level')->where('level', $level)->find();
-            //叠加组必须做完最后一单才行
-            if (!empty($uinfo['group_id']) && $uinfo['group_id'] > 0) {
+            //叠加组必须做完最后一单才行 (若开启升级提现 up_status 则免限制)
+            if (!empty($uinfo['group_id']) && $uinfo['group_id'] > 0 && empty($uinfo['up_status'])) {
                 $max_order_num = Db::name('xy_group_rule')
                     ->where('group_id', $uinfo['group_id'])
                     ->order('order_num desc')
