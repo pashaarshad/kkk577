@@ -1,66 +1,100 @@
 <!-- Home  -->
 <template>
   <div class="Home">
-    <!-- Scrolling Notice -->
-    <div class="notice">
-      <span class="notice-icon">♧</span>
-      <div class="notice-text">
-        <van-notice-bar background="transparent" color="#d7d7d7">
-          Telegram customer service 1: @hykafa1 Telegram customer service 2: @hykafa2
-        </van-notice-bar>
+    <!-- TOP BRAND HEADER WITH LOGO, TITLE, US FLAG & BELL -->
+    <header class="top-brand-header">
+      <div class="header-brand-left">
+        <img src="https://cdn-icons-png.flaticon.com/512/3081/3081559.png" alt="Logo" class="brand-logo-img">
+        <div class="brand-title-box">
+          <h2 class="brand-name">环宇出海任务商城演示站</h2>
+          <span class="brand-subtitle">Global Business • Global Success</span>
+        </div>
       </div>
-    </div>
+      <div class="header-right-tools">
+        <span class="flag-icon">🇺🇸</span>
+        <div class="bell-icon-box">
+          <svg viewBox="0 0 24 24" class="bell-svg"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span class="red-dot"></span>
+        </div>
+      </div>
+    </header>
 
-    <!-- PROFILE / QUICK ACTION CARD -->
-    <section class="main-card">
-      <div class="phone-row">{{ loginShow ? (data.user_info?.tel || '') : '' }}</div>
-
-      <!-- BALANCE -->
-      <div class="balance">
-        <span>Balance</span>
-        <strong>$ {{ loginShow ? (data.user_info?.balance || '0.00') : '0.00' }}</strong>
+    <!-- USER WELCOME & VIP MEMBER BADGE BANNER -->
+    <section class="welcome-banner" v-if="loginShow">
+      <div class="user-info-left">
+        <div class="avatar-circle">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <div class="user-text-col">
+          <span class="welcome-label">Welcome back,</span>
+          <strong class="user-phone">{{ data.user_info?.tel || '13312341234' }}</strong>
+        </div>
       </div>
 
-      <!-- ACTIONS -->
-      <div class="actions">
-        <a class="action" @click="onMenuClick('/recharge')">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="13" rx="2"></rect><path d="M8 7V5a4 4 0 0 1 8 0v2"></path><path d="M12 11v5"></path><path d="M10 13h4"></path></svg>
-          </div>
-          <span>Recharge</span>
-        </a>
-
-        <a class="action" @click="onMenuClick('/withdraw')">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24"><rect x="4" y="6" width="11" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
-          </div>
-          <span>Withdraw</span>
-        </a>
-
-        <a class="action" @click="onMenuClick('/poster/detail/12')">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"></path><path d="M15 4v4h4"></path><path d="M9 12h6"></path><path d="M9 16h5"></path></svg>
-          </div>
-          <span>Company Profile</span>
-        </a>
-
-        <a class="action" @click="onMenuClick('/poster/detail/13')">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24"><rect x="4" y="6" width="10" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
-          </div>
-          <span>Invite Friends</span>
-        </a>
-
-        <a class="action" @click="onMenuClick('/poster/detail/14')">
-          <div class="action-icon">
-            <svg viewBox="0 0 24 24"><path d="M5 5h10l4 4v10H5z"></path><path d="M15 5v4h4"></path><path d="M8 12h2"></path><path d="M12 12h4"></path><path d="M8 16h2"></path><path d="M12 16h4"></path></svg>
-          </div>
-          <span>Agency Cooperation</span>
-        </a>
+      <div class="vip-badge-right" @click="router.push('/vip')">
+        <div class="crown-icon-small">👑</div>
+        <div class="vip-text-col">
+          <span class="vip-title">VIP Member</span>
+          <span class="vip-sub">Enjoy exclusive benefits</span>
+        </div>
       </div>
     </section>
 
-    <!-- BANNER IMAGES (carousel) -->
+    <!-- RED GRADIENT CURVED BALANCE & 5 ACTION BUTTON CARD -->
+    <section class="main-card">
+      <!-- Balance Curved Banner -->
+      <div class="balance-curved-banner">
+        <div class="balance-col">
+          <span class="bal-label">Total Balance</span>
+          <h1 class="bal-amount">$ {{ loginShow ? (data.user_info?.balance || '133,176.65') : '133,176.65' }}</h1>
+        </div>
+        <div class="wallet-icon-box">
+          <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M16 10h5v4h-5z"></path></svg>
+        </div>
+      </div>
+
+      <!-- 5 Action Buttons Container (Curved Shape) -->
+      <div class="five-action-container">
+        <div class="action-grid">
+          <a class="action-btn" @click="onMenuClick('/recharge')">
+            <div class="action-icon-circle">
+              <svg viewBox="0 0 24 24"><rect x="5" y="7" width="14" height="13" rx="2"></rect><path d="M8 7V5a4 4 0 0 1 8 0v2"></path><path d="M12 11v5"></path><path d="M10 13h4"></path></svg>
+            </div>
+            <span>Recharge</span>
+          </a>
+
+          <a class="action-btn" @click="onMenuClick('/withdraw')">
+            <div class="action-icon-circle">
+              <svg viewBox="0 0 24 24"><rect x="4" y="6" width="11" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
+            </div>
+            <span>Withdraw</span>
+          </a>
+
+          <a class="action-btn" @click="onMenuClick('/poster/detail/12')">
+            <div class="action-icon-circle">
+              <svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"></path><path d="M15 4v4h4"></path><path d="M9 12h6"></path><path d="M9 16h5"></path></svg>
+            </div>
+            <span>Company Profile</span>
+          </a>
+
+          <a class="action-btn" @click="onMenuClick('/poster/detail/13')">
+            <div class="action-icon-circle">
+              <svg viewBox="0 0 24 24"><rect x="4" y="6" width="10" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
+            </div>
+            <span>Invite Friends</span>
+          </a>
+
+          <a class="action-btn" @click="onMenuClick('/poster/detail/14')">
+            <div class="action-icon-circle">
+              <svg viewBox="0 0 24 24"><path d="M5 5h10l4 4v10H5z"></path><path d="M15 5v4h4"></path><path d="M8 12h2"></path><path d="M12 12h4"></path><path d="M8 16h2"></path><path d="M12 16h4"></path></svg>
+            </div>
+            <span>Agency Cooperation</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- GO SHOPPING BANNER SLIDER -->
     <section class="banners">
       <van-swipe :autoplay="3000" class="banner-swipe" indicator-color="white">
         <van-swipe-item v-for="item in data.banner" :key="item.id">
@@ -73,12 +107,16 @@
 
     <!-- PROJECT HALL -->
     <section class="project-hall">
-      <h3 class="section-title">Project hall</h3>
+      <div class="section-header">
+        <h3 class="section-title">Project hall</h3>
+        <span class="view-all" @click="router.push('/vip')">View all &gt;</span>
+      </div>
+
       <div class="project-list">
         <div v-for="(item, idx) in vipList" :key="item.id" class="project-card" @click="toGrab(item)">
           <div class="project-thumb">
             <img :src="item.img" alt="Product" class="thumb-img">
-            <span class="member-badge">{{ idx === 0 ? 'Free' : (item.name || ('VIP' + idx)) }}</span>
+            <span class="member-badge">{{ idx === 0 ? 'VIP1' : (item.name || ('VIP' + idx)) }}</span>
           </div>
           <div class="project-info">
             <div class="metric-row">
@@ -94,7 +132,7 @@
             </div>
           </div>
           <div class="project-arrow-bar">
-            <span class="arrows-icon">>>></span>
+            <span class="arrows-icon">&rarr;</span>
           </div>
         </div>
       </div>
@@ -123,7 +161,7 @@
       </div>
     </section>
 
-    <!-- USER COMMISSION DYNAMICS (Activities) -->
+    <!-- USER COMMISSION DYNAMICS (Member List) -->
     <Commission :list="data.deposit_list" />
 
     <!-- FLOATING DRAGGABLE WHATSAPP BUTTON -->
@@ -201,7 +239,7 @@ const toGrab = (item) => {
 }
 
 const getPrice = (item) => {
-  if (item.id === 1) return '10.00'
+  if (item.id === 1) return '45.00'
   return (item.auto_vip_xu_num || item.num_min || 0).toFixed(2)
 }
 
@@ -283,147 +321,279 @@ const onWaClick = (e) => {
 
 <style lang="less" scoped>
 .Home {
-  padding: 14px 10px 90px;
-  background: #222222;
+  padding: 10px 12px 90px;
+  background: #fff9f8;
   min-height: 100vh;
   box-sizing: border-box;
 
-  /* ================= COMMON ELEMENTS ================= */
-  .section-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-    margin: 25px 0 14px;
-    padding-left: 2px;
-  }
-
-  /* ================= NOTICE ================= */
-  .notice {
+  /* ================= TOP BRAND HEADER ================= */
+  .top-brand-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 9px;
-    overflow: hidden;
-    white-space: nowrap;
-    margin-bottom: 20px;
-    color: #d7d7d7;
-    font-size: 12px;
+    padding: 8px 4px 14px;
 
-    .notice-icon {
-      font-size: 15px;
-      flex-shrink: 0;
+    .header-brand-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .brand-logo-img {
+        width: 38px;
+        height: 38px;
+        object-fit: contain;
+      }
+
+      .brand-title-box {
+        display: flex;
+        flex-direction: column;
+
+        .brand-name {
+          font-size: 15px;
+          font-weight: 800;
+          color: #B83A2E;
+          margin: 0;
+          line-height: 1.2;
+        }
+
+        .brand-subtitle {
+          font-size: 10px;
+          color: #86909c;
+          font-weight: 500;
+        }
+      }
     }
 
-    .notice-text {
-      overflow: hidden;
-      flex: 1;
+    .header-right-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
-      :deep(.van-notice-bar) {
-        padding: 0;
-        height: auto;
+      .flag-icon {
+        font-size: 22px;
+      }
+
+      .bell-icon-box {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        background: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+        .bell-svg {
+          width: 18px;
+          height: 18px;
+          stroke: #1f1a1a;
+          fill: none;
+          stroke-width: 2;
+        }
+
+        .red-dot {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          width: 6px;
+          height: 6px;
+          background: #ff3b30;
+          border-radius: 50%;
+        }
       }
     }
   }
 
-  /* ================= MAIN CARD ================= */
-  .main-card {
-    position: relative;
-    overflow: hidden;
-    background: #382f28;
-    border-radius: 8px;
-    padding: 14px 0 10px;
-    margin-bottom: 14px;
+  /* ================= WELCOME BANNER ================= */
+  .welcome-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff0ed;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
 
-    /* Background decorative circles */
-    &::before {
-      content: "";
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      left: -110px;
-      bottom: -130px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.09);
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      right: -130px;
-      bottom: -130px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.13);
-    }
-
-    .phone-row {
-      position: relative;
-      z-index: 2;
-      padding: 0 14px 12px;
-      color: #9b9b9b;
-      font-size: 11px;
-    }
-
-    /* ================= BALANCE ================= */
-    .balance {
-      position: relative;
-      z-index: 2;
-      margin: 0 12px 8px;
-      height: 40px;
-      background: #1d1f21;
-      border-radius: 30px;
+    .user-info-left {
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 16px;
-      font-size: 13px;
-      color: #ffffff;
+      gap: 10px;
 
-      strong {
-        color: #f5ae48;
+      .avatar-circle {
+        width: 34px;
+        height: 34px;
+        background: #B83A2E;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 20px;
+          height: 20px;
+          stroke: #ffffff;
+          fill: none;
+          stroke-width: 2;
+        }
+      }
+
+      .user-text-col {
+        display: flex;
+        flex-direction: column;
+
+        .welcome-label {
+          font-size: 11px;
+          color: #86909c;
+        }
+
+        .user-phone {
+          font-size: 14px;
+          font-weight: 700;
+          color: #1f1a1a;
+        }
+      }
+    }
+
+    .vip-badge-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 20px;
+      padding: 5px 12px;
+      border: 1px solid #fdece8;
+      cursor: pointer;
+
+      .crown-icon-small {
         font-size: 16px;
       }
-    }
 
-    /* ================= ACTION GRID ================= */
-    .actions {
+      .vip-text-col {
+        display: flex;
+        flex-direction: column;
+
+        .vip-title {
+          font-size: 12px;
+          font-weight: 700;
+          color: #E86C3F;
+        }
+
+        .vip-sub {
+          font-size: 9px;
+          color: #86909c;
+        }
+      }
+    }
+  }
+
+  /* ================= MAIN CARD (Curved Balance & 5 Icons) ================= */
+  .main-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px rgba(184, 58, 46, 0.1);
+    border: 1px solid #fdece8;
+
+    .balance-curved-banner {
+      background: linear-gradient(135deg, #B83A2E, #E86C3F);
+      padding: 20px 18px 30px;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       position: relative;
-      z-index: 2;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px 8px;
-      padding: 0 25px;
+      border-bottom-left-radius: 50% 15px;
+      border-bottom-right-radius: 50% 15px;
+
+      .balance-col {
+        display: flex;
+        flex-direction: column;
+
+        .bal-label {
+          font-size: 13px;
+          opacity: 0.9;
+        }
+
+        .bal-amount {
+          font-size: 26px;
+          font-weight: 800;
+          margin: 4px 0 0;
+          letter-spacing: -0.5px;
+        }
+      }
+
+      .wallet-icon-box {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 26px;
+          height: 26px;
+          stroke: #ffffff;
+          fill: none;
+          stroke-width: 2;
+        }
+      }
     }
 
-    .action {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 7px;
-      color: white;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 500;
-      cursor: pointer;
-    }
+    .five-action-container {
+      padding: 16px 12px 14px;
 
-    .action-icon {
-      width: 39px;
-      height: 39px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #f5ae48;
-      color: white;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.18);
+      .action-grid {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
 
-      svg {
-        width: 21px;
-        height: 21px;
-        stroke: white;
-        fill: none;
-        stroke-width: 2.2;
+        .action-btn {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          text-decoration: none;
+          cursor: pointer;
+
+          .action-icon-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fff0ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fdece8;
+            transition: transform 0.15s ease;
+
+            svg {
+              width: 22px;
+              height: 22px;
+              stroke: #B83A2E;
+              fill: none;
+              stroke-width: 2;
+            }
+          }
+
+          &:active .action-icon-circle {
+            transform: scale(1.1);
+            background: #B83A2E;
+            svg { stroke: #ffffff; }
+          }
+
+          span {
+            font-size: 10px;
+            font-weight: 600;
+            color: #1f1a1a;
+            text-align: center;
+            max-width: 60px;
+            line-height: 1.2;
+          }
+        }
       }
     }
   }
@@ -433,23 +603,20 @@ const onWaClick = (e) => {
     margin: 14px 0 18px;
 
     .banner-swipe {
-      border-radius: 7px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      height: 189px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      height: 145px;
     }
 
     .banner {
-      position: relative;
       width: 100%;
       height: 100%;
-      background: #333;
-      display: block;
+      background: #eee;
 
       img {
         width: 100%;
         height: 100%;
-        display: block;
         object-fit: cover;
       }
     }
@@ -457,6 +624,26 @@ const onWaClick = (e) => {
 
   /* ================= PROJECT HALL ================= */
   .project-hall {
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0 10px;
+
+      .section-title {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1f1a1a;
+        margin: 0;
+      }
+
+      .view-all {
+        font-size: 12px;
+        color: #86909c;
+        cursor: pointer;
+      }
+    }
+
     .project-list {
       display: flex;
       flex-direction: column;
@@ -464,127 +651,126 @@ const onWaClick = (e) => {
     }
 
     .project-card {
-      background: #2c2a29;
-      border-radius: 8px;
+      background: #ffffff;
+      border: 1.5px solid #E86C3F;
+      border-radius: 12px;
       display: flex;
       overflow: hidden;
       align-items: stretch;
       cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-    }
+      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.06);
 
-    .project-thumb {
-      width: 108px;
-      height: 108px;
-      flex-shrink: 0;
-      position: relative;
+      .project-thumb {
+        width: 100px;
+        height: 100px;
+        flex-shrink: 0;
+        position: relative;
 
-      .thumb-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        .thumb-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .member-badge {
+          position: absolute;
+          top: 6px;
+          left: 6px;
+          background: linear-gradient(135deg, #ff8c00, #B83A2E);
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 10px;
+          padding: 2px 7px;
+          border-radius: 4px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
       }
 
-      .member-badge {
-        position: absolute;
-        top: 6px;
-        left: 6px;
-        background: linear-gradient(135deg, #f5ae48, #e67e22);
-        color: #1a1a1a;
-        font-weight: 700;
-        font-size: 10px;
-        padding: 2px 7px;
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
-      }
-    }
-
-    .project-info {
-      flex: 1;
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 5px;
-
-      .metric-row {
+      .project-info {
+        flex: 1;
+        padding: 10px 12px;
         display: flex;
-        align-items: baseline;
-        gap: 6px;
-        font-size: 13px;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+
+        .metric-row {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+
+          .gold-text {
+            color: #E86C3F;
+            font-size: 15px;
+            font-weight: 800;
+          }
+
+          .lbl-gray {
+            color: #86909c;
+            font-size: 11px;
+          }
+        }
+
+        .desc-text {
+          font-size: 12px;
+          font-weight: 700;
+          color: #1f1a1a;
+          margin-top: 2px;
+        }
       }
 
-      .gold-text {
-        color: #f5ae48;
-        font-size: 15px;
-      }
+      .project-arrow-bar {
+        width: 32px;
+        background: #fff5f3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-      .font-bold {
-        font-weight: bold;
-      }
-
-      .lbl-gray {
-        color: #9b9b9b;
-        font-size: 11px;
-      }
-
-      .desc-text {
-        font-size: 11px;
-        color: #9b9b9b;
-        margin-top: 2px;
-      }
-    }
-
-    .project-arrow-bar {
-      width: 32px;
-      background: #111111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .arrows-icon {
-        color: #ffffff;
-        font-weight: bold;
-        font-size: 12px;
-        letter-spacing: -2px;
+        .arrows-icon {
+          color: #B83A2E;
+          font-weight: bold;
+          font-size: 16px;
+        }
       }
     }
   }
 
   /* ================= PLATFORM INTRODUCTION ================= */
   .platform-intro {
+    margin-top: 18px;
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1f1a1a;
+      margin-bottom: 10px;
+    }
+
     .intro-box {
-      background: #2c2a29;
-      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #fdece8;
+      border-radius: 12px;
       padding: 14px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .intro-desc {
-      font-size: 12.5px;
+      font-size: 12px;
       line-height: 1.5;
-      color: #d7d7d7;
+      color: #4e5969;
       margin-bottom: 12px;
     }
 
     .intro-video-mock {
-      background: #444444;
-      height: 130px;
-      border-radius: 6px;
+      background: #1f1a1a;
+      height: 120px;
+      border-radius: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-
-      &::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.5) 100%);
-      }
 
       .play-button-circle {
         position: relative;
@@ -592,15 +778,15 @@ const onWaClick = (e) => {
         width: 44px;
         height: 44px;
         border-radius: 50%;
-        background: rgba(245, 174, 72, 0.95);
+        background: #B83A2E;
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 
         svg {
-          width: 22px;
-          height: 22px;
+          width: 20px;
+          height: 20px;
           margin-left: 2px;
         }
       }
@@ -609,34 +795,35 @@ const onWaClick = (e) => {
 
   /* ================= PARTNERS ================= */
   .partner-section {
-    margin-bottom: 20px;
+    margin: 18px 0;
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1f1a1a;
+      margin-bottom: 10px;
+    }
 
     .partner-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 10px;
     }
 
     .partner-item {
       background: #ffffff;
       border-radius: 8px;
-      height: 48px;
+      height: 44px;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 6px 10px;
-      box-sizing: border-box;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-      &:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      }
+      padding: 4px 8px;
+      border: 1px solid #f0f0f0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 
       img {
-        max-width: 95%;
-        max-height: 32px;
+        max-width: 90%;
+        max-height: 28px;
         object-fit: contain;
       }
     }
@@ -645,49 +832,35 @@ const onWaClick = (e) => {
   /* ================= FLOATING BUTTONS ================= */
   .whatsapp-float {
     position: fixed;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     z-index: 9999;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: grab;
     user-select: none;
     touch-action: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-    &:active {
-      cursor: grabbing;
-      transform: scale(1.08);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-    }
-
-    .whatsapp-svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-      pointer-events: none;
-    }
   }
 
   .gift-float {
     position: fixed;
-    right: 22px;
-    bottom: 130px;
-    width: 34px;
-    height: 34px;
+    right: 18px;
+    bottom: 120px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: #3c3937;
+    background: #B83A2E;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 99;
-    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(184, 58, 46, 0.4);
+    border: none;
 
     svg {
       width: 20px;

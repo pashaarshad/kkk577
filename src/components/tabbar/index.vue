@@ -5,17 +5,30 @@
       <a v-for='(item, index) in list' :key='index'
          :class="['nav-item', { active: tabbarIndex === index, isVip: item.path === '/vip' }]"
          @click='onTabbar(item, index)'>
-        <!-- Home icon -->
-        <svg v-if="item.path === '/home'" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
-        <!-- Task icon -->
-        <svg v-if="item.path === '/work'" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16"></rect><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
-        <!-- VIP icon -->
-        <svg v-if="item.path === '/vip'" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-        <!-- Team icon -->
-        <svg v-if="item.path === '/team'" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 21a7 7 0 0 1 14 0"></path></svg>
-        <!-- Me icon -->
-        <svg v-if="item.path === '/mine' || item.path === '/login'" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-16 0"></path><path d="M12 4v8l3 2"></path></svg>
-        <span>{{ item?.title }}</span>
+        
+        <!-- Standard Tab Item -->
+        <template v-if="item.path !== '/vip'">
+          <!-- Home icon -->
+          <svg v-if="item.path === '/home'" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5 9.5V21h14V9.5"></path></svg>
+          <!-- Task icon -->
+          <svg v-if="item.path === '/work'" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16"></rect><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+          <!-- Team icon -->
+          <svg v-if="item.path === '/team'" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3"></circle><path d="M5 21a7 7 0 0 1 14 0"></path></svg>
+          <!-- Me icon -->
+          <svg v-if="item.path === '/mine' || item.path === '/login'" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-16 0"></path><path d="M12 4v8l3 2"></path></svg>
+          <span>{{ item?.title }}</span>
+        </template>
+
+        <!-- Premium Elevated Middle VIP Crown Tab -->
+        <template v-else>
+          <div class="vip-crown-btn">
+            <svg viewBox="0 0 24 24" class="crown-svg">
+              <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" fill="white" />
+            </svg>
+          </div>
+          <span class="vip-label">{{ item?.title }}</span>
+        </template>
+
       </a>
     </nav>
   </div>
@@ -42,7 +55,7 @@ const list = ref([
     icon_active: getAssetURL('main/home-active.png')
   },
   {
-    title: t('main.work') || 'Task',
+    title: t('main.work') || 'Project',
     path: '/work',
     icon: getAssetURL('main/work.png'),
     icon_active: getAssetURL('main/work-sel.png')
@@ -121,12 +134,13 @@ window.onresize = function() {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 56px;
+    height: 60px;
     background-color: #B83A2E;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -3px 12px rgba(184, 58, 46, 0.25);
     width: 100% !important;
+    position: relative;
 
     .nav-item {
       display: flex;
@@ -166,10 +180,41 @@ window.onresize = function() {
         }
       }
 
-      &.isVip.active {
-        svg {
-          fill: #ffeb3b;
-          stroke: #ffffff;
+      &.isVip {
+        position: relative;
+        top: -14px;
+
+        .vip-crown-btn {
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #ff8c00, #B83A2E);
+          border: 3px solid #ffffff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s ease;
+
+          .crown-svg {
+            width: 26px;
+            height: 26px;
+            stroke: none;
+            fill: #ffffff;
+          }
+        }
+
+        .vip-label {
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 11px;
+          margin-top: 2px;
+        }
+
+        &.active .vip-crown-btn {
+          transform: scale(1.1);
+          box-shadow: 0 6px 16px rgba(255, 140, 0, 0.5);
+          background: linear-gradient(135deg, #ffaa00, #e63946);
         }
       }
     }
