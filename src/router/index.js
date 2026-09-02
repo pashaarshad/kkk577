@@ -8,6 +8,33 @@ const router = createRouter({
       redirect: '/home'
     },
     {
+      path: '/vip',
+      name: 'vip',
+      meta: {
+        tabbarShow: true,
+        navbarShow: false
+      },
+      component: () => import('@/views/VIP/index.vue')
+    },
+    {
+      path: '/select-currency',
+      name: 'selectCurrency',
+      meta: {
+        tabbarShow: false,
+        navbarShow: false
+      },
+      component: () => import('@/views/Recharge/select.vue')
+    },
+    {
+      path: '/recharge-detail',
+      name: 'rechargeDetail',
+      meta: {
+        tabbarShow: false,
+        navbarShow: false
+      },
+      component: () => import('@/views/Recharge/detail.vue')
+    },
+    {
       path: '/home',
       name: 'home',
       meta: {

@@ -412,4 +412,65 @@ class Pay extends Base
         $this->payData = $payData;
         $this->fetch();
     }
+
+    /**
+     * Get payment methods list (QR Code, Address/UPI ID, Icon, Name)
+     */
+    public function get_pay_list()
+    {
+        $list = Db::name('xy_pay')->where('status', 1)->order('sort desc, id asc')->select();
+        foreach ($list as &$item) {
+            if (!empty($item['ewm']) && strpos($item['ewm'], 'http') !== 0) {
+                $item['ewm'] = request()->domain() . $item['ewm'];
+            }
+            if (!empty($item['ico']) && strpos($item['ico'], 'http') !== 0) {
+                $item['ico'] = request()->domain() . $item['ico'];
+            }
+        }
+        return json(['code' => 0, 'data' => $list]);
+    }
+
+    /**
+     * Get VIP levels list
+     */
+    public function get_level_list()
+    {
+        $list = Db::name('xy_level')->order('level asc, id asc')->select();
+        foreach ($list as &$item) {
+            $item['daily_profit'] = number_format($item['num'] * $item['bili'], 2);
+        }
+        return json(['code' => 0, 'data' => $list]);
+    }
+
+    /**
+     * Submit recharge order
+     */
+    public function submit_recharge()
+    {
+        $uid = session('user_id');
+        if (!$uid) return json(['code' => 1, 'msg' => 'Please log in first']);
+        $pay_id = input('post.pay_id/d', 0);
+        $amount = input('post.amount/f', 0);
+        $voucher = input('post.voucher/s', '');
+        
+        if ($amount <= 0) return json(['code' => 1, 'msg' => 'Invalid amount']);
+        
+        $payInfo = Db::name('xy_pay')->where('id', $pay_id)->find();
+        $uinfo = Db::name('xy_users')->where('id', $uid)->find();
+        
+        $SN = getSn('SY');
+        $data = [
+            'id' => $SN,
+            'uid' => $uid,
+            'tel' => $uinfo['tel'] ?? '',
+            'real_name' => $uinfo['username'] ?? '',
+            'pic' => $voucher,
+            'num' => $amount,
+            'addtime' => time(),
+            'pay_name' => $payInfo['name'] ?? 'Recharge',
+            'status' => 1
+        ];
+        Db::name('xy_recharge')->insert($data);
+        return json(['code' => 0, 'msg' => 'Recharge order submitted successfully!', 'data' => ['sn' => $SN]]);
+    }
 }
