@@ -1,169 +1,100 @@
 <!-- recharge  -->
 <template>
-  <NavBar>
-    <template #right>
-      <van-icon :name='bill' size='20' @click='toBill' />
-    </template>
-  </NavBar>
-  <div class='recharge'>
-    <div class='title'>{{ $t('recharge.Deposit') }}</div>
-    <div class='cell-title'>
-      <van-cell is-link @click='onVanCell'>
-        <!-- 使用 title 插槽来自定义标题 -->
-        <template #title>
-          <div class='cell-div'>
-            <img :src='coin' alt=''>
-            <span>{{ activeList.name }}</span>
-          </div>
-        </template>
-      </van-cell>
-    </div>
-    <div class='tip'>
-      <span>{{ $t('recharge.AmountLimit') }}</span>
-      <span>{{ $t('main.money') }} {{ list.money_list[0] }} ~ {{ $t('main.money') }} {{ list.money_list[list.money_list.length - 1] }} </span>
-    </div>
-    <div v-show='!popupShow' class='inputList'>
-      <van-field
-        v-model='form.beneficiary'
-        :label="$t('recharge.BeneficiaryBank')"
-        :name="$t('recharge.BeneficiaryBank')"
-        :placeholder="$t('recharge.BeneficiaryBank')"
-        :rules="[{ required: true, message: $t('recharge.BeneficiaryBank') }]"
-        class='btn'
-        right-icon='newspaper-o'
-        @click-right-icon="clickRightIcon($t('recharge.BeneficiaryBank'))"
-      />
-      <van-field
-        v-model='form.paymentAccountNumber'
-        :label="$t('recharge.PaymentAccountNumber')"
-        :name="$t('recharge.PaymentAccountNumber')"
-        :placeholder="$t('recharge.PaymentAccountNumber')"
-        :rules="[{ required: true, message: $t('recharge.PaymentAccountNumber') }]"
-        class='btn'
-        right-icon='newspaper-o'
-        @click-right-icon="clickRightIcon($t('recharge.PaymentAccountNumber'))"
-      />
-      <van-field
-        v-model='form.paymentBank'
-        :label="$t('recharge.PaymentBank')"
-        :name="$t('recharge.PaymentBank')"
-        :placeholder="$t('recharge.PaymentBank')"
-        :rules="[{ required: true, message: $t('recharge.PaymentBank') }]"
-        class='btn'
-      />
-      <van-field
-        v-model='form.payer'
-        :label="$t('recharge.Payer')"
-        :name="$t('recharge.Payer')"
-        :placeholder="$t('recharge.Payer')"
-        :rules="[{ required: true, message: $t('recharge.Payer') }]"
-        class='btn'
-      />
-      <van-field
-        v-model='form.paymentAccount'
-        :label="$t('recharge.PaymentAccount')"
-        :name="$t('recharge.PaymentAccount')"
-        :placeholder="$t('recharge.PaymentAccount')"
-        :rules="[{ required: true, message: $t('recharge.PaymentAccount') }]"
-        class='btn'
-      />
-    </div>
-    <div class='amount'>
-      <van-field
-        v-model='money'
-        :label="$t('recharge.RechargeAmount')"
-        :name="$t('recharge.RechargeAmount')"
-        :placeholder="$t('recharge.RechargeAmount')"
-        :rules="[{ required: true, message: $t('recharge.RechargeAmount') }]"
-        class='btn'
-      >
-        <template #right-icon>
-          <span>{{ $t('main.money') }}</span>
-        </template>
-      </van-field>
-    </div>
-    <div class='moneyList'>
-      <div v-for='(item, index) in list?.money_list' :class='{"moneyListActive": moneyIndex === index }'
-           @click='onMoney(item,index)'>
-        {{ item }}
-      </div>
-    </div>
-    <div class='tip'>
-      <span>{{ $t('recharge.ActualPayment') }}</span>
-      <span>{{ $t('main.money') }} {{ money }} </span>
-    </div>
-    <div>
-      <van-button class='item-btn' plain type='warning' @click='getPay'>
-        {{ $t('main.submit') }}
-      </van-button>
-    </div>
-  </div>
+  <div class="recharge-page-container">
+    <NavBar>
+      <template #right>
+        <van-icon :name="bill" size="20" @click="toBill" />
+      </template>
+    </NavBar>
 
-  <div>
-    <van-popup
-      v-model:show='showBottom'
-      :style="{ height: '30%' }"
-      position='bottom'
-    >
-      <div class='popup'>
-        <div class='popup-title'>{{ $t('recharge.SelectChannel') }}</div>
-        <div class='popup-list'>
-          <template v-for='(item, index) in list?.pay'>
-            <div :class='{"popupActive": popupIndex === index}' @click='onPopupClick(item,index)'>
-              <img :src='coin' alt=''>
-              <span>{{ item.name }}</span>
+    <div class="recharge">
+      <div class="title">{{ $t('recharge.Deposit') || 'Deposit' }}</div>
+
+      <!-- Currency Channel Selector Row -->
+      <div class="cell-title">
+        <van-cell is-link @click="onVanCell">
+          <template #title>
+            <div class="cell-div">
+              <img :src="coin" alt="Coin">
+              <span>{{ activeList?.name || 'Select Currency Channel' }}</span>
             </div>
           </template>
-          <!--          <div :class='{"popupActive": popupShow}' @click='onPopupClick(true, $t("recharge.VodafoneCash"))'>-->
-          <!--            <img :src='coin' alt=''>-->
-          <!--            <span>{{ $t('recharge.VodafoneCash') }}</span>-->
-          <!--          </div>-->
-          <!--          <div :class='{"popupActive": !popupShow}' @click='onPopupClick(false, $t("recharge.Vodafone"))'>-->
-          <!--            <img :src='coin' alt=''>-->
-          <!--            <span>{{ $t('recharge.Vodafone') }}</span>-->
-          <!--          </div>-->
+        </van-cell>
+      </div>
+
+      <!-- Amount Limit Info -->
+      <div class="tip">
+        <span>{{ $t('recharge.AmountLimit') || 'Amount limit' }}</span>
+        <span>$ {{ list?.money_list?.[0] || 30 }} ~ $ {{ list?.money_list?.[list?.money_list?.length - 1] || 30000 }}</span>
+      </div>
+
+      <!-- Amount Input Field -->
+      <div class="amount">
+        <van-field
+          v-model="money"
+          type="number"
+          :label="$t('recharge.RechargeAmount') || 'Recharge amount'"
+          :placeholder="$t('recharge.RechargeAmount') || 'Please enter recharge amount'"
+          class="btn"
+        >
+          <template #right-icon>
+            <span>$</span>
+          </template>
+        </van-field>
+      </div>
+
+      <!-- Preset Quick Amount Buttons -->
+      <div class="moneyList">
+        <div 
+          v-for="(item, index) in (list?.money_list || defaultMoneyList)" 
+          :key="index"
+          :class="{'moneyListActive': money === item}"
+          @click="onMoney(item, index)"
+        >
+          {{ item }}
         </div>
       </div>
-    </van-popup>
+
+      <!-- Actual Payment Summary -->
+      <div class="tip actual-tip">
+        <span>{{ $t('recharge.ActualPayment') || 'Actual payment' }}</span>
+        <span class="actual-val">$ {{ money || 0 }}</span>
+      </div>
+
+      <!-- Submit Action Button -->
+      <div class="action-wrap">
+        <button class="submit-action-btn" @click="getPay">
+          {{ $t('main.submit') || 'Submit' }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import coin from '@/assets/img/mine/COIN.png'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { i18n } from '@/lang/index.js'
 import { showNotify } from 'vant'
 import bill from '@/assets/img/mine/bill.png'
 import NavBar from '@/components/navbar/index.vue'
 import { useRouter } from 'vue-router'
 import Request from '@/services/index.js'
-import { baseURL } from '@/services/config.js'
 
 const { t } = i18n.global
 const router = useRouter()
 
-const money = ref(0)
-const showBottom = ref(false)
-const popupShow = ref(true)
-const popupIndex = ref(0)
+const defaultMoneyList = [30, 50, 100, 300, 500, 1000, 3000, 5000, 10000, 30000]
+const money = ref(30)
+const activeList = ref({ name: 'USDT / Crypto & Payment Gateways' })
 
-const activeList = ref([])
-
-const title = ref(t('recharge.VodafoneCash'))
-const form = ref({
-  beneficiary: '',
-  paymentAccountNumber: '',
-  paymentBank: '',
-  payer: '',
-  paymentAccount: ''
+const list = ref({
+  money_list: defaultMoneyList,
+  pay: []
 })
 
-const moneyList = [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 30000]
-const moneyIndex = ref()
-
-const onMoney = (item, index) => {
+const onMoney = (item) => {
   money.value = item
-  moneyIndex.value = index
 }
 
 const onVanCell = () => {
@@ -173,6 +104,10 @@ const onVanCell = () => {
       amount: money.value || 30
     }
   })
+}
+
+const toBill = () => {
+  router.push('/billList')
 }
 
 const getPay = () => {
@@ -187,166 +122,167 @@ const getPay = () => {
     }
   })
 }
+
+onMounted(() => {
+  Request.get({ url: 'index/ctrl/recharge' }).then(res => {
+    if (res && res.data) {
+      list.value = res.data
+      if (res.data.pay && res.data.pay.length > 0) {
+        activeList.value = res.data.pay[0]
+      }
+    }
+  }).catch(err => {
+    console.warn('Recharge config fallback loaded:', err)
+  })
+})
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
+.recharge-page-container {
+  min-height: 100vh;
+  background: #FFF9F8;
+}
+
 .recharge {
   min-height: 90vh;
-  padding: 20px 16px 40px 16px;
-  background: #FFFFFF;
+  padding: 16px 16px 40px;
+  background: #FFF9F8;
 
   .title {
-    font-weight: 700 !important;
-    font-size: 22px;
-  }
-
-  .btn {
-    width: 100%;
-    background: #f7f8fa;
-    border-radius: 30px;
-
-    padding: 16px !important;
-    margin-bottom: 20px;
-
-    :deep(.van-cell) {
-      padding: 20px !important;
-    }
-
-    :deep(.van-field__control) {
-      color: var(--main-color);
-    }
-
+    font-weight: 800 !important;
+    font-size: 24px;
+    color: #1F1A1A;
+    margin-bottom: 16px;
   }
 
   .cell-title {
+    margin-bottom: 16px;
+
     :deep(.van-cell) {
-      background: #f7f8fa;
-      padding: 16px;
-      margin-bottom: 22px;
-      border-radius: 30px;
-      margin-top: 20px;
-    }
-  }
-
-  .cell-div {
-    display: flex;
-    align-items: center;
-
-    img {
-      width: 24px;
-      height: 24px;
+      border-radius: 14px;
+      padding: 14px 16px;
+      background: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.06);
+      align-items: center;
     }
 
-    span {
-      margin-left: 10px;
-      color: #a2a2a2;
+    .cell-div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      img {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+      }
+
+      span {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1F1A1A;
+      }
     }
   }
 
   .tip {
     display: flex;
     justify-content: space-between;
-    font-size: 13.2px;
-    margin: 15px 0;
+    font-size: 13px;
+    color: #86909C;
+    margin-bottom: 12px;
+    padding: 0 4px;
 
-    span:nth-child(1) {
-      color: #c8c8c8;
+    span:last-child {
+      font-weight: 700;
+      color: #B83A2E;
     }
 
-    span:nth-child(2) {
-      color: var(--main-color);
+    &.actual-tip {
+      margin-top: 18px;
+      margin-bottom: 24px;
+      font-size: 14px;
+
+      .actual-val {
+        font-size: 18px;
+        font-weight: 800;
+        color: #B83A2E;
+      }
     }
   }
 
-  .btn {
-    width: 100%;
-    background: #f7f8fa;
-    border-radius: 30px;
+  .amount {
+    margin-bottom: 16px;
 
-    padding: 16px !important;
-    margin-bottom: 20px;
+    .btn {
+      width: 100%;
+      background: #FFFFFF;
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.06);
 
-    :deep(.van-cell) {
-      padding: 20px !important;
+      :deep(.van-field__control) {
+        font-size: 18px;
+        font-weight: 700;
+        color: #B83A2E;
+      }
+
+      :deep(.van-field__right-icon) {
+        font-size: 18px;
+        font-weight: 800;
+        color: #B83A2E;
+      }
     }
-
-    :deep(.van-field__control) {
-      color: var(--main-color);
-    }
-
   }
 
   .moneyList {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(30%, 1fr));
-    grid-gap: 10px;
-    background: #FFFFFF;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
 
     div {
-      color: var(--main-color);
-      background: none;
-      border: 1px solid var(--main-color);
+      background: #FFFFFF;
+      border: 1.5px solid #FDECE8;
+      border-radius: 10px;
+      padding: 12px 0;
       text-align: center;
-      height: 32px;
-      line-height: 32px;
-      font-size: 13.2px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #1F1A1A;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      transition: all 0.2s ease;
+
+      &.moneyListActive {
+        border-color: #B83A2E;
+        background: #FFF0ED;
+        color: #B83A2E;
+        box-shadow: 0 2px 8px rgba(184, 58, 46, 0.15);
+      }
     }
   }
 
-  .moneyListActive {
-    background: var(--second-color) !important;
-  }
+  .action-wrap {
+    margin-top: 20px;
 
-  .item-btn {
-    font-size: 12px;
-    width: 100%;
-    height: 44px;
-    border-radius: 15px;
-    background-color: var(--second-color);
-    border: 0.05px solid var(--main-color);
-    color: var(--main-color);
-    margin-top: 15px;
-  }
-}
+    .submit-action-btn {
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #B83A2E, #E86C3F);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(184, 58, 46, 0.25);
+      transition: transform 0.1s ease;
 
-.popup {
-
-  .popup-title {
-    padding: 20px 16px;
-    color: #969799;
-    font-size: 14px;
-    line-height: 30px;
-    text-align: center;
-    border-bottom: 1px solid #ebedf0;
-  }
-
-  .popup-list {
-    padding: 0 16px;
-    font-size: 13.2px;
-
-    div {
-      display: flex;
-      align-items: center;
-      padding: 22px;
-      //color: var(--main-color);
-      border: 1px solid transparent;
-      border-radius: 15px;
-      margin-top: 15px;
+      &:active {
+        transform: scale(0.98);
+      }
     }
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
-
-    span {
-      margin-left: 10px;
-    }
-  }
-
-  .popupActive {
-    color: var(--main-color);
-    border: 1px solid var(--main-color) !important;
   }
 }
 </style>
