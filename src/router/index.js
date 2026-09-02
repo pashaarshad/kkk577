@@ -217,14 +217,14 @@ const router = createRouter({
   ]
 })
 
-// 全局守卫：登录拦截 本地没有存token,请重新登录
+// 全局守卫：登录拦截
 router.beforeEach((to, from, next) => {
-  // 判断有没有登录
-  if (!sessionStorage.getItem('token')) {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (!token) {
     if (to.name === 'login' || to.name === 'home' || to.name === 'register' || to.name === 'forgotPassword' || to.name === 'posterDetail') {
       next()
     } else {
-      router.push('/login')
+      next({ name: 'login' })
     }
   } else {
     next()
