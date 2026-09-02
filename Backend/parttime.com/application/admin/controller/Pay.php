@@ -95,8 +95,53 @@ class Pay extends Base
         if (!$id) $this->error('参数错误');
         $this->info = Db::table($this->table)->find($id);
 
-        //var_dump($this->info);die;
         return $this->fetch();
+    }
+
+    /**
+     * 添加支付方式
+     * @auth true
+     * @menu true
+     */
+    public function add()
+    {
+        if (request()->isPost()) {
+            $data = array(
+                'name' => input('post.name/s', ''),
+                'min' => input('post.min/f', 0),
+                'max' => input('post.max/f', 0),
+                'ewm' => input('post.ewm/s', ''),
+                'usercode' => input('post.username/s', ''),
+                'username' => input('post.usercode/s', ''),
+                'secret' => input('post.secret/s', ''),
+                'mch_id' => input('post.mch_id/s', ''),
+                'pay_commission' => input('post.pay_commission/f', 0),
+                'status' => 1,
+                'sort' => 0,
+                'addtime' => time()
+            );
+            $res = Db::table($this->table)->insert($data);
+            if (!$res) {
+                return $this->error('添加失败');
+            }
+            sysoplog('添加支付方式', json_encode($data, JSON_UNESCAPED_UNICODE));
+            $this->success('添加成功');
+        }
+        $this->info = ['id' => 0, 'name' => '', 'min' => 0, 'max' => 0, 'ewm' => '', 'username' => '', 'usercode' => '', 'secret' => '', 'mch_id' => '', 'pay_commission' => 0];
+        return $this->fetch('edit');
+    }
+
+    /**
+     * 删除支付方式
+     * @auth true
+     */
+    public function del()
+    {
+        $id = input('post.id/d', 0);
+        if (!$id) $this->error('参数错误');
+        Db::table($this->table)->where('id', $id)->delete();
+        sysoplog('删除支付方式', "ID: {$id}");
+        $this->success('删除成功');
     }
 
 
