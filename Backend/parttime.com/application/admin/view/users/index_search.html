@@ -1,146 +1,41 @@
-<form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false" method="get"
-      autocomplete="off">
+<form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false" method="get" autocomplete="off">
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">一级代理</label>
+        <label class="layui-form-label" style="background:#f8f9fa; color:#4e5969;">uid</label>
         <div class="layui-input-inline">
-            <select name="agent_id">
-                <option value="0">全部</option>
-                {foreach $agent_list as $k=>$v}
-                <option value="{$k}"{if $agent_id==$k} selected{/if}>{$v}</option>
-                {/foreach}
-            </select>
+            <input name="id" value="{$Think.get.id|default=''}" placeholder="uid" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">二级代理</label>
+        <label class="layui-form-label" style="background:#f8f9fa; color:#4e5969;">account</label>
         <div class="layui-input-inline">
-            <select name="agent_service_id">
-                <option value="0">全部</option>
-                {foreach $agent_service_list as $k=>$v}
-                <option value="{$k}"{if $agent_service_id==$k} selected{/if}>{$v}</option>
-                {/foreach}
-            </select>
+            <input name="tel" value="{$Think.get.tel|default=''}" placeholder="account" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">级别</label>
+        <label class="layui-form-label" style="background:#f8f9fa; color:#4e5969;">Invitation code</label>
         <div class="layui-input-inline">
-            <select name="level">
-                <option value="-1">全部级别</option>
-                {foreach $level_list as $vo}
-                <option value="{$vo.level}" {if $level==$vo.level} selected{
-                /if}>{$vo.name}</option>
-                {/foreach}
-            </select>
+            <input name="invite_code" value="{$Think.get.invite_code|default=''}" placeholder="Invitation code" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">叠加组</label>
+        <label class="layui-form-label" style="background:#f8f9fa; color:#4e5969;">Registration</label>
         <div class="layui-input-inline">
-            <select name="group_id">
-                <option value="-1">全部叠加组</option>
-                {foreach $groupList as $k=>$vo}
-                <option value="{$k}" {if $group_id==$k} selected{
-                /if}>{$vo}</option>
-                {/foreach}
-            </select>
+            <input data-date-range name="addtime" value="{$Think.get.addtime|default=''}" placeholder="Start time - End time" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">状态</label>
-        <div class="layui-input-inline">
-            <select name="is_jia" id="selectList">
-                <option value="">所有状态</option>
-                <option value="-1">真人</option>
-                <option value="1">假人</option>
-            </select>
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">排序方式</label>
-        <div class="layui-input-inline">
-            <select name="order">
-                <option value="">默认排序</option>
-                <option value="recharge" {if $order=='recharge'} selected{
-                /if}>充值金额倒序</option>
-                <option value="recharge_count" {if $order=='recharge_count'} selected{
-                /if}>充值次数倒序</option>
-                <option value="deposit" {if $order=='deposit'} selected{
-                /if}>提现金额倒序</option>
-                <option value="deposit_count" {if $order=='deposit_count'} selected{
-                /if}>提现次数倒序</option>
-            </select>
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">用户名称</label>
-        <div class="layui-input-inline">
-            <input name="username" value="{$Think.get.username|default=''}" placeholder="请输入用户名称" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">手机号码</label>
-        <div class="layui-input-inline">
-            <input name="tel" value="{$Think.get.tel|default=''}" placeholder="请输入手机号码" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">邀请码</label>
-        <div class="layui-input-inline">
-            <input name="invite_code" value="{$Think.get.invite_code|default=''}" placeholder="邀请码" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">注册时间</label>
-        <div class="layui-input-inline">
-            <input data-date-range name="addtime" value="{$Think.get.addtime|default=''}" placeholder="请选择注册时间"
-                   class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <button class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe615;</i> 搜 索</button>
-        {if auth("daochu") }
-        <a href="{:url('daochu')}" class="layui-btn layui-btn-danger"><i class="layui-icon">&#xe615;</i> 导 出</a>
+        <button class="layui-btn btn-op-blue" style="height:38px; line-height:38px; padding:0 20px;"><i class="layui-icon">&#xe615;</i> Query</button>
+        <a href="{:url('index')}" class="layui-btn layui-btn-primary" style="height:38px; line-height:38px; padding:0 20px;">Reset</a>
+        {if auth("daochu")}
+        <a href="{:url('daochu')}" class="layui-btn btn-op-green" style="height:38px; line-height:38px; padding:0 20px;"><i class="layui-icon">&#xe601;</i> Export Membership</a>
         {/if}
     </div>
 </form>
-<div class="layui-form layui-form-pane form-search">
-    {if auth("inyectar/batch_inyectar") }
-    <div class="layui-form-item layui-inline">
-        <label class="layui-form-label">打针幅度</label>
-        <div class="layui-input-inline">
-            <input id="in_cale" value="" type="number" placeholder="最低 1.1" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item layui-inline">
-        <a data-post='{:url("inyectar/batch_inyectar")}'
-           data-csrf="{:systoken('inyectar/batch_inyectar')}"
-           onclick="set_inyectar(this)"
-           class="layui-btn layui-btn-danger">批量打针
-        </a>
-    </div>
-    {/if}
+
+<!-- VIP Tier Filter Pills -->
+<div class="vip-filter-pills" style="margin: 15px 0; display: flex; gap: 8px; flex-wrap: wrap;">
+    <a href="{:url('index')}?level=-1" class="layui-btn layui-btn-sm {if $Think.get.level=='' || $Think.get.level=='-1'}layui-btn-normal{else}layui-btn-primary{/if}">All</a>
+    {foreach $level_list as $vo}
+    <a href="{:url('index')}?level={$vo.level}" class="layui-btn layui-btn-sm {if $Think.get.level==$vo.level}layui-btn-normal{else}layui-btn-primary{/if}">VIP{$vo.level}</a>
+    {/foreach}
 </div>
-<script>
-    function set_inyectar(el) {
-        var sel = table.checkStatus('userTable');
-        var ids = [];
-        var $this = $(el);
-        for (var i = 0; i < sel.data.length; i++) ids.push(sel.data[i].id);
-        if (ids.length < 1) return $.msg.tips('请选择要打针的用户！');
-        var data = {};
-        data.uids = ids;
-        data.scale = $('#in_cale').val();
-        data.scale = data.scale.length > 0 ? parseFloat(data.scale) : 0;
-        if (data.scale < 1.1) return $.msg.tips('请输入打针比例！');
-        console.log(data);
-
-        $.msg.confirm('确定打针？', function () {
-            $.form.load($this.attr('data-post'), data, 'post',false, true);
-        });
-    }
-
-    var test = "{$Think.get.is_jia|default='0'}";
-    $("#selectList").find("option[value=" + test + "]").prop("selected", true);
-    form.render()
-</script>
