@@ -49,7 +49,7 @@
     </div>
 
     <!-- Confirm Dialog Modal -->
-    <van-popup v-model:show="showModal" round :style="{ width: '85%', padding: '24px 16px', textAlign: 'center' }">
+    <van-popup v-model:show="showModal" round :style="{ width: '80%', maxWidth: '300px', padding: '20px 16px', textAlign: 'center' }">
       <div class="modal-content">
         <p class="modal-text">
           The recharge balance is automatically unlocked Need to recharge ${{ Number(selectedItem?.num || 0).toFixed(2) }}
@@ -250,11 +250,14 @@ onMounted(() => {
 }
 
 .modal-content {
+  max-width: 260px;
+  margin: 0 auto;
+
   .modal-text {
-    font-size: 15px;
-    color: #1d2129;
-    line-height: 1.5;
-    margin-bottom: 24px;
+    font-size: 13px;
+    color: #1f1a1a;
+    line-height: 1.4;
+    margin-bottom: 16px;
     font-weight: 500;
   }
 
@@ -263,13 +266,13 @@ onMounted(() => {
     background: #ff3b30;
     color: #ffffff;
     border: none;
-    border-radius: 24px;
-    height: 44px;
-    line-height: 44px;
-    font-size: 16px;
+    border-radius: 20px;
+    height: 38px;
+    line-height: 38px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+    box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
 
     &:active {
       background: #d63027;
