@@ -628,6 +628,15 @@ class Ctrl extends Base
     //提现接口
     public function do_deposit()
     {
+        $uid = session('user_id');
+        $checkUser = Db::name('xy_users')->field('status,deposit_status')->find($uid);
+        if ($checkUser && $checkUser['status'] != 1) {
+            return json(['code' => 1, 'info' => 'Account is disabled']);
+        }
+        if ($checkUser && $checkUser['deposit_status'] != 1) {
+            return json(['code' => 1, 'info' => 'Withdrawal permission is currently disabled for your account']);
+        }
+
         $res = check_time(config('tixian_time_1'), config('tixian_time_2'));
         $str = config('tixian_time_1') . ":00  - " . config('tixian_time_2') . ":00";
         if ($res) return json(['code' => 1, 'info' => lang('ctrl_jzz') . $str . lang('ctrl_ywsjd')]);
