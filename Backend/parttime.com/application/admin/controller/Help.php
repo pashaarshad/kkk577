@@ -369,4 +369,34 @@ class Help extends Base
         sysoplog('Delete Homepage Video', 'Homepage video removed');
         $this->success('Homepage video deleted successfully!');
     }
+
+    /**
+     * 独立视频文件上传接口
+     */
+    public function upload_video_file()
+    {
+        if (empty($_FILES['file'])) {
+            return json(['code' => 0, 'info' => 'No video file received or file size exceeds php.ini post_max_size']);
+        }
+        $file = $_FILES['file'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return json(['code' => 0, 'info' => 'Upload error code: ' . $file['error']]);
+        }
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed = ['mp4', 'mov', 'webm', 'mkv', 'avi', 'flv', 'wmv', 'ts', 'm4v', '3gp', 'mpeg'];
+        if (!in_array($ext, $allowed)) {
+            return json(['code' => 0, 'info' => 'Unsupported video format: ' . $ext]);
+        }
+        $dir = env('root_path') . 'public/upload/video/' . date('Ymd') . '/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+        $filename = md5(time() . rand(1000, 9999)) . '.' . $ext;
+        $savePath = $dir . $filename;
+        if (move_uploaded_file($file['tmp_name'], $savePath)) {
+            $url = request()->domain() . '/upload/video/' . date('Ymd') . '/' . $filename;
+            return json(['code' => 1, 'info' => 'Upload success', 'url' => $url]);
+        }
+        return json(['code' => 0, 'info' => 'Failed to save video file']);
+    }
 }

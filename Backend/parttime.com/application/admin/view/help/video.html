@@ -11,10 +11,17 @@
                 <label class="layui-col-xs12 relative">
                     <span class="color-green font-w700">Video File URL or Click Upload Button (YouTube or Direct Video File)</span>
                     <div class="margin-top-10 flex" style="display:flex; gap:10px; align-items:center;">
-                        <input name="video_url" class="layui-input" placeholder="Paste YouTube Link (e.g. https://www.youtube.com/watch?v=...) OR upload local video file" value="{$video_url|default=''}">
-                        <button type="button" class="layui-btn btn-op-green" data-file="btn" data-type="mp4,mov,webm,mkv,avi,flv,wmv,ts,m4v,3gp,mpeg" data-field="video_url">
+                        <input id="videoUrlInput" name="video_url" class="layui-input" placeholder="Paste YouTube Link (e.g. https://www.youtube.com/watch?v=...) OR upload local video file" value="{$video_url|default=''}">
+                        
+                        <!-- Hidden Direct HTML5 File Input -->
+                        <input type="file" id="localVideoFileInput" style="display:none;" accept="video/*,.mp4,.mov,.webm,.mkv,.avi,.flv,.wmv,.ts,.m4v,.3gp,.mpeg">
+                        
+                        <button type="button" id="triggerUploadBtn" class="layui-btn btn-op-green" style="white-space:nowrap;">
                             <i class="layui-icon">&#xe67c;</i> Upload Video File
                         </button>
+                    </div>
+                    <div id="uploadProgressBox" style="display:none; margin-top:8px; font-weight:600; color:#B83A2E;">
+                        <span id="uploadStatusText">Uploading video... 0%</span>
                     </div>
                     <p class="help-block margin-top-5">
                         <i class="layui-icon color-blue">&#xe60b;</i> <strong>Supported Video Formats:</strong> MP4, MOV, WebM, MKV, AVI, FLV, WMV, TS, M4V, 3GP, MPEG (supports all OBS Studio & phone recordings).
@@ -39,14 +46,12 @@
             </div>
 
             <!-- Active Video Preview -->
-            {notempty name="video_url"}
-            <div class="layui-form-item margin-top-20">
+            <div class="layui-form-item margin-top-20" id="previewSection" style="{if empty($video_url)}display:none;{/if}">
                 <span class="color-blue font-w700 block margin-bottom-10">Active Homepage Video Preview:</span>
                 <div id="adminVideoPreview" style="max-width:480px; border-radius:12px; overflow:hidden; background:#000; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
-                    <!-- JavaScript will dynamically render either <video> or <iframe> preview -->
+                    <!-- JavaScript dynamically renders video or iframe -->
                 </div>
             </div>
-            {/notempty}
 
             <div class="layui-form-item padding-top-20">
                 <button class="layui-btn btn-op-blue" type="submit"><i class="layui-icon">&#xe681;</i> Save Video Settings</button>
@@ -60,20 +65,67 @@
 
 <script>
 (function() {
-    var videoUrl = '{$video_url|default=""}';
-    var ratioMode = '{$video_ratio|default="auto"}';
+    var videoUrlInput = document.getElementById('videoUrlInput');
+    var fileInput = document.getElementById('localVideoFileInput');
+    var triggerBtn = document.getElementById('triggerUploadBtn');
+    var progressBox = document.getElementById('uploadProgressBox');
+    var statusText = document.getElementById('uploadStatusText');
+    var previewSection = document.getElementById('previewSection');
     var previewContainer = document.getElementById('adminVideoPreview');
-    if (!previewContainer || !videoUrl) return;
 
-    if (ratioMode === '9-16') {
-        previewContainer.style.aspectRatio = '9 / 16';
-        previewContainer.style.maxHeight = '520px';
-    } else if (ratioMode === '16-9') {
-        previewContainer.style.aspectRatio = '16 / 9';
-        previewContainer.style.maxHeight = '300px';
-    } else {
-        previewContainer.style.aspectRatio = '16 / 9';
-    }
+    // Trigger local file picker
+    triggerBtn.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    // Handle Direct AJAX File Upload
+    fileInput.addEventListener('change', function() {
+        if (!fileInput.files || !fileInput.files[0]) return;
+        var file = fileInput.files[0];
+
+        var formData = new FormData();
+        formData.append('file', file);
+
+        progressBox.style.display = 'block';
+        statusText.innerText = 'Uploading video file... 0%';
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', "{:url('upload_video_file')}", true);
+
+        xhr.upload.onprogress = function(e) {
+            if (e.lengthComputable) {
+                var percent = Math.round((e.loaded / e.total) * 100);
+                statusText.innerText = 'Uploading video file... ' + percent + '%';
+            }
+        };
+
+        xhr.onload = function() {
+            progressBox.style.display = 'none';
+            if (xhr.status === 200) {
+                try {
+                    var res = JSON.parse(xhr.responseText);
+                    if (res.code === 1 && res.url) {
+                        videoUrlInput.value = res.url;
+                        renderPreview(res.url);
+                        if (window.layer) layer.msg('Video uploaded successfully!');
+                    } else {
+                        alert(res.info || 'Upload failed');
+                    }
+                } catch(err) {
+                    alert('Upload response error');
+                }
+            } else {
+                alert('Upload server error: ' + xhr.status);
+            }
+        };
+
+        xhr.onerror = function() {
+            progressBox.style.display = 'none';
+            alert('Upload network connection error');
+        };
+
+        xhr.send(formData);
+    });
 
     function parseYoutubeEmbed(url) {
         if (!url) return null;
@@ -82,12 +134,26 @@
         return (match && match[2].length === 11) ? 'https://www.youtube.com/embed/' + match[2] : null;
     }
 
-    var ytEmbed = parseYoutubeEmbed(videoUrl);
-    if (ytEmbed) {
-        previewContainer.innerHTML = '<iframe src="' + ytEmbed + '" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>';
-    } else {
-        previewContainer.innerHTML = '<video controls style="width:100%; height:100%; object-fit:cover;" src="' + videoUrl + '"></video>';
+    function renderPreview(url) {
+        if (!previewContainer) return;
+        if (!url) {
+            previewSection.style.display = 'none';
+            return;
+        }
+        previewSection.style.display = 'block';
+        var ytEmbed = parseYoutubeEmbed(url);
+        if (ytEmbed) {
+            previewContainer.innerHTML = '<iframe src="' + ytEmbed + '" style="width:100%; height:100%; min-height:280px; border:none;" allowfullscreen></iframe>';
+        } else {
+            previewContainer.innerHTML = '<video controls style="width:100%; height:100%; object-fit:cover;" src="' + url + '"></video>';
+        }
     }
+
+    videoUrlInput.addEventListener('input', function() {
+        renderPreview(this.value.trim());
+    });
+
+    renderPreview(videoUrlInput.value.trim());
 })();
 </script>
 {/block}
