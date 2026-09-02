@@ -167,68 +167,24 @@ const onMoney = (item, index) => {
 }
 
 const onVanCell = () => {
-  showBottom.value = true
-}
-
-const onPopupClick = (item, index) => {
-  popupIndex.value = index
-  activeList.value = item
-}
-
-const clickRightIcon = (text) => {
-  navigator.clipboard.writeText(text)
-  showNotify({ type: 'success', message: t('recharge.copy_success') })
-}
-
-const toBill = () => {
-  router.push('/billList')
-}
-
-const list = ref()
-Request.get({ url: 'index/ctrl/recharge' }).then(res => {
-  list.value = res.data
-  activeList.value = res.data.pay[0]
-})
-
-const getPay = () => {
-  let param = new FormData()
-  param.append('price', money.value)
-  param.append('type', activeList.value.name2)
-  Request.post({ url: 'index/ctrl/recharge_do_before', data: param }).then(res => {
-    if (res.code === 0) {
-      getQeapay(res.info.num)
+  router.push({
+    path: '/select-currency',
+    query: {
+      amount: money.value || 30
     }
   })
 }
 
-const getQeapay = (num) => {
-  if (!money.value || money.value <= 0) {
-    showNotify({ type: 'warning', message: t('recharge.RechargeAmount') })
+const getPay = () => {
+  if (!money.value || Number(money.value) <= 0) {
+    showNotify({ type: 'warning', message: t('recharge.RechargeAmount') || 'Please enter recharge amount' })
     return
   }
-
-  const endpoint = activeList.value.url + `?num=${money.value}&type=${activeList.value.type}&id=${activeList.value.id}`
-  Request.get({ url: endpoint }).then(res => {
-    if (res && res.data && res.data.payInfo && res.data.payInfo.startsWith('http')) {
-      window.location.href = res.data.payInfo
-    } else {
-      router.push({
-        path: '/recharge-detail',
-        query: {
-          id: activeList.value.id,
-          amount: money.value,
-          sn: res?.data?.sn || ''
-        }
-      })
+  router.push({
+    path: '/select-currency',
+    query: {
+      amount: money.value
     }
-  }).catch(() => {
-    router.push({
-      path: '/recharge-detail',
-      query: {
-        id: activeList.value.id,
-        amount: money.value
-      }
-    })
   })
 }
 </script>

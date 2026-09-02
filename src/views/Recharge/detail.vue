@@ -13,6 +13,10 @@
         <span>{{ payInfo.name }}</span>
       </div>
 
+      <div v-if="amount && Number(amount) > 0" style="text-align:center; margin: 4px 0 16px; font-size:16px; font-weight:700; color:#B83A2E;">
+        Deposit Amount: ${{ amount }}
+      </div>
+
       <!-- QR Code Container -->
       <div class="qr-box">
         <img :src="payInfo.ewm || generateQrUrl(payInfo.usercode || '0x4f85459F610376Ee6Ad77216785582c55817d5bc')" alt="QR Code" class="qr-img">
