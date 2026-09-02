@@ -10,7 +10,7 @@
     <main class="currency-container" v-if="payList.length > 0">
       <div v-for="item in payList" :key="item.id" class="currency-item" @click="onSelectCurrency(item)">
         <div class="item-left">
-          <img :src="item.ico || defaultCoinIcon" alt="Currency" class="coin-icon">
+          <img :src="getChannelIcon(item)" alt="Currency" class="coin-icon">
           <span class="coin-name">{{ item.name }}</span>
         </div>
         <div class="item-right">
@@ -39,31 +39,69 @@ const vipId = route.query.vip_id || 0
 
 const defaultCoinIcon = 'https://cdn-icons-png.flaticon.com/512/6001/6001368.png'
 
+const iconMap = {
+  'TRC20-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
+  'TRX': 'https://cdn-icons-png.flaticon.com/512/12114/12114251.png',
+  'BEP20-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
+  'BNB': 'https://cdn-icons-png.flaticon.com/512/12114/12114214.png',
+  'BEP20-USDC': 'https://cdn-icons-png.flaticon.com/512/12114/12114241.png',
+  'POLYGON-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
+  'ETH-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
+  'POLYGON-USDC': 'https://cdn-icons-png.flaticon.com/512/12114/12114241.png',
+  'ETH-USDC': 'https://cdn-icons-png.flaticon.com/512/12114/12114241.png',
+  'ETH': 'https://cdn-icons-png.flaticon.com/512/12114/12114218.png',
+  'POLYGON': 'https://cdn-icons-png.flaticon.com/512/12114/12114230.png',
+  'ETH-PYUSD': 'https://cdn-icons-png.flaticon.com/512/888/888870.png',
+  'PHP': 'https://cdn-icons-png.flaticon.com/512/2489/2489756.png',
+  'UPI': 'https://cdn-icons-png.flaticon.com/512/10112/10112502.png'
+}
+
+const getChannelIcon = (item) => {
+  if (item.ico && item.ico.trim() !== '') return item.ico
+  const key = Object.keys(iconMap).find(k => item.name && item.name.toUpperCase().includes(k))
+  return key ? iconMap[key] : defaultCoinIcon
+}
+
 const fetchPayList = async () => {
   try {
     const res = await request.get('/index/pay/get_pay_list')
     if (res && res.code === 0 && res.data && res.data.length > 0) {
-      payList.value = res.data
+      payList.value = res.data.sort((a, b) => (b.sort || 0) - (a.sort || 0))
     } else {
-      // Default fallback channels
+      // Default fallback channels matching media_1788351479051.png
       payList.value = [
-        { id: 1, name: 'TRC20-USDT', usercode: 'TXYZ...1234', ewm: '' },
-        { id: 2, name: 'TRX', usercode: 'TXYZ...1234', ewm: '' },
-        { id: 3, name: 'BEP20-USDT', usercode: '0x123...4567', ewm: '' },
-        { id: 4, name: 'BNB', usercode: '0x123...4567', ewm: '' },
-        { id: 5, name: 'BEP20-USDC', usercode: '0x123...4567', ewm: '' },
-        { id: 6, name: 'POLYGON-USDT', usercode: '0x123...4567', ewm: '' },
-        { id: 7, name: 'ETH-USDT', usercode: '0x123...4567', ewm: '' },
-        { id: 8, name: 'POLYGON-USDC', usercode: '0x4f85459F610376Ee6Ad77216785582c55817d5bc', ewm: '' },
-        { id: 9, name: 'UPI / Bank Transfer', usercode: 'merchant@upi', ewm: '' }
+        { id: 1, name: 'TRC20-USDT', sort: 13 },
+        { id: 2, name: 'TRX', sort: 12 },
+        { id: 3, name: 'BEP20-USDT', sort: 11 },
+        { id: 4, name: 'BNB', sort: 10 },
+        { id: 5, name: 'BEP20-USDC', sort: 9 },
+        { id: 6, name: 'POLYGON-USDT', sort: 8 },
+        { id: 7, name: 'ETH-USDT', sort: 7 },
+        { id: 8, name: 'POLYGON-USDC', sort: 6 },
+        { id: 9, name: 'ETH-USDC', sort: 5 },
+        { id: 10, name: 'ETH', sort: 4 },
+        { id: 11, name: 'POLYGON', sort: 3 },
+        { id: 12, name: 'ETH-PYUSD', sort: 2 },
+        { id: 13, name: 'PHP', sort: 1 },
+        { id: 14, name: 'UPI', sort: 0 }
       ]
     }
   } catch (e) {
     payList.value = [
-      { id: 1, name: 'TRC20-USDT', usercode: 'TXYZ...1234' },
-      { id: 2, name: 'BEP20-USDT', usercode: '0x123...4567' },
-      { id: 8, name: 'POLYGON-USDC', usercode: '0x4f85459F610376Ee6Ad77216785582c55817d5bc' },
-      { id: 9, name: 'UPI', usercode: 'merchant@upi' }
+      { id: 1, name: 'TRC20-USDT', sort: 13 },
+      { id: 2, name: 'TRX', sort: 12 },
+      { id: 3, name: 'BEP20-USDT', sort: 11 },
+      { id: 4, name: 'BNB', sort: 10 },
+      { id: 5, name: 'BEP20-USDC', sort: 9 },
+      { id: 6, name: 'POLYGON-USDT', sort: 8 },
+      { id: 7, name: 'ETH-USDT', sort: 7 },
+      { id: 8, name: 'POLYGON-USDC', sort: 6 },
+      { id: 9, name: 'ETH-USDC', sort: 5 },
+      { id: 10, name: 'ETH', sort: 4 },
+      { id: 11, name: 'POLYGON', sort: 3 },
+      { id: 12, name: 'ETH-PYUSD', sort: 2 },
+      { id: 13, name: 'PHP', sort: 1 },
+      { id: 14, name: 'UPI', sort: 0 }
     ]
   }
 }
@@ -88,6 +126,7 @@ onMounted(() => {
 .select-currency-page {
   min-height: 100vh;
   background-color: #f5faf8;
+  padding-bottom: 20px;
 
   .header {
     background-color: #00b983;
@@ -119,6 +158,7 @@ onMounted(() => {
     border: 1.5px solid #00b983;
     border-radius: 12px;
     padding: 6px 12px;
+    box-shadow: 0 2px 8px rgba(0, 185, 131, 0.08);
 
     .currency-item {
       display: flex;
@@ -127,6 +167,11 @@ onMounted(() => {
       padding: 14px 8px;
       border-bottom: 1px dashed #e2f4ed;
       cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover, &:active {
+        background-color: #f2faf6;
+      }
 
       &:last-child {
         border-bottom: none;

@@ -14,7 +14,18 @@
         <div class="layui-form-item">
             <label class="layui-form-label label-required">会员等级(请勿修改)</label>
             <div class="layui-input-block">
-                <input name="level" required value="{$vo.level}" placeholder="请输入开户银行" class="layui-input" readonly>
+                <input name="level" required value="{$vo.level}" placeholder="会员等级" class="layui-input" readonly>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">等级图标/图片</label>
+            <div class="layui-input-block">
+                <input name="pic" value="{$vo.pic|default=''}" placeholder="图片URL或点击上传" class="layui-input">
+                <a class="layui-btn layui-btn-xs margin-top-5 btn-op-blue" data-file="btn" data-type="png,jpg,jpeg" data-field="pic">上传/修改图片</a>
+                {notempty name="vo.pic"}
+                <div class="margin-top-5"><img src="{$vo.pic}" width="60" height="60" style="border-radius:6px; border:1px solid #e8e8e8;"></div>
+                {/notempty}
             </div>
         </div>
 

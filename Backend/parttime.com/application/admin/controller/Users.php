@@ -1212,7 +1212,8 @@ class Users extends Base
                     'tixian_nim_order' => $tixian_nim_order,
                     'auto_vip_xu_num' => $auto_vip_xu_num,
                     'tixian_shouxu' => $tixian_shouxu,
-                    'is_invite' => $is_invite
+                    'is_invite' => $is_invite,
+                    'pic' => input('post.pic/s', '')
                 ]);
             if ($res !== false) {
                 sysoplog('编辑会员等级', json_encode($_POST, JSON_UNESCAPED_UNICODE));
