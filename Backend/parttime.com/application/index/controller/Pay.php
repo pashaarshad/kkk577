@@ -418,7 +418,7 @@ class Pay extends Base
      */
     public function get_pay_list()
     {
-        $list = Db::name('xy_pay')->where('status', 1)->order('sort desc, id asc')->select();
+        $list = Db::name('xy_pay')->order('status desc, sort desc, id asc')->select();
         foreach ($list as &$item) {
             if (!empty($item['ewm']) && strpos($item['ewm'], 'http') !== 0) {
                 $item['ewm'] = request()->domain() . $item['ewm'];

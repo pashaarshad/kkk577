@@ -8,20 +8,27 @@
 
     <!-- Currency List Container -->
     <main class="currency-container" v-if="payList.length > 0">
-      <div v-for="item in payList" :key="item.id" class="currency-item" @click="onSelectCurrency(item)">
+      <div 
+        v-for="item in payList" 
+        :key="item.id" 
+        class="currency-item"
+        :class="{ 'is-disabled': item.status === 0 }"
+        @click="onSelectCurrency(item)"
+      >
         <div class="item-left">
           <img :src="getChannelIcon(item)" alt="Currency" class="coin-icon">
           <span class="coin-name">{{ item.name }}</span>
+          <span v-if="item.status === 0" class="disabled-tag">Disabled</span>
         </div>
         <div class="item-right">
-          <van-icon name="arrow" color="#86909c" size="16" />
+          <van-icon name="arrow" :color="item.status === 0 ? '#c9cdd4' : '#86909c'" size="16" />
         </div>
       </div>
     </main>
 
     <!-- Loading -->
     <div class="loading-box" v-else>
-      <van-loading type="spinner" color="#00b983">Loading payment channels...</van-loading>
+      <van-loading type="spinner" color="#B83A2E">Loading payment channels...</van-loading>
     </div>
   </div>
 </template>
@@ -29,6 +36,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { showToast } from 'vant'
 import request from '@/services/index.js'
 
 const router = useRouter()
@@ -66,7 +74,11 @@ const fetchPayList = async () => {
   try {
     const res = await request.get('/index/pay/get_pay_list')
     if (res && res.code === 0 && res.data) {
-      payList.value = res.data.sort((a, b) => (b.sort || 0) - (a.sort || 0))
+      payList.value = res.data.sort((a, b) => {
+        if (b.status !== a.status) return b.status - a.status
+        if (b.sort !== a.sort) return (b.sort || 0) - (a.sort || 0)
+        return a.id - b.id
+      })
     }
   } catch (e) {
     console.error('Failed to fetch payment channels:', e)
@@ -74,6 +86,10 @@ const fetchPayList = async () => {
 }
 
 const onSelectCurrency = (item) => {
+  if (item.status === 0) {
+    showToast('This payment channel is currently disabled by Admin.')
+    return
+  }
   router.push({
     path: '/recharge-detail',
     query: {
@@ -144,6 +160,16 @@ onMounted(() => {
         border-bottom: none;
       }
 
+      &.is-disabled {
+        opacity: 0.55;
+        background-color: #fafafa;
+
+        .coin-name {
+          color: #86909c;
+          text-decoration: line-through;
+        }
+      }
+
       .item-left {
         display: flex;
         align-items: center;
@@ -158,7 +184,16 @@ onMounted(() => {
         .coin-name {
           font-size: 14px;
           font-weight: 700;
-          color: #1d2129;
+          color: #1f1a1a;
+        }
+
+        .disabled-tag {
+          font-size: 10px;
+          background: #e5e6eb;
+          color: #86909c;
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-weight: 500;
         }
       }
     }
