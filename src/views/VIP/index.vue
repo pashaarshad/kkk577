@@ -64,7 +64,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showToast } from 'vant'
-import request from '@/utils/request'
+import request from '@/services/index.js'
 
 const router = useRouter()
 const levelList = ref([])

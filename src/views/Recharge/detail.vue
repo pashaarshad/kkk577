@@ -43,7 +43,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { showToast, showSuccessToast } from 'vant'
-import request from '@/utils/request'
+import request from '@/services/index.js'
 
 const router = useRouter()
 const route = useRoute()
