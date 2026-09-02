@@ -374,7 +374,14 @@ $(function () {
         this.getUri = function (uri) {
             uri = uri || window.location.href;
             uri = (uri.indexOf(window.location.host) > -1 ? uri.split(window.location.host)[1] : uri);
-            return (uri.indexOf('#') > -1 ? uri.split('#')[1] : uri).split('?')[0];
+            uri = (uri.indexOf('#') > -1 ? uri.split('#')[1] : uri).split('?')[0];
+            uri = uri.replace(/^\/+/, '');
+            if (uri.indexOf('admin/') === 0) {
+                uri = '/' + uri;
+            } else if (uri && uri !== '#') {
+                uri = '/admin/' + uri;
+            }
+            return uri;
         };
         // 通过URI查询最有可能的菜单NODE
         this.queryNode = function (url, node) {
