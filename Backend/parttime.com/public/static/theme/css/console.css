@@ -1325,31 +1325,42 @@ label.think-radio {
     color: #fff;
 }
 
-/* Light Categorized Sidebar Menu */
+/* Light Categorized Sidebar Menu - High Contrast Black Text */
+.layui-side,
 .layui-side.layui-bg-black {
     background-color: #ffffff !important;
     top: 50px !important;
+    border-right: 1px solid #e8e8e8 !important;
 }
-.layui-nav-tree .layui-nav-item a {
-    color: #333333 !important;
-    height: 44px;
-    line-height: 44px;
-    font-size: 13px;
-    border-left: 3px solid transparent;
+.layui-side *,
+.layui-side .layui-side-scroll *,
+.layui-side .layui-nav-tree *,
+.layui-side .layui-nav-item a,
+.layui-side .layui-nav-item a span,
+.layui-side .layui-nav-item a .nav-text,
+.layui-side .layui-nav-item a .layui-icon,
+.layui-side .layui-nav-child dd a,
+.layui-side .layui-nav-child dd a span {
+    color: #1d2129 !important;
 }
-.layui-nav-tree .layui-nav-item a:hover {
-    background-color: #f2f3f5 !important;
-    color: #1890ff !important;
+
+/* SIDEBAR HOVER STATE: Blue background with white text */
+.layui-side .layui-nav-tree .layui-nav-item a:hover,
+.layui-side .layui-nav-tree .layui-nav-item a:hover *,
+.layui-side .layui-nav-tree .layui-nav-item a:hover .nav-text,
+.layui-side .layui-nav-tree .layui-nav-item a:hover .layui-icon {
+    background-color: #1890ff !important;
+    color: #ffffff !important;
 }
-.layui-nav-tree .layui-nav-item.layui-this a,
-.layui-nav-tree .layui-nav-item.layui-this > a {
-    background-color: #e8f4ff !important;
-    color: #1890ff !important;
-    border-left-color: #1890ff !important;
-    font-weight: 600;
-}
-.layui-nav-tree .layui-nav-child dd a {
-    color: #555555 !important;
+
+/* SIDEBAR ACTIVE STATE: Blue background with white text */
+.layui-side .layui-nav-tree .layui-nav-item.layui-this a,
+.layui-side .layui-nav-tree .layui-nav-item.layui-this a *,
+.layui-side .layui-nav-tree .layui-nav-item.layui-this a .nav-text,
+.layui-side .layui-nav-tree .layui-nav-item.layui-this a .layui-icon {
+    background-color: #1890ff !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
 }
 .layui-body {
     top: 50px !important;
