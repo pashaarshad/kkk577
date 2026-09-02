@@ -1,4 +1,4 @@
-const baseURL = '/api' // '/api' // '接口地址'
-const TIMEOUT = 5000
+const baseURL = '/'
+const TIMEOUT = 15000
 
 export { baseURL, TIMEOUT }

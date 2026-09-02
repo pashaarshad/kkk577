@@ -111,17 +111,17 @@
                 审核通过
                 {else/}
                 {switch $vo.status}
-                    {case 0}待付款 (Waiting){/case}
+                    {case 0}Waiting (待付款){/case}
                     {case 1}
                         {if auth("edit_recharge")}
-                            <a data-csrf="{:systoken('edit_recharge')}" class="layui-btn layui-btn-xs layui-btn-normal" data-action="{:url('edit_recharge',['status'=>2,'id'=>$vo.id])}" data-value="id#{$vo.id};status#2">通过 (Approve)</a>
-                            <a data-csrf="{:systoken('edit_recharge')}" class="layui-btn layui-btn-xs layui-btn-danger" data-action="{:url('edit_recharge',['status'=>3,'id'=>$vo.id])}" data-value="id#{$vo.id};status#3">拒绝 (Deny)</a>
+                            <a data-csrf="{:systoken('edit_recharge')}" class="layui-btn layui-btn-xs layui-btn-normal" data-action="{:url('edit_recharge',['status'=>2,'id'=>$vo.id])}" data-value="id#{$vo.id};status#2">Accept (通过)</a>
+                            <a data-csrf="{:systoken('edit_recharge')}" class="layui-btn layui-btn-xs layui-btn-danger" data-action="{:url('edit_recharge',['status'=>3,'id'=>$vo.id])}" data-value="id#{$vo.id};status#3">Deny (拒绝)</a>
                         {else}
-                            待审核 (Pending)
+                            Pending (待审核)
                         {/if}
                     {/case}
-                    {case 2}<a class="layui-btn layui-btn-xs layui-btn-success">已通过 (Approved)</a>{/case}
-                    {case 3}<a class="layui-btn layui-btn-xs layui-btn-danger">已拒绝 (Denied)</a>{/case}
+                    {case 2}<a class="layui-btn layui-btn-xs layui-btn-success">Approved (已通过)</a>{/case}
+                    {case 3}<a class="layui-btn layui-btn-xs layui-btn-danger">Denied (已拒绝)</a>{/case}
                 {/switch}
                 {/if}
             </td>

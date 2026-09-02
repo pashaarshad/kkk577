@@ -227,12 +227,12 @@
                        data-confirm="Are you sure you want to approve this withdrawal? 确定通过此提现记录吗?"
                        data-csrf="{:systoken('do_deposit')}"
                        data-action="{:url('do_deposit')}"
-                       data-value="id#{$vo.id};status#2">通过 (Approve)</a>
+                       data-value="id#{$vo.id};status#2">Accept (通过)</a>
                     <a class="layui-btn layui-btn-xs layui-btn-danger"
                        data-prompt="Please enter reason for rejection 请输入驳回内容"
                        data-csrf="{:systoken('do_deposit')}"
                        data-action="{:url('do_deposit')}"
-                       data-value="id#{$vo.id};status#3;uid#{$vo.uid};num#{$vo.num}">拒绝 (Deny)</a>
+                       data-value="id#{$vo.id};status#3;uid#{$vo.uid};num#{$vo.num}">Deny (拒绝)</a>
                     {if $agent_id==0}
                     {/if}
                     {/if}
