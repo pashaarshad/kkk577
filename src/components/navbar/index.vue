@@ -2,9 +2,9 @@
 <template>
   <van-sticky>
     <div class='navbar'>
-      <!-- Home Route: Clean White Header with Logo, Subtitle, US Flag & Bell -->
+      <!-- Home Route: Clean White Header with Official Shopping Cart Logo, Subtitle, US Flag & Bell -->
       <div v-if='$route.path === "/home"' class='navbar-left'>
-        <img src='https://cdn-icons-png.flaticon.com/512/3081/3081559.png' alt='Logo' class='navbar-img'>
+        <img :src='officialLogo' alt='Logo' class='navbar-img'>
         <div class='brand-text-box'>
           <span class='brand-title'>环宇出海任务商城演示站</span>
           <span class='brand-sub'>Global Business • Global Success</span>
@@ -13,7 +13,7 @@
 
       <!-- Other Main Routes (Order, Mine) -->
       <div v-else-if='$route.path === "/order" || $route.path === "/mine"' class='navbar-left' @click='$router.go(-1)'>
-        <img src='https://cdn-icons-png.flaticon.com/512/3081/3081559.png' alt='Logo' class='navbar-img'>
+        <img :src='officialLogo' alt='Logo' class='navbar-img'>
         <div class='page-title-text'>{{ $t('main.' + $route.name) }}</div>
       </div>
 
@@ -23,10 +23,10 @@
         <div class='page-title-text'>{{ $t('main.' + $route.name) }}</div>
       </div>
 
-      <!-- Right Header Actions (US Flag + Bell Icon) -->
+      <!-- Right Header Actions (US Flag Image + Bell Icon) -->
       <div class='navbar-right'>
         <slot name='right'>
-          <span class="flag-icon" @click="showBottom = true">🇺🇸</span>
+          <img :src='langImg' alt='US Flag' class='flag-img' @click='showBottom = true'>
           <div class="bell-box" @click="$router.push('/message')">
             <svg viewBox="0 0 24 24" class="bell-svg">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -64,6 +64,7 @@
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import { getAssetURL } from '@/utils/get_assets_img.js'
+import officialLogo from '@/assets/img/main/official_logo.png'
 
 const { t, locale } = useI18n()
 const langImg = ref(getAssetURL('main/en-US.png'))
@@ -109,7 +110,7 @@ const changeLanguage = (lang) => {
   z-index: 99;
   top: 0;
   width: 100%;
-  height: 52px;
+  height: 54px;
   background-color: #ffffff;
   border-bottom: 1px solid #fdece8;
   display: flex;
@@ -125,8 +126,9 @@ const changeLanguage = (lang) => {
     gap: 10px;
 
     .navbar-img {
-      width: 36px;
-      height: 36px;
+      height: 38px;
+      width: auto;
+      max-width: 48px;
       object-fit: contain;
     }
 
@@ -163,11 +165,15 @@ const changeLanguage = (lang) => {
   .navbar-right {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 
-    .flag-icon {
-      font-size: 22px;
+    .flag-img {
+      width: 26px;
+      height: 18px;
+      object-fit: contain;
       cursor: pointer;
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
     .bell-box {
