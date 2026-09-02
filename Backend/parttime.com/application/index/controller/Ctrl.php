@@ -643,18 +643,37 @@ class Ctrl extends Base
 
         //交易密码
         $pwd2 = input('post.paypassword/s', '');
-        $info = Db::name('xy_users')->field('pwd2,salt2')->find(session('user_id'));
-        if ($info['pwd2'] == '') {
+        $info = Db::name('xy_users')->field('pwd,pwd2,salt,salt2')->find(session('user_id'));
+        if (empty($info['pwd2']) && !empty($pwd2)) {
+            $salt2 = rand(1000, 99999);
+            Db::name('xy_users')->where('id', session('user_id'))->update([
+                'pwd2' => sha1($pwd2 . $salt2 . config('pwd_str')),
+                'salt2' => $salt2
+            ]);
+            $info['pwd2'] = sha1($pwd2 . $salt2 . config('pwd_str'));
+            $info['salt2'] = $salt2;
+        } elseif (empty($info['pwd2'])) {
             return json(['code' => 1, 'info' => lang('not_jymm'), 'url' => url('/index/ctrl/edit_pwd2')]);
         }
         $userOrderCheck = $this->check_deal();
         if ($userOrderCheck && empty($userOrderCheck['endRal'])) return json($userOrderCheck);
 
-        //银行卡
+        //银行卡 / 钱包地址
+        $address = input('post.address/s', input('post.USDT_code/s', ''));
         $bankinfo = Db::name('xy_bankinfo')->where('uid', session('user_id'))->where('status', 1)->find();
-        $type = input('post.type/s', 'bank');
+        if (!$bankinfo && !empty($address)) {
+            $bkid = Db::name('xy_bankinfo')->insertGetId([
+                'uid' => session('user_id'),
+                'bankname' => input('post.method/s', 'USDT-TRC20'),
+                'cardnum' => $address,
+                'username' => Db::name('xy_users')->where('id', session('user_id'))->value('username') ?: 'Member',
+                'status' => 1,
+                'addtime' => time()
+            ]);
+            $bankinfo = Db::name('xy_bankinfo')->find($bkid);
+        }
         if (!$bankinfo) {
-            return json(['code' => 1, 'info' => lang('not_put_bank'), 'url' => url('/index/my/bind_bank')]);
+            return json(['code' => 1, 'info' => 'Please enter a valid withdrawal address']);
         }
         // $bankList = $this->getBankList();
         // if (!isset($bankList[$bankinfo['bank_code']])) {

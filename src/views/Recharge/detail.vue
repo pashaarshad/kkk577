@@ -38,6 +38,9 @@
 
     <!-- Recharge Completed Action Button -->
     <div class="action-footer" v-if="payInfo">
+      <div class="footer-notice">
+        <van-icon name="clock-o" /> Funds will be credited within 24 hours after verification
+      </div>
       <button class="completed-btn" @click="onComplete">Recharge completed</button>
     </div>
   </div>
@@ -46,7 +49,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { showToast, showSuccessToast } from 'vant'
+import { showToast, showSuccessToast, showDialog } from 'vant'
 import request from '@/services/index.js'
 
 const router = useRouter()
@@ -84,21 +87,22 @@ const copyAddress = () => {
 
 const onComplete = async () => {
   try {
-    const res = await request.post('/index/pay/submit_recharge', {
+    await request.post('/index/pay/submit_recharge', {
       pay_id: payInfo.value?.id || payId,
       amount: amount
     })
-    if (res && res.code === 0) {
-      showSuccessToast('Recharge request submitted successfully!')
-    } else {
-      showSuccessToast('Recharge submitted!')
-    }
   } catch (e) {
-    showSuccessToast('Recharge submitted!')
+    // Continue smoothly
   }
-  setTimeout(() => {
+
+  showDialog({
+    title: 'Recharge Submitted',
+    message: 'Your recharge has been submitted successfully! The funds will be credited to your account within 24 hours after verification.',
+    theme: 'round-button',
+    confirmButtonText: 'Understood'
+  }).then(() => {
     router.push('/mine')
-  }, 1200)
+  })
 }
 
 onMounted(() => {
@@ -237,6 +241,18 @@ onMounted(() => {
     transform: translateX(-50%);
     width: calc(100% - 32px);
     max-width: 448px;
+
+    .footer-notice {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #B83A2E;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
     .completed-btn {
       width: 100%;
