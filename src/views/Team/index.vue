@@ -69,7 +69,7 @@
     <!-- VIP Level Cards -->
     <div class="level-cards-list">
       <!-- Level 1 -->
-      <div class="level-card card-gradient-green">
+      <div class="level-card card-lvl-1">
         <div class="card-left">
           <span class="level-badge-lbl">LEVEL 1</span>
         </div>
@@ -87,7 +87,7 @@
       </div>
 
       <!-- Level 2 -->
-      <div class="level-card card-gradient-pink">
+      <div class="level-card card-lvl-2">
         <div class="card-left">
           <span class="level-badge-lbl">LEVEL 2</span>
         </div>
@@ -105,17 +105,17 @@
       </div>
 
       <!-- Level 3 -->
-      <div class="level-card card-gradient-blue">
+      <div class="level-card card-lvl-3">
         <div class="card-left">
           <span class="level-badge-lbl">LEVEL 3</span>
         </div>
         <div class="card-middle">
           <div class="meta-row">
             <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team3_count || 0 }}/0</span></div>
-            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[2] * 100).toFixed(0) : 2 }}%</span></div>
+            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[2] * 100).toFixed(0) : 3 }}%</span></div>
           </div>
           <div class="meta-row">
-            <div>Task rebate: <span class="bold-txt">2%</span></div>
+            <div>Task rebate: <span class="bold-txt">1%</span></div>
             <div>Total income: <span class="bold-txt">$ {{ data?.data?.team3_yj || '0.00' }}</span></div>
           </div>
         </div>
@@ -126,270 +126,223 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { i18n } from '@/lang/index.js'
-import Request from '@/services/index.js'
 import { showSuccessToast } from 'vant'
-
-const router = useRouter()
-const { t } = i18n.global
-const selectedItemId = ref(0)
-const data = ref([])
-const userData = ref({})
+import { computed, ref } from 'vue'
+import Request from '@/services/index.js'
 
 const navList = [
-  { title: 'All', id: 0 },
-  { title: 'Today', id: 1 },
-  { title: 'Yesterday', id: 2 },
-  { title: 'Week', id: 3 }
+  { id: 1, title: 'Today' },
+  { id: 2, title: 'Yesterday' },
+  { id: 3, title: 'This week' }
 ]
 
-const onClickTab = (id) => {
-  selectedItemId.value = id
-  getData(selectedItemId.value)
-}
+const selectedItemId = ref(1)
+const data = ref({})
+const userData = ref({})
 
-const getData = (type) => {
-  let start = ''
-  if (type === 1) {
-    start = new Date().getTime() / 1000
-  } else if (type === 2) {
-    start = new Date().getTime() / 1000 - (60 * 60 * 24)
-  } else if (type === 3) {
-    start = new Date().getTime() / 1000 - (60 * 60 * 24 * 7)
-  }
-  
-  Request.get({ url: '/index/ctrl/junior?ajax=1&start=' + start }).then(res => {
-    data.value = res.data
-  }).catch(() => {})
-}
+Request.get({ url: 'index/user/team' }).then(res => {
+  data.value = res
+})
 
-// Fetch user data for copy link and copy code details
 Request.get({ url: 'index/user/info' }).then(res => {
   userData.value = res.info || {}
 })
 
-getData(selectedItemId.value)
-
 const getReferralLink = computed(() => {
-  return window.location.origin + '/#/register?invite_code=' + (userData.value.invite_code || '')
+  const host = window.location.origin
+  return `${host}/#/register?invite_code=${userData.value.invite_code || ''}`
 })
 
-const copyToClipboard = (text) => {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text)
-  }
-  const textArea = document.createElement('textarea')
-  textArea.value = text
-  textArea.style.position = 'fixed'
-  textArea.style.opacity = '0'
-  document.body.appendChild(textArea)
-  textArea.focus()
-  textArea.select()
-  try { document.execCommand('copy') } catch(e) {}
-  document.body.removeChild(textArea)
-  return Promise.resolve()
+const onClickTab = (id) => {
+  selectedItemId.value = id
 }
 
 const copyCode = () => {
-  const code = userData.value.invite_code || ''
-  copyToClipboard(code)
-  showSuccessToast('Copy invite code successfully: ' + code)
+  if (userData.value.invite_code) {
+    navigator.clipboard.writeText(userData.value.invite_code)
+    showSuccessToast('Invitation code copied')
+  }
 }
 
 const copyLink = () => {
-  const link = getReferralLink.value
-  copyToClipboard(link)
-  showSuccessToast('Copy referral link successfully')
+  navigator.clipboard.writeText(getReferralLink.value)
+  showSuccessToast('Referral link copied')
 }
 
-const showLevelDetails = (level) => {
-  showSuccessToast('Viewing Level ' + level + ' Details')
+const showLevelDetails = (lvl) => {
+  showSuccessToast(`Viewing Level ${lvl} member details`)
 }
 </script>
 
 <style lang="less" scoped>
 .team-view {
-  background: var(--bg-second-color);
+  background: #fff9f8;
   min-height: 100vh;
-  padding: 16px 16px 90px 16px;
+  padding: 16px 14px 90px;
   box-sizing: border-box;
 
   .invitation-box {
-    background-color: var(--bg-color);
-    border: 1px solid var(--second-color);
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1.5px solid #E86C3F;
+    border-radius: 14px;
     padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 10px rgba(184, 58, 46, 0.08);
 
     .invite-item {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
+      margin-bottom: 14px;
 
       .lbl {
         font-size: 13px;
-        color: var(--text-second);
+        color: #86909c;
+        font-weight: 500;
       }
 
       .code-val {
-        font-size: 18px;
-        font-weight: 750;
-        color: var(--default-color);
+        font-size: 16px;
+        font-weight: 800;
+        color: #B83A2E;
+        letter-spacing: 1px;
       }
     }
 
     .invite-link-box {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
+      margin-bottom: 14px;
 
       .lbl {
         font-size: 11px;
-        color: var(--text-second);
+        color: #86909c;
       }
 
       .link-row {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        background-color: var(--bg-second-color);
-        border: 1px solid var(--second-color);
+        gap: 10px;
+        background: #fff5f3;
         padding: 8px 12px;
         border-radius: 8px;
+        border: 1px dashed #fdece8;
 
         .link-val {
-          font-size: 12px;
-          color: var(--text-second);
+          flex: 1;
+          font-size: 11px;
+          color: #1f1a1a;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          max-width: 75%;
         }
       }
     }
 
     .copy-btn {
-      background-color: var(--main-color);
-      color: #000000;
+      background: linear-gradient(135deg, #B83A2E, #E86C3F);
+      color: #ffffff;
       border: none;
-      padding: 4px 14px;
-      border-radius: 6px;
-      font-size: 11px;
+      padding: 6px 16px;
+      border-radius: 16px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      box-shadow: 0 2px 6px rgba(184, 58, 46, 0.2);
     }
 
     .social-icons {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
-      margin-top: 6px;
 
       .social-icon {
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background-color: var(--second-color);
+        background: #fff0ed;
+        color: #B83A2E;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--default-color);
         font-size: 14px;
         font-weight: bold;
-        cursor: pointer;
-        border: 1px solid var(--second-color);
-
-        &:hover {
-          background-color: var(--main-color);
-          color: #000;
-        }
+        border: 1px solid #fdece8;
       }
     }
   }
 
   .period-header {
-    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
 
     .title-text {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--default-color);
-      display: block;
-      margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1f1a1a;
     }
 
     .tab-group {
       display: flex;
-      background-color: var(--bg-color);
-      border: 1px solid var(--second-color);
-      border-radius: 8px;
-      padding: 4px;
+      gap: 6px;
+      background: #ffffff;
+      padding: 3px;
+      border-radius: 20px;
+      border: 1px solid #fdece8;
 
       .tab-btn {
-        flex: 1;
-        text-align: center;
-        padding: 8px 0;
-        font-size: 12px;
-        color: var(--text-second);
-        border-radius: 6px;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 11px;
+        color: #86909c;
         cursor: pointer;
         font-weight: 600;
 
         &.active {
-          background-color: var(--second-color);
-          color: var(--main-color);
-          font-weight: 700;
+          background: #B83A2E;
+          color: #ffffff;
         }
       }
     }
   }
 
   .team-stats-panel {
-    background-color: var(--bg-color);
-    border: 1px solid var(--second-color);
-    border-radius: 12px;
+    background: linear-gradient(135deg, #B83A2E, #E86C3F);
+    border-radius: 14px;
     padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(184, 58, 46, 0.2);
 
     .stats-row {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
+      align-items: center;
 
       &.three-cols {
-        border-top: 1px solid var(--second-color);
-        padding-top: 16px;
-        
-        .stat-cell {
-          width: 30%;
-          text-align: center;
-          align-items: center;
-        }
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
       }
 
       .stat-cell {
         display: flex;
         flex-direction: column;
+        align-items: center;
         gap: 4px;
 
         .lbl {
-          font-size: 11px;
-          color: var(--text-second);
+          font-size: 10.5px;
+          opacity: 0.85;
+          text-align: center;
         }
 
         .val {
           font-size: 16px;
-          font-weight: 750;
-          color: var(--default-color);
+          font-weight: 800;
         }
       }
     }
@@ -398,83 +351,57 @@ const showLevelDetails = (level) => {
   .level-cards-list {
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
 
     .level-card {
+      background: #ffffff;
+      border: 1.5px solid #E86C3F;
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.06);
 
       .card-left {
-        width: 25%;
-        font-size: 14px;
-        font-weight: 800;
-        border-right: 1px dashed rgba(30, 41, 59, 0.2);
-        padding-right: 10px;
-        display: flex;
-        align-items: center;
-        height: 100%;
+        .level-badge-lbl {
+          font-size: 11px;
+          font-weight: 800;
+          padding: 4px 10px;
+          border-radius: 6px;
+          color: #ffffff;
+          background: linear-gradient(135deg, #B83A2E, #E86C3F);
+        }
       }
 
       .card-middle {
         flex: 1;
-        padding-left: 14px;
         display: flex;
         flex-direction: column;
-        gap: 6px;
-        font-size: 10px;
+        gap: 4px;
 
         .meta-row {
           display: flex;
           justify-content: space-between;
+          font-size: 10.5px;
+          color: #86909c;
 
           .bold-txt {
+            color: #1f1a1a;
             font-weight: 700;
           }
         }
       }
 
       .details-pill-btn {
-        background: transparent;
-        color: inherit;
-        border: 1px solid currentColor;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 10px;
+        background: #fff0ed;
+        color: #B83A2E;
+        border: 1px solid #fdece8;
+        padding: 5px 12px;
+        border-radius: 14px;
+        font-size: 11px;
         font-weight: 700;
         cursor: pointer;
-        margin-left: 10px;
-
-        &:hover {
-          background-color: rgba(0,0,0,0.05);
-        }
-      }
-
-      &.card-gradient-green {
-        background: linear-gradient(90deg, #d4fc79 0%, #96e6a1 100%);
-        color: #1e293b;
-        .details-pill-btn {
-          border-color: #1e293b;
-        }
-      }
-
-      &.card-gradient-pink {
-        background: linear-gradient(90deg, #ff9a9e 0%, #fecfef 100%);
-        color: #1e293b;
-        .details-pill-btn {
-          border-color: #1e293b;
-        }
-      }
-
-      &.card-gradient-blue {
-        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-        color: #1e293b;
-        .details-pill-btn {
-          border-color: #1e293b;
-        }
       }
     }
   }

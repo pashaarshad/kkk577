@@ -5,18 +5,18 @@
     <div class="work-header">
       <div class="header-top-row">
         <span class="title-text">Project</span>
-        <span class="history-link" @click="router.push('/order')">Purchase History</span>
+        <span class="history-link" @click="router.push('/order')">Purchase History &gt;</span>
       </div>
       
       <div class="stats-card">
         <div class="stats-left">
           <div class="stat-item">
             <div class="lbl">Current investment total</div>
-            <div class="val">0 USDT</div>
+            <div class="val">0.00 USDT</div>
           </div>
           <div class="stat-item">
             <div class="lbl">Interest can be collected</div>
-            <div class="val">0 USDT</div>
+            <div class="val">0.00 USDT</div>
           </div>
         </div>
         <button class="collect-btn" @click="collectInterest">Receive</button>
@@ -36,16 +36,16 @@
             <div class="metrics-grid">
               <div class="metric-item">
                 <span class="lbl">The total profit</span>
-                <span class="val green-text">{{ (Number(item.num || 0) * 3.6).toFixed(2) }} USDT</span>
+                <span class="val profit-text">{{ (Number(item.num || 0) * 3.6).toFixed(2) }} USDT</span>
               </div>
               <div class="metric-item">
                 <span class="lbl">Invest cycle</span>
-                <span class="val green-text">90Day</span>
+                <span class="val cycle-text">90 Day</span>
               </div>
             </div>
             <div class="limits-info">
-              <div>Number of investments available per day: <span class="white-text">Unlimited</span></div>
-              <div>Total number of investments available: <span class="white-text">Unlimited</span></div>
+              <div>Number of investments available per day: <span class="dark-text">Unlimited</span></div>
+              <div>Total number of investments available: <span class="dark-text">Unlimited</span></div>
             </div>
           </div>
         </div>
@@ -97,9 +97,9 @@ const collectInterest = () => {
 
 <style lang="less" scoped>
 .work-view {
-  background: var(--bg-second-color);
+  background: #fff9f8;
   min-height: 100vh;
-  padding: 16px 16px 90px 16px;
+  padding: 16px 14px 90px;
   box-sizing: border-box;
 
   .work-header {
@@ -109,61 +109,61 @@ const collectInterest = () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
 
       .title-text {
         font-size: 20px;
-        font-weight: 700;
-        color: var(--default-color);
+        font-weight: 800;
+        color: #1f1a1a;
       }
 
       .history-link {
         font-size: 13px;
-        color: var(--main-color);
+        color: #B83A2E;
         font-weight: 600;
         cursor: pointer;
       }
     }
 
     .stats-card {
-      background-color: var(--bg-color);
-      border: 1px solid var(--second-color);
-      border-radius: 12px;
-      padding: 16px;
+      background: linear-gradient(135deg, #B83A2E, #E86C3F);
+      border-radius: 14px;
+      padding: 18px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 14px rgba(184, 58, 46, 0.2);
+      color: #ffffff;
 
       .stats-left {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 10px;
 
         .stat-item {
           .lbl {
             font-size: 11px;
-            color: var(--text-second);
+            opacity: 0.85;
             margin-bottom: 2px;
           }
           .val {
-            font-size: 15px;
-            font-weight: 750;
-            color: var(--main-color);
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffffff;
           }
         }
       }
 
       .collect-btn {
-        background-color: var(--main-color);
-        color: #000000;
+        background-color: #ffffff;
+        color: #B83A2E;
         border: none;
-        padding: 10px 24px;
+        padding: 10px 22px;
         border-radius: 20px;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       }
     }
   }
@@ -171,21 +171,21 @@ const collectInterest = () => {
   .project-hall-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 
     .project-card-item {
-      background-color: var(--bg-color);
-      border: 1px solid var(--second-color);
-      border-radius: 12px;
+      background-color: #ffffff;
+      border: 1.5px solid #E86C3F;
+      border-radius: 14px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 10px rgba(184, 58, 46, 0.08);
 
       .card-body-row {
         display: flex;
-        gap: 16px;
+        gap: 14px;
 
         .img-wrapper {
           position: relative;
@@ -205,8 +205,8 @@ const collectInterest = () => {
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: var(--main-color);
+            background: linear-gradient(135deg, #ff8c00, #B83A2E);
+            color: #ffffff;
             font-size: 9px;
             font-weight: 700;
             text-align: center;
@@ -225,12 +225,12 @@ const collectInterest = () => {
           .title-row {
             font-size: 15px;
             font-weight: 700;
-            color: var(--default-color);
+            color: #1f1a1a;
           }
 
           .metrics-grid {
             display: flex;
-            gap: 24px;
+            gap: 20px;
 
             .metric-item {
               display: flex;
@@ -239,15 +239,18 @@ const collectInterest = () => {
 
               .lbl {
                 font-size: 10px;
-                color: var(--text-second);
+                color: #86909c;
               }
 
               .val {
                 font-size: 13px;
                 font-weight: 700;
 
-                &.green-text {
-                  color: #00b25e;
+                &.profit-text {
+                  color: #E86C3F;
+                }
+                &.cycle-text {
+                  color: #B83A2E;
                 }
               }
             }
@@ -255,13 +258,13 @@ const collectInterest = () => {
 
           .limits-info {
             font-size: 10px;
-            color: var(--text-second);
+            color: #86909c;
             display: flex;
             flex-direction: column;
             gap: 2px;
 
-            .white-text {
-              color: var(--default-color);
+            .dark-text {
+              color: #1f1a1a;
               font-weight: 600;
             }
           }
@@ -276,48 +279,48 @@ const collectInterest = () => {
         .progress-bar-container {
           flex: 1;
           height: 6px;
-          background-color: var(--bg-second-color);
+          background-color: #fdece8;
           border-radius: 3px;
           overflow: hidden;
 
           .progress-bar-fill {
             height: 100%;
-            background-color: var(--main-color);
+            background: linear-gradient(90deg, #E86C3F, #B83A2E);
             border-radius: 3px;
           }
         }
 
         .progress-val {
           font-size: 11px;
-          color: var(--main-color);
+          color: #B83A2E;
           font-weight: 700;
         }
       }
 
       .buy-button {
         width: 100%;
-        background-color: var(--main-color);
-        color: #000000;
+        background: linear-gradient(135deg, #B83A2E, #E86C3F);
+        color: #ffffff;
         border: none;
-        padding: 10px 0;
+        padding: 11px 0;
         border-radius: 24px;
-        font-size: 13px;
+        font-size: 13.5px;
         font-weight: 700;
         cursor: pointer;
         text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 10px rgba(184, 58, 46, 0.25);
       }
     }
   }
 
   .investment-orders-section {
-    margin-top: 30px;
+    margin-top: 26px;
     
     .section-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--default-color);
-      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #1f1a1a;
+      margin-bottom: 14px;
     }
   }
 }

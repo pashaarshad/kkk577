@@ -4,20 +4,21 @@
     <!-- Profile Header -->
     <div class="profile-header">
       <div class="header-left">
-        <span class="user-greeting">Hi, {{ data.tel || 'User' }}</span>
+        <span class="welcome-tag">Welcome</span>
+        <h2 class="user-greeting">Hi, {{ data.tel || '13312341234' }}</h2>
       </div>
       <img alt="" class="avatar-img" src="../../assets/img/mine/photo.png">
     </div>
 
-    <!-- Gold Balance Card -->
+    <!-- Red Gradient Balance Card -->
     <div class="gold-balance-card">
       <div class="balance-cell">
         <span class="lbl">Total balance (USDT)</span>
-        <span class="val">{{ data.balance || '0' }}</span>
+        <span class="val">$ {{ data.balance || '0.00' }}</span>
       </div>
       <div class="balance-cell">
         <span class="lbl">Recharge amount (USDT)</span>
-        <span class="val">{{ data.recharge_amount || '0' }}</span>
+        <span class="val">$ {{ data.recharge_amount || '0.00' }}</span>
       </div>
     </div>
 
@@ -48,7 +49,7 @@
     <!-- Foot copy info -->
     <div class="foot">
       <span>Copyright ©2011-2026</span>
-      <span>marketing de mercado Pictures All Rights Reserved</span>
+      <span>Global Business • Global Success All Rights Reserved</span>
     </div>
   </div>
 </template>
@@ -60,11 +61,11 @@ import { ref } from 'vue'
 import { useMitt } from '@/utils/mitt.js'
 
 const navList = [
-  { path: '/bankCard', icon: 'card', title: 'Account', bgClass: 'bg-blue' },
-  { path: '/recharge', icon: 'gold-coin', title: 'Recharge', bgClass: 'bg-teal' },
-  { path: '/withdraw', icon: 'balance-pay', title: 'Withdraw', bgClass: 'bg-indigo' },
-  { path: '/billList', icon: 'description-o', title: 'Financial records', bgClass: 'bg-green' },
-  { path: '/password', icon: 'setting', title: 'Change Password', bgClass: 'bg-orange' }
+  { path: '/bankCard', icon: 'card', title: 'Account', bgClass: 'bg-crimson' },
+  { path: '/recharge', icon: 'gold-coin', title: 'Recharge', bgClass: 'bg-orange' },
+  { path: '/withdraw', icon: 'balance-pay', title: 'Withdraw', bgClass: 'bg-crimson' },
+  { path: '/billList', icon: 'description-o', title: 'Financial records', bgClass: 'bg-orange' },
+  { path: '/password', icon: 'setting', title: 'Change Password', bgClass: 'bg-crimson' }
 ]
 
 const router = useRouter()
@@ -89,7 +90,7 @@ const goBack = () => {
 
 <style lang="less" scoped>
 .Mine-view {
-  background: var(--bg-second-color);
+  background: #fff9f8;
   min-height: 100vh;
   padding: 16px 0 90px 0;
   box-sizing: border-box;
@@ -98,32 +99,45 @@ const goBack = () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 16px;
+    padding: 16px 20px;
 
-    .user-greeting {
-      font-size: 20px;
-      font-weight: 750;
-      color: var(--default-color);
+    .header-left {
+      display: flex;
+      flex-direction: column;
+
+      .welcome-tag {
+        font-size: 11px;
+        color: #86909c;
+      }
+
+      .user-greeting {
+        font-size: 20px;
+        font-weight: 800;
+        color: #1f1a1a;
+        margin: 2px 0 0;
+      }
     }
 
     .avatar-img {
-      width: 54px;
-      height: 54px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      border: 2px solid var(--second-color);
+      border: 2px solid #E86C3F;
+      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.15);
     }
   }
 
   .gold-balance-card {
     width: 92%;
     margin: 0 auto 20px;
-    background: linear-gradient(135deg, #fce0ad, #dfb479);
-    border-radius: 12px;
-    padding: 20px 16px;
+    background: linear-gradient(135deg, #B83A2E, #E86C3F);
+    border-radius: 16px;
+    padding: 22px 18px;
     display: flex;
     justify-content: space-between;
     box-sizing: border-box;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 14px rgba(184, 58, 46, 0.25);
+    color: #ffffff;
 
     .balance-cell {
       display: flex;
@@ -132,7 +146,7 @@ const goBack = () => {
       width: 50%;
 
       &:first-child {
-        border-right: 1px solid rgba(0,0,0,0.1);
+        border-right: 1px solid rgba(255,255,255,0.25);
         padding-right: 16px;
       }
 
@@ -142,34 +156,39 @@ const goBack = () => {
 
       .lbl {
         font-size: 11px;
-        color: #1e293b;
-        font-weight: 600;
+        opacity: 0.9;
+        font-weight: 500;
       }
 
       .val {
         font-size: 22px;
         font-weight: 800;
-        color: #000000;
+        color: #ffffff;
       }
     }
   }
 
   .menu-links-list {
-    background-color: var(--bg-color);
-    border: 1px solid var(--second-color);
-    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1.5px solid #E86C3F;
+    border-radius: 14px;
     width: 92%;
     margin: 20px auto;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 10px rgba(184, 58, 46, 0.08);
 
     .menu-link-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      border-bottom: 1px solid var(--second-color);
+      border-bottom: 1px dashed #fdece8;
       cursor: pointer;
+      transition: background 0.15s;
+
+      &:hover, &:active {
+        background-color: #fdf5f3;
+      }
 
       &:last-child {
         border-bottom: none;
@@ -178,35 +197,32 @@ const goBack = () => {
       .menu-link-left {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
 
         .icon-circle-wrapper {
-          width: 32px;
-          height: 32px;
-          border-radius: 6px;
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #ffffff;
           font-size: 18px;
 
-          &.bg-blue { background-color: #2563eb; }
-          &.bg-teal { background-color: #0d9488; }
-          &.bg-indigo { background-color: #4f46e5; }
-          &.bg-green { background-color: #16a34a; }
-          &.bg-orange { background-color: #ea580c; }
-          &.bg-red-icon { background-color: #b91c1c; }
+          &.bg-crimson { background-color: #B83A2E; }
+          &.bg-orange { background-color: #E86C3F; }
+          &.bg-red-icon { background-color: #d9363e; }
         }
 
         .link-title {
-          font-size: 14px;
-          color: var(--default-color);
-          font-weight: 600;
+          font-size: 14.5px;
+          color: #1f1a1a;
+          font-weight: 700;
         }
       }
 
       .arrow-right-icon {
-        color: var(--text-second);
+        color: #86909c;
         font-size: 14px;
       }
     }
@@ -218,7 +234,7 @@ const goBack = () => {
     justify-content: center;
     text-align: center;
     padding: 30px 0;
-    color: var(--text-second);
+    color: #86909c;
     font-size: 11px;
     gap: 4px;
   }

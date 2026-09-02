@@ -1,8 +1,4 @@
-/*@import 'vant/es/image-preview/style';*/
-/*@import 'vant/es/notify/style';*/
-/*@import 'vant/es/dialog/style';*/
-/*@import 'vant/es/toast/style';*/
-
+/* Global Brand Theme System */
 body {
     margin: 0 auto;
     width: 100%;
@@ -21,52 +17,43 @@ body {
 }
 
 body {
-    --bg-color: #382f28;
-    --bg-second-color: #222222;
-    --default-color: #ffffff;
-    --main-color: #f5ae48;
-    --second-color: #3a3229;
-    --gray-color: #222222;
-    --gray-color2: #9b9b9b;
-    --gray-color3: #1d1f21;
-    --text-second: #9b9b9b;
-    --gray-light-color: #6b6b6b;
-    --green-color: #65d69a;
-    --purple-color: #4c4aef;
-    --red-color: #e36564;
-    --yellow-color: #f5ae48;
+    --bg-color: #ffffff;
+    --bg-second-color: #fff9f8;
+    --default-color: #1f1a1a;
+    --main-color: #B83A2E;
+    --second-color: #fdece8;
+    --gray-color: #f5f5f5;
+    --gray-color2: #86909c;
+    --gray-color3: #fff5f3;
+    --text-second: #86909c;
+    --gray-light-color: #4e5969;
+    --green-color: #00b25e;
+    --purple-color: #722ed1;
+    --red-color: #B83A2E;
+    --yellow-color: #E86C3F;
 
-    /* Vant components dark theme overrides */
-    --van-background: #222222;
-    --van-background-light: #382f28;
-    --van-background-color-light: #382f28;
-    --van-text-color: #ffffff;
-    --van-text-color-placeholder: #6b6b6b;
-    --van-border-color: #3a3229;
-    --van-cell-background: #382f28;
-    --van-cell-text-color: #ffffff;
-    --van-cell-value-color: #9b9b9b;
-    --van-cell-group-background: #222222;
-    --van-nav-bar-background: #222222;
-    --van-nav-bar-title-text-color: #ffffff;
-    --van-nav-bar-text-color: #f5ae48;
-    --van-tabbar-background: #382f28;
-    --van-tabbar-item-text-color: #a9a9a9;
-    --van-tabbar-item-active-color: #f5ae48;
-    --van-button-default-background: #382f28;
-    --van-button-default-color: #ffffff;
-    --van-button-default-border-color: #3a3229;
-    --van-field-label-color: #ffffff;
-    --van-dialog-background: #382f28;
-    --van-dialog-has-title-message-text-color: #9b9b9b;
-    --van-dialog-title-text-color: #ffffff;
-}
-
-html {
-    box-sizing: border-box;
-    line-height: 1.5;
-}
-
-.van-toast {
-    width: 180px !important;
+    /* Vant components theme overrides */
+    --van-background: #ffffff;
+    --van-background-light: #fff9f8;
+    --van-background-color-light: #fff0ed;
+    --van-text-color: #1f1a1a;
+    --van-text-color-placeholder: #86909c;
+    --van-border-color: #fdece8;
+    --van-cell-background: #ffffff;
+    --van-cell-text-color: #1f1a1a;
+    --van-cell-value-color: #86909c;
+    --van-cell-group-background: #ffffff;
+    --van-nav-bar-background: #ffffff;
+    --van-nav-bar-title-text-color: #1f1a1a;
+    --van-nav-bar-text-color: #B83A2E;
+    --van-tabbar-background: #B83A2E;
+    --van-tabbar-item-text-color: rgba(255, 255, 255, 0.75);
+    --van-tabbar-item-active-color: #ffffff;
+    --van-button-default-background: #ffffff;
+    --van-button-default-color: #1f1a1a;
+    --van-button-default-border-color: #fdece8;
+    --van-field-label-color: #1f1a1a;
+    --van-dialog-background: #ffffff;
+    --van-dialog-has-title-message-text-color: #4e5969;
+    --van-popup-background-color: #ffffff;
 }

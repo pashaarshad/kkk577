@@ -1392,7 +1392,7 @@ label.think-radio {
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
     font-size: 12px;
     display: inline-block;
     margin: 2px;
@@ -1402,7 +1402,7 @@ label.think-radio {
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
     font-size: 12px;
     display: inline-block;
     margin: 2px;
@@ -1412,7 +1412,7 @@ label.think-radio {
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
     font-size: 12px;
     display: inline-block;
     margin: 2px;
@@ -1422,7 +1422,7 @@ label.think-radio {
     color: #ffffff !important;
     border: none;
     padding: 3px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
     font-size: 12px;
     display: inline-block;
     margin: 2px;
@@ -1432,9 +1432,47 @@ label.think-radio {
     color: #1f1a1a !important;
     border: none;
     padding: 3px 10px;
-    border-radius: 3px;
+    border-radius: 4px;
     font-size: 12px;
     display: inline-block;
     margin: 2px;
 }
+
+/* Global Admin Brand Palette Overrides */
+.framework-header {
+    background: linear-gradient(135deg, #B83A2E, #E86C3F) !important;
+}
+.framework-header .layui-nav-item a {
+    color: #ffffff !important;
+}
+.framework-sidebar {
+    background-color: #1f1a1a !important;
+}
+.framework-sidebar .layui-nav-tree .layui-this a,
+.framework-sidebar .layui-nav-tree .layui-this {
+    background-color: #B83A2E !important;
+    color: #ffffff !important;
+}
+.layui-btn-normal, .layui-btn-submit {
+    background-color: #B83A2E !important;
+}
+.layui-btn-warm {
+    background-color: #E86C3F !important;
+}
+.layui-tab-brief>.layui-tab-title .layui-this {
+    color: #B83A2E !important;
+}
+.layui-tab-brief>.layui-tab-more li.layui-this:after,
+.layui-tab-brief>.layui-tab-title .layui-this:after {
+    border-bottom: 3px solid #B83A2E !important;
+}
+.layui-form-checked[lay-skin=primary] i {
+    border-color: #B83A2E !important;
+    background-color: #B83A2E !important;
+}
+.layui-form-onswitch {
+    border-color: #B83A2E !important;
+    background-color: #B83A2E !important;
+}
+
 /*# sourceMappingURL=console.css.map */
