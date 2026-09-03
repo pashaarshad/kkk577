@@ -51,7 +51,11 @@ class Index extends Controller
             if (!session('user_id')) {
                 session('user_id', $uid);
             }
-            $data->user_info = Db::name('xy_users')->field('tel,invite_code,balance,level')->find($uid);
+            $userInfo = Db::name('xy_users')->field('id,username,tel,invite_code,balance,level,deposit_status,deal_status,up_status')->find($uid);
+            if ($userInfo) {
+                $userInfo['level_name'] = Db::name('xy_level')->where('level', $userInfo['level'])->value('name') ?: ('VIP' . $userInfo['level']);
+            }
+            $data->user_info = $userInfo;
         } else {
             $data->user_info = null;
         }

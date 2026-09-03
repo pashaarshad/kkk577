@@ -199,11 +199,14 @@ const actuallyReceived = computed(() => {
   return net > 0 ? net.toFixed(3) : '0'
 })
 
+const depositStatus = ref(1)
+
 const fetchUserData = async () => {
   try {
     const res = await Request.get({ url: 'index/user/info' })
     if (res && res.code === 0 && res.info) {
       userBalance.value = parseFloat(res.info.balance || 0).toFixed(2)
+      depositStatus.value = res.info.deposit_status != null ? Number(res.info.deposit_status) : 1
     }
   } catch (e) {
     console.error('Failed to load user balance', e)
@@ -239,6 +242,10 @@ const fetchUserData = async () => {
 }
 
 const handleConfirm = async () => {
+  if (depositStatus.value === 0) {
+    showNotify({ type: 'warning', message: 'Withdrawal is currently disabled for your account. Please contact support.' })
+    return
+  }
   if (!amount.value || parseFloat(amount.value) <= 0) {
     showNotify({ type: 'warning', message: 'Please enter a valid withdrawal amount' })
     return

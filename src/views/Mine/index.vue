@@ -5,7 +5,7 @@
     <div class="profile-header">
       <div class="header-left">
         <span class="welcome-tag">Welcome</span>
-        <h2 class="user-greeting">Hi, {{ data.tel || 'User' }}</h2>
+        <h2 class="user-greeting">Hi, {{ data.username || data.tel || 'User' }}</h2>
       </div>
       <img alt="" class="avatar-img" src="../../assets/img/mine/photo.png">
     </div>

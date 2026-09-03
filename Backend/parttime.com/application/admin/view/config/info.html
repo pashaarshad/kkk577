@@ -1,180 +1,371 @@
 {extend name="main"}
 
+{block name="button"}
+<button class="layui-btn layui-btn-sm btn-op-blue" data-action="{:url('save_system_config')}" data-form="#systemConfigForm">保存配置 / Save Settings</button>
+{/block}
+
 {block name="content"}
+<style>
+.tab-module-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e8e8e8;
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+}
+.tab-module-btn {
+    padding: 8px 18px;
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4e5969;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+.tab-module-btn.active, .tab-module-btn:hover {
+    background: #B83A2E;
+    color: #ffffff;
+    border-color: #B83A2E;
+}
+.tab-panel-content {
+    display: none;
+}
+.tab-panel-content.active {
+    display: block;
+}
+.config-card-box {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+.form-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1f1a1a;
+    border-left: 4px solid #B83A2E;
+    padding-left: 10px;
+    margin-bottom: 20px;
+}
+</style>
 
-{if auth('config')}
-<div class="think-box-shadow margin-bottom-15">
-    <span class="color-green font-w7 text-middle">数据清理：</span>
+<!-- Top Module Tab Bar (matching reference image) -->
+<div class="tab-module-bar">
+    <a class="tab-module-btn active" data-tab="tab-basic">基本功能 / Basic Function</a>
+    <a class="tab-module-btn" data-tab="tab-client">用户端配置 / User Config</a>
+    <a class="tab-module-btn" data-tab="tab-install">安装包 / Install Tab</a>
+    <a class="tab-module-btn" data-tab="tab-withdraw">出款模块 / Withdrawal Module</a>
+    <a class="tab-module-btn" data-tab="tab-collection">归集模块 / Collection Module</a>
+    <a class="tab-module-btn" data-tab="tab-register">注册登录 / Registration</a>
+    <a class="tab-module-btn" data-tab="tab-recharge">充值模块 / Recharge Module</a>
+    <a class="tab-module-btn" data-tab="tab-task">任务配置 / Task Config</a>
+    <a class="tab-module-btn" data-tab="tab-share">分享奖励 / Share Award</a>
+    <a class="tab-module-btn" data-tab="tab-push">消息推送 / Message Push</a>
+</div>
 
-    <div class="layui-form layui-card">
-        <div class="layui-card-body">
-            <div class="layui-form-item" pane="">
-                <label class="layui-form-label">显示选项</label>
-                <div class="layui-input-block" id="clear">
-                    <input type="checkbox" name="clear" value="1" lay-skin="primary" title="用户">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>用户</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="2" lay-skin="primary" title="交易">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>交易</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="3" lay-skin="primary" title="财务记录">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>财务记录</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="4" lay-skin="primary" title="充值">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>充值</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="5" lay-skin="primary" title="提现">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>提现</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="6" lay-skin="primary" title="银行卡">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>银行卡</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="7" lay-skin="primary" title="地址">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>地址</span><i class="layui-icon layui-icon-ok"></i></div>
-                    <input type="checkbox" name="clear" value="8" lay-skin="primary" title="利息宝">
-                    <div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin="primary">
-                        <span>利息宝</span><i class="layui-icon layui-icon-ok"></i></div>
+<form id="systemConfigForm" class="layui-form" action="{:url('config')}" data-auto="true" method="post" autocomplete="off">
+    
+    <!-- 1. 基本功能 / Basic Function -->
+    <div class="tab-panel-content active" id="tab-basic">
+        <div class="config-card-box">
+            <h3 class="form-section-title">基本功能与外观 / Basic Functions & Skin</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">皮肤模板 / Skin Template</label>
+                <div class="layui-input-inline" style="width:240px;">
+                    <select name="skin_template">
+                        <option value="21" {if sysconf('skin_template')=='21' || !sysconf('skin_template')}selected{/if}>【21】皮肤21 (Default Red Theme)</option>
+                        <option value="1" {if sysconf('skin_template')=='1'}selected{/if}>【1】皮肤1 (Classic)</option>
+                        <option value="2" {if sysconf('skin_template')=='2'}selected{/if}>【2】皮肤2 (Dark Modern)</option>
+                    </select>
                 </div>
-                <div class="layui-input-block" style="width: 30%">
-                    <input value="" id="clearPwd" type="password" class="layui-input" placeholder="清理密码">
+                <label class="layui-form-label" style="width:120px;">皮肤样式 / Style</label>
+                <div class="layui-input-inline" style="width:200px;">
+                    <select name="skin_style">
+                        <option value="21-1" {if sysconf('skin_style')=='21-1' || !sysconf('skin_style')}selected{/if}>【1】样式21-1</option>
+                        <option value="21-2" {if sysconf('skin_style')=='21-2'}selected{/if}>【2】样式21-2</option>
+                    </select>
+                </div>
+                <div class="layui-input-inline" style="width:120px;">
+                    <a href="/#/home" target="_blank" class="layui-btn btn-op-blue">预览皮肤 / Preview</a>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">系统玩法 / Gameplay</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="system_mode" value="vip" title="升级vip做任务 / Upgrade VIP Tasks" {if sysconf('system_mode')=='vip' || !sysconf('system_mode')}checked{/if}>
+                    <input type="radio" name="system_mode" value="invest" title="投资项目 / Investment Project" {if sysconf('system_mode')=='invest'}checked{/if}>
+                    <p class="help-block" style="color:#86909c; font-size:12px; margin-top:6px;">
+                        系统玩法：1.升级VIP做商品任务：基于VIP等级，用户根据不同VIP等级分配不同任务，收益也不同；<br>
+                        2.投资项目：可自由配置任何项目，可多项目同时购买，每天获得收益。
+                    </p>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">优惠券开关 / Coupon</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="user_coupon_status" value="1" title="开启 / Open" {if sysconf('user_coupon_status')=='1'}checked{/if}>
+                    <input type="radio" name="user_coupon_status" value="0" title="关闭 / Close" {if sysconf('user_coupon_status')=='0' || !sysconf('user_coupon_status')}checked{/if}>
+                    <p class="help-block" style="color:#86909c; font-size:12px;">user_coupon_status: 优惠券开关</p>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">用户端开启谷歌验证器 / 2FA</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="google_secret_status" value="1" title="开启 / Open" {if sysconf('google_secret_status')=='1'}checked{/if}>
+                    <input type="radio" name="google_secret_status" value="0" title="关闭 / Close" {if sysconf('google_secret_status')=='0' || !sysconf('google_secret_status')}checked{/if}>
+                    <p class="help-block" style="color:#86909c; font-size:12px;">google_secret_status: 用户端是否开启谷歌验证器</p>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">网站标题 / Site Title</label>
+                <div class="layui-input-block">
+                    <input name="site_name" value="{:sysconf('site_name')}" placeholder="请输入网站名称" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">介绍视频 / Intro Video URL</label>
+                <div class="layui-input-block">
+                    <input name="intro_video_url" value="{:sysconf('intro_video_url')}" placeholder="https://..." class="layui-input">
+                    <p class="help-block" style="color:#86909c; font-size:12px;">前台首页【Platform Introduction】展示的视频地址</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <a class="layui-btn layui-btn-sm" onclick="clearData()">确定清理</a>
-</div>
-{/if}
+    <!-- 2. 用户端配置 / User Config -->
+    <div class="tab-panel-content" id="tab-client">
+        <div class="config-card-box">
+            <h3 class="form-section-title">用户端全局规则 / Client Configuration</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">注册赠送体验金 / Sign-up Bonus</label>
+                <div class="layui-input-inline" style="width:240px;">
+                    <input name="reg_bonus" value="{:sysconf('reg_bonus')|default='0.00'}" class="layui-input" placeholder="0.00">
+                </div>
+                <span class="help-inline">USDT</span>
+            </div>
 
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">多语言开关 / Multi-Language</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="lang_status" value="1" title="开启 / Open" {if sysconf('lang_status')!='0'}checked{/if}>
+                    <input type="radio" name="lang_status" value="0" title="关闭 / Close" {if sysconf('lang_status')=='0'}checked{/if}>
+                </div>
+            </div>
 
-{if auth('config')}
-<div class="think-box-shadow margin-bottom-15">
-    <span class="color-green font-w7 text-middle">系统参数配置：</span>
-    <a class="layui-btn layui-btn-sm" data-modal="{:url('config')}">修改系统配置</a>
-</div>
-{/if}
-
-<div class="think-box-shadow margin-bottom-15">
-    <span class="color-green font-w7 text-middle">文件存储引擎：</span>
-    {foreach ['local'=>'本地服务器存储','qiniu'=>'七牛云对象存储','oss'=>'阿里云OSS存储'] as $k=>$v}
-    {if sysconf('storage_type') eq $k}
-    {if auth('file')}<a data-modal="{:url('file')}?type={$k}" class="layui-btn layui-btn-sm">{$v}</a>{else}<a
-        class="layui-btn layui-btn-sm">{$v}</a>{/if}
-    {elseif auth('file')}<a data-modal="{:url('file')}?type={$k}"
-                            class="layui-btn layui-btn-sm layui-btn-primary">{$v}</a>{/if}
-    {/foreach}
-</div>
-
-<div class="think-box-shadow padding-40">
-    <div class="layui-form-item">
-        <span class="color-green font-w7">网站名称 Website</span>
-        <label class="relative block">
-            <input readonly value="{:sysconf('site_name')}" class="layui-input layui-bg-gray">
-            <a data-copy="{:sysconf('site_name')}" class="fa fa-copy right-btn"></a>
-        </label>
-        <p class="help-block">网站名称及网站图标，将显示在浏览器的标签上</p>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">在线客服链接 / Support Link</label>
+                <div class="layui-input-block">
+                    <input name="chats_link" value="{:sysconf('chats_link')|default='https://wa.me/553588236216'}" class="layui-input" placeholder="https://...">
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="layui-form-item">
-        <span class="color-green font-w7">网站名称 Website</span>
-        <label class="relative block">
-            <input readonly value="{:sysconf('site_name')}" class="layui-input layui-bg-gray">
-            <a data-copy="{:sysconf('site_name')}" class="fa fa-copy right-btn"></a>
-        </label>
-        <p class="help-block">网站名称及网站图标，将显示在浏览器的标签上</p>
+    <!-- 3. 安装包 / Install Tab -->
+    <div class="tab-panel-content" id="tab-install">
+        <div class="config-card-box">
+            <h3 class="form-section-title">App 下载与安装包 / App Package Downloads</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">Android APK 下载链接</label>
+                <div class="layui-input-block">
+                    <input name="app_android_url" value="{:sysconf('app_android_url')}" class="layui-input" placeholder="https://.../app.apk">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">iOS 安装包 / Profile 链接</label>
+                <div class="layui-input-block">
+                    <input name="app_ios_url" value="{:sysconf('app_ios_url')}" class="layui-input" placeholder="https://...">
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- 4. 出款模块 / Withdrawal Module -->
+    <div class="tab-panel-content" id="tab-withdraw">
+        <div class="config-card-box">
+            <h3 class="form-section-title">提现控制模块 / Withdrawal Settings</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">全站提现开关 / Master Switch</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="withdraw_master_switch" value="1" title="开启 / Open" {if sysconf('withdraw_master_switch')!='0'}checked{/if}>
+                    <input type="radio" name="withdraw_master_switch" value="0" title="关闭 / Close" {if sysconf('withdraw_master_switch')=='0'}checked{/if}>
+                </div>
+            </div>
 
-    <div class="layui-form-item">
-        <span class="color-green font-w7">管理程序名称 Name</span>
-        <label class="relative block">
-            <input readonly placeholder="请输入程序名称" value="{:sysconf('app_name')}" class="layui-input layui-bg-gray">
-            <a data-copy="{:sysconf('app_name')}" class="fa fa-copy right-btn"></a>
-        </label>
-        <p class="help-block">管理程序名称，将显示在后台左上角标题</p>
-    </div>
-    <div class="layui-form-item">
-        <span class="color-green font-w7">管理程序版本 Version</span>
-        <label class="relative block">
-            <input readonly value="{:sysconf('app_version')}" class="layui-input layui-bg-gray">
-            <a data-copy="{:sysconf('app_version')}" class="fa fa-copy right-btn"></a>
-        </label>
-        <p class="help-block">管理程序版本，将显示在后台左上角标题</p>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">提现手续费率 / Fee Rate</label>
+                <div class="layui-input-inline" style="width:200px;">
+                    <input name="withdraw_fee_rate" value="{:sysconf('withdraw_fee_rate')|default='5'}" class="layui-input" placeholder="5">
+                </div>
+                <span class="help-inline">%</span>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">单笔最低提现 / Min Quota</label>
+                <div class="layui-input-inline" style="width:200px;">
+                    <input name="withdraw_min" value="{:sysconf('withdraw_min')|default='1'}" class="layui-input" placeholder="1">
+                </div>
+                <span class="help-inline">USDT</span>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">单笔最高提现 / Max Quota</label>
+                <div class="layui-input-inline" style="width:200px;">
+                    <input name="withdraw_max" value="{:sysconf('withdraw_max')|default='100000'}" class="layui-input" placeholder="100000">
+                </div>
+                <span class="help-inline">USDT</span>
+            </div>
+        </div>
     </div>
 
-    <div class="layui-form-item">
-        <span class="color-green font-w7">网站备案号 Miitbeian</span>
-        <label class="relative block">
-            <input readonly value="{:sysconf('miitbeian')}" class="layui-input layui-bg-gray">
-            <a data-copy="{:sysconf('miitbeian')}" class="fa fa-copy right-btn"></a>
-        </label>
-        <p class="help-block">网站备案号，可以在<a target="_blank" href="http://beian.miit.gov.cn">备案管理中心</a>查询获取，将显示在登录页面下面</p>
-    </div>
-    <div class="layui-form-item">
-        <span class="color-green font-w7">网站版权信息 Copyright</span>
-        <label class="relative block">
-            <input readonly value="{:sysconf('site_copy')}" class="layui-input layui-bg-gray">
-            <a data-copy="{:sysconf('site_copy')}" class="fa fa-copy right-btn"></a>
-        </label>
-        <p class="help-block">网站版权信息，在后台登录页面显示版本信息并链接到备案到信息备案管理系统</p>
-    </div>
-</div>
-{/block}
+    <!-- 5. 归集模块 / Collection Module -->
+    <div class="tab-panel-content" id="tab-collection">
+        <div class="config-card-box">
+            <h3 class="form-section-title">链上归集模块 / Auto Collection Module</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">TRC20 归集总地址</label>
+                <div class="layui-input-block">
+                    <input name="trc20_collect_address" value="{:sysconf('trc20_collect_address')|default='TXYZo89h129kJs99aLqP10x992KmNsQW1a'}" class="layui-input">
+                </div>
+            </div>
 
-{block name='style'}
-<style>
-    .right-btn {
-        top: 0;
-        right: 0;
-        width: 38px;
-        height: 38px;
-        display: inline-block;
-        position: absolute;
-        text-align: center;
-        line-height: 38px;
-    }
-</style>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">EVM 归集总地址 (BEP/ETH/POL)</label>
+                <div class="layui-input-block">
+                    <input name="evm_collect_address" value="{:sysconf('evm_collect_address')|default='0x4f85459F610376Ee6Ad77216785582c55817d5bc'}" class="layui-input">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. 注册登录 / Registration -->
+    <div class="tab-panel-content" id="tab-register">
+        <div class="config-card-box">
+            <h3 class="form-section-title">注册登录模块 / Registration Settings</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">邀请码必填 / Invite Required</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="invite_code_required" value="1" title="必填 / Required" {if sysconf('invite_code_required')!='0'}checked{/if}>
+                    <input type="radio" name="invite_code_required" value="0" title="选填 / Optional" {if sysconf('invite_code_required')=='0'}checked{/if}>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. 充值模块 / Recharge Module -->
+    <div class="tab-panel-content" id="tab-recharge">
+        <div class="config-card-box">
+            <h3 class="form-section-title">充值通道快速管理 / Recharge Channels</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">默认充值方式</label>
+                <div class="layui-input-inline" style="width:240px;">
+                    <select name="default_recharge_channel">
+                        <option value="TRC20-USDT" {if sysconf('default_recharge_channel')=='TRC20-USDT' || !sysconf('default_recharge_channel')}selected{/if}>TRC20-USDT</option>
+                        <option value="BEP20-USDT" {if sysconf('default_recharge_channel')=='BEP20-USDT'}selected{/if}>BEP20-USDT</option>
+                        <option value="ETH-USDT" {if sysconf('default_recharge_channel')=='ETH-USDT'}selected{/if}>ETH-USDT</option>
+                    </select>
+                </div>
+                <a href="/admin/pay/index" class="layui-btn btn-op-green">管理全部 13 个充值通道</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. 任务配置 / Task Config -->
+    <div class="tab-panel-content" id="tab-task">
+        <div class="config-card-box">
+            <h3 class="form-section-title">任务规则配置 / Task Rules</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">每日任务冻结时间 / Task Freeze</label>
+                <div class="layui-input-inline" style="width:200px;">
+                    <input name="task_freeze_seconds" value="{:sysconf('task_freeze_seconds')|default='5'}" class="layui-input" placeholder="5">
+                </div>
+                <span class="help-inline">秒 / Seconds</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. 分享奖励 / Share Award -->
+    <div class="tab-panel-content" id="tab-share">
+        <div class="config-card-box">
+            <h3 class="form-section-title">推广分享奖励 / Referral Commission Levels</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">一级佣金比例 / Tier 1</label>
+                <div class="layui-input-inline" style="width:160px;">
+                    <input name="referral_tier1" value="{:sysconf('referral_tier1')|default='10'}" class="layui-input" placeholder="10">
+                </div>
+                <span class="help-inline">%</span>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">二级佣金比例 / Tier 2</label>
+                <div class="layui-input-inline" style="width:160px;">
+                    <input name="referral_tier2" value="{:sysconf('referral_tier2')|default='5'}" class="layui-input" placeholder="5">
+                </div>
+                <span class="help-inline">%</span>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">三级佣金比例 / Tier 3</label>
+                <div class="layui-input-inline" style="width:160px;">
+                    <input name="referral_tier3" value="{:sysconf('referral_tier3')|default='2'}" class="layui-input" placeholder="2">
+                </div>
+                <span class="help-inline">%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. 消息推送 / Message Push -->
+    <div class="tab-panel-content" id="tab-push">
+        <div class="config-card-box">
+            <h3 class="form-section-title">系统消息与弹窗公告 / Announcements & Push</h3>
+            
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width:160px;">跑马灯滚动公告 / Ticker</label>
+                <div class="layui-input-block">
+                    <textarea name="home_ticker_text" class="layui-textarea" placeholder="Welcome to the platform! Earn commissions by completing daily tasks.">{:sysconf('home_ticker_text')}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+    <div class="layui-form-item text-center">
+        <button class="layui-btn btn-op-blue" type="submit" style="height:42px; line-height:42px; padding:0 36px; font-size:15px;">保存所有配置 / Save All Configuration</button>
+    </div>
+</form>
+
 <script>
+layui.use(['form'], function () {
+    var form = layui.form;
+    form.render();
 
-    window.form.render();
-</script>
-<script>
-    function clearData() {
-        $.msg.confirm('确定要清理吗？', function (index) {
-            //history.back();
-            $.msg.close(index);
-            if ($('#clearPwd').val() == '') {
-                return;
-            }
-            var chk_value = [];
-            $('input[name="clear"]:checked').each(function () {
-                chk_value.push($(this).val());
-            });
+    $('.tab-module-btn').on('click', function () {
+        var targetTab = $(this).data('tab');
+        $('.tab-module-btn').removeClass('active');
+        $(this).addClass('active');
 
-            console.log(chk_value)
-            console.log(JSON.stringify(chk_value))
-            $.ajax({
-                type: 'POST',
-                url: "{:url('clear')}",
-                data: {
-                    'id': 2,
-                    'pwd': $('#clearPwd').val(),
-                    'data': JSON.stringify(chk_value),
-                    '_csrf_': "{:systoken('clear')}"
-                },
-                success: function (res) {
-                    layer.msg(res.info, {time: 2500});
-                    //location.reload();
-                }
-            });
-
-
-        }, function () {
-            return false;
-        });
-
-
-    }
+        $('.tab-panel-content').removeClass('active');
+        $('#' + targetTab).addClass('active');
+    });
+});
 </script>
 {/block}

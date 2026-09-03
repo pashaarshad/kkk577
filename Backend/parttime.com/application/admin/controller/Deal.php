@@ -1503,4 +1503,106 @@ class Deal extends Base
         $this->info = Db::table('xy_recharge')->find($id);
         return $this->fetch();
     }
+
+    /**
+     * 一键审核通过 (批量审核通过并付款)
+     * @auth true
+     */
+    public function batch_deposit_pass()
+    {
+        $ids = input('post.ids/a', []);
+        if (empty($ids) && input('post.id')) {
+            $ids = explode(',', input('post.id'));
+        }
+        if (empty($ids)) {
+            return $this->error('请先勾选需要通过的提现订单');
+        }
+        $success = 0;
+        foreach ($ids as $id) {
+            $oinfo = Db::name('xy_deposit')->where('id', $id)->where('status', 1)->find();
+            if ($oinfo) {
+                Db::name('xy_deposit')->where('id', $id)->update(['status' => 2, 'endtime' => time()]);
+                Db::name('xy_message')->insert([
+                    'uid' => $oinfo['uid'],
+                    'type' => 2,
+                    'title' => lang('sys_msg'),
+                    'content' => sprintf(lang('deposit_system_success'), $oinfo['id']),
+                    'addtime' => time()
+                ]);
+                $success++;
+            }
+        }
+        sysoplog('一键审核提现通过', 'Count: ' . $success);
+        return $this->success("一键审核通过成功！已处理 {$success} 笔订单");
+    }
+
+    /**
+     * 手动出款 (标记为转账成功)
+     * @auth true
+     */
+    public function batch_deposit_manual()
+    {
+        $ids = input('post.ids/a', []);
+        if (empty($ids) && input('post.id')) {
+            $ids = explode(',', input('post.id'));
+        }
+        if (empty($ids)) {
+            return $this->error('请先勾选需要手动出款的订单');
+        }
+        $count = Db::name('xy_deposit')->where('id', 'in', $ids)->update(['status' => 2, 'endtime' => time()]);
+        sysoplog('手动提现出款完成', 'Count: ' . $count);
+        return $this->success("手动出款标记成功！已完成 {$count} 笔订单");
+    }
+
+    /**
+     * 一键退回 / 驳回提现 (资金退回余额)
+     * @auth true
+     */
+    public function batch_deposit_reject()
+    {
+        $ids = input('post.ids/a', []);
+        if (empty($ids) && input('post.id')) {
+            $ids = explode(',', input('post.id'));
+        }
+        if (empty($ids)) {
+            return $this->error('请先勾选需要退回的提现订单');
+        }
+        $msg = input('post.reason/s', '管理员审核驳回，资金已退回');
+        $success = 0;
+        foreach ($ids as $id) {
+            $oinfo = Db::name('xy_deposit')->where('id', $id)->where('status', 1)->find();
+            if ($oinfo) {
+                Db::startTrans();
+                try {
+                    Db::name('xy_users')->where('id', $oinfo['uid'])->setInc('balance', $oinfo['num']);
+                    Db::name('xy_deposit')->where('id', $id)->update([
+                        'status' => 3,
+                        'endtime' => time(),
+                        'payout_err_msg' => $msg
+                    ]);
+                    Db::name('xy_balance_log')->insert([
+                        'uid' => $oinfo['uid'],
+                        'oid' => $oinfo['id'],
+                        'num' => $oinfo['num'],
+                        'type' => 8,
+                        'status' => 1,
+                        'addtime' => time()
+                    ]);
+                    Db::name('xy_message')->insert([
+                        'uid' => $oinfo['uid'],
+                        'type' => 2,
+                        'title' => lang('sys_msg'),
+                        'content' => sprintf(lang('deposit_system_clean'), $oinfo['id']) . ' ' . $msg,
+                        'addtime' => time()
+                    ]);
+                    Db::commit();
+                    $success++;
+                } catch (\Exception $e) {
+                    Db::rollback();
+                }
+            }
+        }
+        sysoplog('一键退回提现', 'Count: ' . $success);
+        return $this->success("一键退回成功！已退回 {$success} 笔提现资金至用户账户");
+    }
 }

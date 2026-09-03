@@ -9,14 +9,14 @@
         </div>
         <div class="user-text-col">
           <span class="welcome-label">Welcome back,</span>
-          <strong class="user-phone">{{ loginShow && data.user_info?.tel ? data.user_info.tel : 'Guest' }}</strong>
+          <strong class="user-phone">{{ loginShow && (data.user_info?.username || data.user_info?.tel) ? (data.user_info?.username || data.user_info?.tel) : 'Guest' }}</strong>
         </div>
       </div>
 
       <div class="vip-badge-right" @click="onMenuClick('/vip')">
         <div class="crown-icon-small">👑</div>
         <div class="vip-text-col">
-          <span class="vip-title">VIP Member</span>
+          <span class="vip-title">{{ (loginShow && data.user_info?.level_name) ? data.user_info.level_name : 'VIP Member' }}</span>
           <span class="vip-sub">Enjoy exclusive benefits</span>
         </div>
       </div>

@@ -66,6 +66,7 @@ class Users extends Base
 
         $query = $this->_query($this->table)->alias('u');
         $where = [];
+        if (input('id/d', 0)) $where[] = ['u.id', '=', input('id/d')];
         if (input('tel/s', '')) $where[] = ['u.tel', 'like', '%' . input('tel/s', '') . '%'];
         if (input('invite_code/s', '')) $where[] = ['u.invite_code', '=', input('invite_code/s')];
         if (input('username/s', '')) $where[] = ['u.username', 'like', '%' . input('username/s', '') . '%'];
@@ -1462,6 +1463,91 @@ class Users extends Base
         $status = input('status/d', 0);
         Db::name('xy_users')->where('id', $id)->update(['show_invite' => $status]);
         return json(['code' => 1, 'info' => '邀请码状态修改成功']);
+    }
+
+    /**
+     * 批量操作
+     * @auth true
+     */
+    public function batch_op()
+    {
+        $ids = input('post.ids/a', []);
+        if (empty($ids) && input('post.id')) {
+            $ids = explode(',', input('post.id'));
+        }
+        $act = input('post.act/s', 'ban');
+        if (empty($ids)) {
+            return $this->error('请先勾选需要操作的会员');
+        }
+        if ($act === 'ban') {
+            Db::name('xy_users')->where('id', 'in', $ids)->update(['status' => 0]);
+            sysoplog('批量禁用会员', 'IDs: ' . implode(',', $ids));
+            return $this->success('批量禁用成功！');
+        } elseif ($act === 'unban') {
+            Db::name('xy_users')->where('id', 'in', $ids)->update(['status' => 1]);
+            sysoplog('批量启用会员', 'IDs: ' . implode(',', $ids));
+            return $this->success('批量启用成功！');
+        } elseif ($act === 'ban_deposit') {
+            Db::name('xy_users')->where('id', 'in', $ids)->update(['deposit_status' => 0]);
+            sysoplog('批量禁提会员', 'IDs: ' . implode(',', $ids));
+            return $this->success('批量禁提成功！');
+        } elseif ($act === 'allow_deposit') {
+            Db::name('xy_users')->where('id', 'in', $ids)->update(['deposit_status' => 1]);
+            sysoplog('批量允许提现会员', 'IDs: ' . implode(',', $ids));
+            return $this->success('批量开启提现成功！');
+        }
+        return $this->error('未知操作类型');
+    }
+
+    /**
+     * 导出会员
+     * @auth true
+     */
+    public function export_user()
+    {
+        return $this->daochu();
+    }
+
+    /**
+     * 批量封禁
+     * @auth true
+     */
+    public function batch_ban()
+    {
+        $ids = input('post.ids/a', []);
+        if (empty($ids) && input('post.id')) {
+            $ids = explode(',', input('post.id'));
+        }
+        if (empty($ids)) {
+            return $this->error('请先勾选需要封禁的会员');
+        }
+        Db::name('xy_users')->where('id', 'in', $ids)->update(['status' => 0]);
+        sysoplog('批量封禁会员', 'IDs: ' . implode(',', $ids));
+        return $this->success('批量封禁成功！已封禁 ' . count($ids) . ' 位会员');
+    }
+
+    /**
+     * 设置分组
+     * @auth true
+     */
+    public function set_group()
+    {
+        if (request()->isPost()) {
+            $ids = input('post.ids/a', []);
+            if (empty($ids) && input('post.id')) {
+                $ids = explode(',', input('post.id'));
+            }
+            $group_id = input('post.group_id/d', 0);
+            if (empty($ids)) {
+                return $this->error('请先勾选需要分配分组的会员');
+            }
+            Db::name('xy_users')->where('id', 'in', $ids)->update(['group_id' => $group_id]);
+            sysoplog('批量设置分组', 'GroupID: ' . $group_id . ' IDs: ' . implode(',', $ids));
+            return $this->success('分组分配成功！');
+        }
+        $this->groupList = Db::table('xy_group')->select();
+        $this->ids = input('id/s', '');
+        return $this->fetch();
     }
 
 }

@@ -7,18 +7,23 @@
         <legend>条件搜索</legend>
         <form class="layui-form layui-form-pane form-search" action="{:request()->url()}" onsubmit="return false"
               method="get" autocomplete="off">
-            <!--
-            {if auth("do_deposit") }
             <div class="layui-form-item layui-inline" style="margin-right: 10px">
-                <button data-action='{:url("do_deposit2")}' data-csrf="{:systoken('do_deposit2')}" data-rule="id#{key}"
-                        class='layui-btn layui-btn-sm layui-btn-danger'>批量通过
+                <button data-action='{:url("deal/batch_deposit_pass")}' data-csrf="{:systoken('deal/batch_deposit_pass')}" data-rule="id#{key}"
+                        class='layui-btn layui-btn-sm btn-op-blue'>一键通过 / One-click approval
                 </button>
-                <button data-action='{:url("do_deposit3")}' data-csrf="{:systoken('do_deposit3')}" data-rule="id#{key}"
-                        class='layui-btn layui-btn-sm layui-btn-warning'>批量拒绝
+                <button data-action='{:url("deal/batch_deposit_pass")}' data-csrf="{:systoken('deal/batch_deposit_pass')}" data-rule="id#{key}"
+                        class='layui-btn layui-btn-sm btn-op-green'>一键出款 / One-click withdrawal
                 </button>
+                <button data-action='{:url("deal/batch_deposit_manual")}' data-csrf="{:systoken('deal/batch_deposit_manual')}" data-rule="id#{key}"
+                        class='layui-btn layui-btn-sm btn-op-cyan'>手动出款 / Manual withdrawal
+                </button>
+                <button data-action='{:url("deal/batch_deposit_reject")}' data-csrf="{:systoken('deal/batch_deposit_reject')}" data-rule="id#{key}"
+                        class='layui-btn layui-btn-sm btn-op-red'>一键退回 / One-click back
+                </button>
+                {if auth("daochu") }
+                <a href="{:url('daochu')}" class="layui-btn layui-btn-sm btn-op-orange"><i class="layui-icon">&#xe601;</i> 导出订单 / Export Orders</a>
+                {/if}
             </div>
-            {/if}
-            -->
             <div class="layui-form-item layui-inline">
                 <label class="layui-form-label">代理审核</label>
                 <div class="layui-input-inline">

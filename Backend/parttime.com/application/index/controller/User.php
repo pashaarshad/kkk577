@@ -168,8 +168,9 @@ class User extends Controller
         if (!session('user_id')) {
             session('user_id', $uid);
         }
-        $data = Db::name('xy_users')->field('id,tel,username,balance,freeze_balance,invite_code,level,credit_score')->find($uid);
-        $data['level_name'] = Db::name('xy_level')->where('id', $data['level'])->value('name') ?:'Free';
+        $data = Db::name('xy_users')->field('id,tel,username,balance,freeze_balance,invite_code,level,credit_score,deposit_status,deal_status,up_status')->find($uid);
+        $data['level_name'] = Db::name('xy_level')->where('level', $data['level'])->value('name') ?: ('VIP' . $data['level']);
+        $data['recharge_amount'] = Db::name('xy_recharge')->where('uid', $uid)->where('status', 2)->sum('num') ?: 0;
         return json(['code' => 0, 'info' => $data]);
     }
 

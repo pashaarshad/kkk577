@@ -80,7 +80,7 @@ const defaultIcons = [
 
 const fetchLevels = async () => {
   try {
-    const res = await request.get('/index/pay/get_level_list')
+    const res = await request.get({ url: 'index/pay/get_level_list' })
     if (res && res.code === 0 && res.data) {
       levelList.value = res.data
     }
