@@ -17,6 +17,7 @@ namespace app\index\controller;
 
 use library\Controller;
 use think\Db;
+use think\facade\Env;
 
 /**
  * 应用入口
@@ -30,7 +31,11 @@ class Index extends Controller
      */
     public function index()
     {
-        $this->home();
+        $htmlFile = Env::get('root_path') . 'public/index.html';
+        if (is_file($htmlFile)) {
+            return response(file_get_contents($htmlFile))->contentType('text/html');
+        }
+        return $this->home();
     }
 
     public function home() {
