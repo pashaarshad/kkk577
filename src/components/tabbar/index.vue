@@ -99,6 +99,11 @@ watch(() => route.fullPath, (newPath) => {
 }, { immediate: true })
 
 const onTabbar = (item, index) => {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  if (item.path !== '/home' && !token) {
+    router.push('/login')
+    return
+  }
   tabbarIndex.value = index
   router.push(item.path)
 }

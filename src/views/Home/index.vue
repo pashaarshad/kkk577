@@ -9,11 +9,11 @@
         </div>
         <div class="user-text-col">
           <span class="welcome-label">Welcome back,</span>
-          <strong class="user-phone">{{ data.user_info?.tel || '13312341234' }}</strong>
+          <strong class="user-phone">{{ loginShow && data.user_info?.tel ? data.user_info.tel : 'Guest' }}</strong>
         </div>
       </div>
 
-      <div class="vip-badge-right" @click="router.push('/vip')">
+      <div class="vip-badge-right" @click="onMenuClick('/vip')">
         <div class="crown-icon-small">👑</div>
         <div class="vip-text-col">
           <span class="vip-title">VIP Member</span>
@@ -91,7 +91,7 @@
     <section class="project-hall">
       <div class="section-header">
         <h3 class="section-title">Project hall</h3>
-        <span class="view-all" @click="router.push('/vip')">View all &gt;</span>
+        <span class="view-all" @click="onMenuClick('/vip')">View all &gt;</span>
       </div>
 
       <div class="project-list">
@@ -177,7 +177,7 @@
     </div>
 
     <!-- Floating Gift -->
-    <button class="gift-float" @click="router.push('/work')">
+    <button class="gift-float" @click="onMenuClick('/work')">
       <svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="2"></rect><path d="M3 9h18v4H3z"></path><path d="M12 9v11"></path><path d="M12 9S7 8 7 5.5A2.5 2.5 0 0 1 12 5z"></path><path d="M12 9s5-1 5-3.5A2.5 2.5 0 0 0 12 5z"></path></svg>
     </button>
   </div>
@@ -261,7 +261,8 @@ const loginShow = computed(() => {
 })
 
 const onMenuClick = (path) => {
-  if (!sessionStorage.getItem('token')) {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  if (!token) {
     router.push('/login')
     return
   }
@@ -269,7 +270,8 @@ const onMenuClick = (path) => {
 }
 
 const toGrab = (item) => {
-  if (!sessionStorage.getItem('token')) {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  if (!token) {
     router.push('/login')
     return
   }
