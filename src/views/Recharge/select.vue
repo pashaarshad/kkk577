@@ -47,27 +47,28 @@ const vipId = route.query.vip_id || 0
 
 const defaultCoinIcon = 'https://cdn-icons-png.flaticon.com/512/6001/6001368.png'
 
-const iconMap = {
-  'TRC20-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
-  'TRX': 'https://cdn-icons-png.flaticon.com/512/12114/12114251.png',
-  'BEP20-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
-  'BNB': 'https://cdn-icons-png.flaticon.com/512/12114/12114214.png',
-  'BEP20-USDC': 'https://cdn-icons-png.flaticon.com/512/12114/12114241.png',
-  'POLYGON-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
-  'ETH-USDT': 'https://cdn-icons-png.flaticon.com/512/12114/12114233.png',
-  'POLYGON-USDC': 'https://cdn-icons-png.flaticon.com/512/12114/12114241.png',
-  'ETH-USDC': 'https://cdn-icons-png.flaticon.com/512/12114/12114241.png',
-  'ETH': 'https://cdn-icons-png.flaticon.com/512/12114/12114218.png',
-  'POLYGON': 'https://cdn-icons-png.flaticon.com/512/12114/12114230.png',
-  'ETH-PYUSD': 'https://cdn-icons-png.flaticon.com/512/888/888870.png',
-  'PHP': 'https://cdn-icons-png.flaticon.com/512/2489/2489756.png',
-  'UPI': 'https://cdn-icons-png.flaticon.com/512/10112/10112502.png'
+const localIconMap = {
+  'TRC20-USDT': '/static/image/trc20-usdt.jpg',
+  'TRX': '/static/image/trx.webp',
+  'BEP20-USDT': '/static/image/bep20-usdt.webp',
+  'BNB': '/static/image/bnb.webp',
+  'BEP20-USDC': '/static/image/bep20-usdc.png',
+  'POLYGON-USDT': '/static/image/polygon-usdt.webp',
+  'ETH-USDT': '/static/image/eth-usdt.webp',
+  'POLYGON-USDC': '/static/image/polygon-usdc.webp',
+  'ETH-USDC': '/static/image/eth-usdc.webp',
+  'ETH': '/static/image/eth.webp',
+  'POLYGON': '/static/image/polygon.webp',
+  'ETH-PYUSD': '/static/image/eth-pyusd.webp',
+  'PHP': '/static/image/flb.webp'
 }
 
 const getChannelIcon = (item) => {
-  if (item.ico && item.ico.trim() !== '') return item.ico
-  const key = Object.keys(iconMap).find(k => item.name && item.name.toUpperCase().includes(k))
-  return key ? iconMap[key] : defaultCoinIcon
+  if (item.ico && item.ico.trim() !== '' && !item.ico.includes('cdn.fwtqo.cn') && !item.ico.includes('card.png')) {
+    return item.ico
+  }
+  const key = Object.keys(localIconMap).find(k => item.name && item.name.toUpperCase().includes(k))
+  return key ? localIconMap[key] : (item.ico || '/static/image/trc20-usdt.jpg')
 }
 
 const fetchPayList = async () => {

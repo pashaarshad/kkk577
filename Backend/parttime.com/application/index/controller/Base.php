@@ -31,9 +31,11 @@ class Base extends Controller
             exit();
         }*/
         $controller = strtolower(\request()->controller());
+        $action = strtolower(\request()->action());
         if ($controller == 'user') return;
+        if ($controller == 'pay' && in_array($action, ['get_pay_list', 'get_level_list'])) return;
 
-        if (!$uid && request()->isPost()) {
+        if (!$uid && (request()->isAjax() || request()->isPost())) {
             $this->error(lang('no_login'));
         }
         if (!$uid) $this->redirect('User/login');

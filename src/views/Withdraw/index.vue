@@ -157,12 +157,21 @@ const quotaMin = ref('1.000')
 const quotaMax = ref('100000.000')
 const feeRate = ref(0.05) // 5% fee rate
 
-const methods = [
-  { id: 'TRC20-USDT', label: 'TRC20-USDT', icon: 'https://cdn-icons-png.flaticon.com/512/6001/6001368.png' },
-  { id: 'TRX', label: 'TRX', icon: 'https://cdn-icons-png.flaticon.com/512/12114/12114250.png' },
-  { id: 'BEP20-USDT', label: 'BEP20-USDT', icon: 'https://cdn-icons-png.flaticon.com/512/6001/6001368.png' },
-  { id: 'BEP20-USDC', label: 'BEP20-USDC', icon: 'https://cdn-icons-png.flaticon.com/512/14446/14446187.png' }
-]
+const methods = ref([
+  { id: 'TRC20-USDT', label: 'TRC20-USDT', icon: '/static/image/trc20-usdt.jpg' },
+  { id: 'TRX', label: 'TRX', icon: '/static/image/trx.webp' },
+  { id: 'BEP20-USDT', label: 'BEP20-USDT', icon: '/static/image/bep20-usdt.webp' },
+  { id: 'BNB', label: 'BNB', icon: '/static/image/bnb.webp' },
+  { id: 'BEP20-USDC', label: 'BEP20-USDC', icon: '/static/image/bep20-usdc.png' },
+  { id: 'POLYGON-USDT', label: 'POLYGON-USDT', icon: '/static/image/polygon-usdt.webp' },
+  { id: 'ETH-USDT', label: 'ETH-USDT', icon: '/static/image/eth-usdt.webp' },
+  { id: 'POLYGON-USDC', label: 'POLYGON-USDC', icon: '/static/image/polygon-usdc.webp' },
+  { id: 'ETH-USDC', label: 'ETH-USDC', icon: '/static/image/eth-usdc.webp' },
+  { id: 'ETH', label: 'ETH', icon: '/static/image/eth.webp' },
+  { id: 'POLYGON', label: 'POLYGON', icon: '/static/image/polygon.webp' },
+  { id: 'ETH-PYUSD', label: 'ETH-PYUSD', icon: '/static/image/eth-pyusd.webp' },
+  { id: 'PHP', label: 'PHP', icon: '/static/image/flb.webp' }
+])
 const selectedMethod = ref('TRC20-USDT')
 
 const handleMethodClick = (id) => {
@@ -205,14 +214,30 @@ const fetchUserData = async () => {
   }
 
   try {
+    const payRes = await Request.get({ url: 'index/pay/get_pay_list' })
+    if (payRes && payRes.code === 0 && payRes.data && payRes.data.length > 0) {
+      const activeChannels = payRes.data.filter(p => p.status === 1)
+      if (activeChannels.length > 0) {
+        methods.value = activeChannels.map(item => ({
+          id: item.name,
+          label: item.name,
+          icon: item.ico || '/static/image/trc20-usdt.jpg'
+        }))
+      }
+    }
+  } catch (e) {
+    // Keep local default list
+  }
+
+  try {
     const bankRes = await Request.get({ url: 'index/ctrl/bankinfo' })
     if (bankRes && bankRes.code === 0 && bankRes.data && bankRes.data[0]) {
       const b = bankRes.data[0]
-      if (b.cardnum) {
+      if (b && b.cardnum) {
         address.value = b.cardnum
         tempAddress.value = b.cardnum
       }
-      if (b.bankname) {
+      if (b && b.bankname) {
         selectedMethod.value = b.bankname
       }
     }
@@ -392,9 +417,12 @@ onMounted(() => {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding: 2px 2px 6px 2px;
 
       @media (min-width: 380px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .method-pill {
