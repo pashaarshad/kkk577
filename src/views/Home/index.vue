@@ -28,7 +28,7 @@
       <div class="balance-curved-banner">
         <div class="balance-col">
           <span class="bal-label">Total Balance</span>
-          <h1 class="bal-amount">$ {{ loginShow ? (data.user_info?.balance || '133,176.65') : '133,176.65' }}</h1>
+          <h1 class="bal-amount">$ {{ loginShow && data.user_info?.balance != null ? Number(data.user_info.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00' }}</h1>
         </div>
         <div class="wallet-icon-box">
           <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"></rect><path d="M16 10h5v4h-5z"></path></svg>
@@ -255,11 +255,10 @@ const computedVideoStyle = computed(() => {
   }
 })
 
-const token = sessionStorage.getItem('token')
-const loginShow = ref(false)
-if (token) {
-  loginShow.value = true
-}
+const loginShow = computed(() => {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  return !!token && !!data.value?.user_info
+})
 
 const onMenuClick = (path) => {
   if (!sessionStorage.getItem('token')) {

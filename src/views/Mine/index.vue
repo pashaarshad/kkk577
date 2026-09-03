@@ -5,7 +5,7 @@
     <div class="profile-header">
       <div class="header-left">
         <span class="welcome-tag">Welcome</span>
-        <h2 class="user-greeting">Hi, {{ data.tel || '13312341234' }}</h2>
+        <h2 class="user-greeting">Hi, {{ data.tel || 'User' }}</h2>
       </div>
       <img alt="" class="avatar-img" src="../../assets/img/mine/photo.png">
     </div>
@@ -14,11 +14,11 @@
     <div class="gold-balance-card">
       <div class="balance-cell">
         <span class="lbl">Total balance (USDT)</span>
-        <span class="val">$ {{ data.balance || '0.00' }}</span>
+        <span class="val">$ {{ data.balance != null ? Number(data.balance).toFixed(2) : '0.00' }}</span>
       </div>
       <div class="balance-cell">
         <span class="lbl">Recharge amount (USDT)</span>
-        <span class="val">$ {{ data.recharge_amount || '0.00' }}</span>
+        <span class="val">$ {{ data.recharge_amount != null ? Number(data.recharge_amount).toFixed(2) : '0.00' }}</span>
       </div>
     </div>
 
@@ -87,8 +87,10 @@ Request.get({ url: 'index/user/info' }).then(res => {
 const mitt = useMitt()
 const goBack = () => {
   sessionStorage.clear()
+  localStorage.clear()
+  data.value = {}
   Request.get({ url: 'index/user/logout' }).then(() => {
-    router.replace('/home')
+    router.replace('/login')
     mitt.emit('goBack')
   })
 }

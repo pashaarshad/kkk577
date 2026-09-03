@@ -47,7 +47,11 @@ class Index extends Controller
         }
         $data->deposit_list = $deposit_list;
         $uid = session('user_id');
-        $data->user_info = Db::name('xy_users')->field('tel,invite_code,balance,level')->find($uid);
+        if ($uid) {
+            $data->user_info = Db::name('xy_users')->field('tel,invite_code,balance,level')->find($uid);
+        } else {
+            $data->user_info = null;
+        }
         $yes1 = strtotime(date("Y-m-d 00:00:00", strtotime("-1 day")));
         $yes2 = strtotime(date("Y-m-d 23:59:59", strtotime("-1 day")));
         $data->today_commission = Db::name('xy_convey')->where('uid', $uid)->where('status', 1)->where('addtime', 'between', [strtotime('Y-m-d 00:00:00'), time()])->sum('commission');
