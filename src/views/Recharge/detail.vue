@@ -76,13 +76,48 @@ const generateQrUrl = (text) => {
   return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`
 }
 
+const fallbackCopy = (text, successMsg) => {
+  try {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    textArea.style.position = 'fixed'
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.width = '2em'
+    textArea.style.height = '2em'
+    textArea.style.padding = '0'
+    textArea.style.border = 'none'
+    textArea.style.outline = 'none'
+    textArea.style.boxShadow = 'none'
+    textArea.style.background = 'transparent'
+    textArea.setAttribute('readonly', '')
+    document.body.appendChild(textArea)
+    textArea.focus()
+    textArea.select()
+    textArea.setSelectionRange(0, 99999)
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+    if (successful) {
+      showSuccessToast(successMsg)
+    } else {
+      window.prompt('Copy address:', text)
+    }
+  } catch (err) {
+    window.prompt('Copy address:', text)
+  }
+}
+
 const copyAddress = () => {
   const text = payInfo.value?.usercode || '0x4f85459F610376Ee6Ad77216785582c55817d5bc'
-  navigator.clipboard.writeText(text).then(() => {
-    showSuccessToast('Address copied to clipboard!')
-  }).catch(() => {
-    showSuccessToast('Address copied!')
-  })
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      showSuccessToast('Address copied to clipboard!')
+    }).catch(() => {
+      fallbackCopy(text, 'Address copied to clipboard!')
+    })
+  } else {
+    fallbackCopy(text, 'Address copied to clipboard!')
+  }
 }
 
 const onComplete = async () => {

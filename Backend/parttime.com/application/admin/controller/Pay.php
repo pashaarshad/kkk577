@@ -76,23 +76,27 @@ class Pay extends Base
             $token = input('__token__');
             $data = array(
                 'name' => input('post.name/s', ''),
-                'min' => input('post.min/f', 0),
-                'max' => input('post.max/f', 0),
+                'name2' => input('post.name2/s', input('post.name/s', '')),
+                'ico' => input('post.ico/s', ''),
+                'usercode' => input('post.usercode/s', ''),
+                'username' => input('post.username/s', ''),
+                'min' => input('post.min/f', 1),
+                'max' => input('post.max/f', 100000),
                 'ewm' => input('post.ewm/s', ''),
-                'usercode' => input('post.username/s', ''),
-                'username' => input('post.usercode/s', ''),
+                'sort' => input('post.sort/d', 0),
+                'status' => input('post.status/d', 1),
                 'secret' => input('post.secret/s', ''),
                 'mch_id' => input('post.mch_id/s', ''),
                 'pay_commission' => input('post.pay_commission/f', 0),
             );
             $res = Db::table($this->table)->where('id', $id)->update($data);
-            if (!$res) {
-                return $this->error('保存失败');
+            if ($res === false) {
+                return $this->error('Save failed');
             }
-            sysoplog('编辑支付', json_encode($data, JSON_UNESCAPED_UNICODE));
-            $this->success('编辑成功');
+            sysoplog('Edit Payment Method', json_encode($data, JSON_UNESCAPED_UNICODE));
+            $this->success('Updated successfully');
         }
-        if (!$id) $this->error('参数错误');
+        if (!$id) $this->error('Invalid ID');
         $this->info = Db::table($this->table)->find($id);
 
         return $this->fetch();
@@ -108,26 +112,44 @@ class Pay extends Base
         if (request()->isPost()) {
             $data = array(
                 'name' => input('post.name/s', ''),
-                'min' => input('post.min/f', 0),
-                'max' => input('post.max/f', 0),
+                'name2' => input('post.name2/s', input('post.name/s', '')),
+                'ico' => input('post.ico/s', ''),
+                'usercode' => input('post.usercode/s', ''),
+                'username' => input('post.username/s', ''),
+                'min' => input('post.min/f', 1),
+                'max' => input('post.max/f', 100000),
                 'ewm' => input('post.ewm/s', ''),
-                'usercode' => input('post.username/s', ''),
-                'username' => input('post.usercode/s', ''),
+                'sort' => input('post.sort/d', 0),
+                'status' => 1,
+                'is_payout' => 1,
                 'secret' => input('post.secret/s', ''),
                 'mch_id' => input('post.mch_id/s', ''),
                 'pay_commission' => input('post.pay_commission/f', 0),
-                'status' => 1,
-                'sort' => 0,
-                'addtime' => time()
+                'type' => 1
             );
             $res = Db::table($this->table)->insert($data);
             if (!$res) {
-                return $this->error('添加失败');
+                return $this->error('Add failed');
             }
-            sysoplog('添加支付方式', json_encode($data, JSON_UNESCAPED_UNICODE));
-            $this->success('添加成功');
+            sysoplog('Add Payment Method', json_encode($data, JSON_UNESCAPED_UNICODE));
+            $this->success('Added successfully');
         }
-        $this->info = ['id' => 0, 'name' => '', 'name2' => '', 'username' => '', 'usercode' => '', 'ico' => '', 'min' => 0, 'max' => 0, 'ewm' => '', 'secret' => '', 'mch_id' => '', 'pay_commission' => 0];
+        $this->info = [
+            'id' => 0,
+            'name' => '',
+            'name2' => '',
+            'username' => '',
+            'usercode' => '',
+            'ico' => '',
+            'sort' => 50,
+            'min' => 1,
+            'max' => 100000,
+            'ewm' => '',
+            'secret' => '',
+            'mch_id' => '',
+            'pay_commission' => 0,
+            'status' => 1
+        ];
         return $this->fetch('edit');
     }
 

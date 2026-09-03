@@ -1,54 +1,83 @@
 {extend name='admin@main'}
 {block name="content"}
 <form onsubmit="return false;" id="PayForm" data-auto="true" method="post" class='layui-form layui-card' autocomplete="off">
-    <div class="layui-card-body think-box-shadow padding-left-40">
+    <div class="layui-card-body think-box-shadow padding-left-40 padding-right-40">
+        
         <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs9 relative">
-                <span class="color-green font-w700">Payment Channel Name (e.g. UPI, USDT TRC20, Bank Pay)</span>
-                <input name="name" required class="layui-input margin-top-5" placeholder="Enter channel name" value="{$info.name}">
-                <input type="hidden" name="id" value="{$info.id}">
+            <label class="layui-col-xs12 relative">
+                <span class="color-green font-w700">Payment Channel Name (e.g. TRC20-USDT, TRX, BEP20-USDT, BEP20-USDC, POLYGON-USDT)</span>
+                <input name="name" required class="layui-input margin-top-5" placeholder="Enter channel name" value="{$info.name|default=''}">
+                <input type="hidden" name="id" value="{$info.id|default=0}">
                 <input type="hidden" name="_csrf_" value="{:systoken('edit')}">
             </label>
         </div>
+
         <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs9 relative">
-                <span class="color-green font-w700">UPI ID / Wallet Address / Account Number</span>
-                <input name="usercode" class="layui-input margin-top-5" placeholder="Enter UPI ID or Wallet Address" value="{$info.usercode}">
+            <label class="layui-col-xs12 relative">
+                <span class="color-green font-w700">Receiving Wallet Address / UPI ID / Account Number (充值收款地址)</span>
+                <input name="usercode" required class="layui-input margin-top-5" placeholder="Enter crypto wallet address or account number" value="{$info.usercode|default=''}">
+                <p class="help-block margin-top-5">This address will be displayed to users when they recharge through this channel.</p>
             </label>
         </div>
+
         <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs9 relative">
-                <span class="color-green font-w700">Account Holder Name / UPI Name / Bank Name</span>
-                <input name="username" class="layui-input margin-top-5" placeholder="Enter Account Holder Name" value="{$info.username}">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green font-w700">Network / Currency Code (e.g. TRC20, BEP20, TRX, ERC20)</span>
+                <input name="name2" class="layui-input margin-top-5" placeholder="Enter network code" value="{$info.name2|default=''}">
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green font-w700">Account / Holder Name</span>
+                <input name="username" class="layui-input margin-top-5" placeholder="e.g. Official Wallet" value="{$info.username|default=''}">
             </label>
         </div>
+
+        <div class="layui-form-item layui-row layui-col-space15">
+            <label class="layui-col-xs12 relative">
+                <span class="color-green font-w700">Logo Icon Path (图标路径，支持本地或外部链接)</span>
+                <input name="ico" class="layui-input margin-top-5" placeholder="/static/image/trc20-usdt.jpg" value="{$info.ico|default=''}">
+                <p class="help-block margin-top-5">Examples: /static/image/trc20-usdt.jpg, /static/image/trx.webp, /static/image/bep20-usdt.webp, /static/image/bep20-usdc.png, /static/image/polygon-usdt.webp</p>
+            </label>
+        </div>
+
         <div class="layui-form-item block">
-            <span class="label-required-prev color-green font-w700">Upload QR Code Image (For scanning and payment)</span>
+            <span class="label-required-prev color-green font-w700">Upload QR Code Image (收款二维码图片)</span>
             <p width="auto" class="text-left margin-top-5"><input name="ewm" type="hidden" value="{$info.ewm|default=''}"></p>
             <script>$('[name="ewm"]').uploadMultipleImage();</script>
-            <p class="help-block margin-top-5">Upload or select QR code image for users to scan and pay</p>
+            <p class="help-block margin-top-5">Upload QR code image for users to scan and deposit</p>
         </div>
+
         <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs9 relative">
+            <label class="layui-col-xs4 relative">
                 <span class="color-green font-w700">Minimum Amount</span>
-                <input name="min" required class="layui-input margin-top-5" placeholder="Minimum payment amount" value="{$info.min}">
+                <input name="min" required class="layui-input margin-top-5" placeholder="Minimum payment amount" value="{$info.min|default='1.00'}">
             </label>
-        </div>
-        <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs9 relative">
+            <label class="layui-col-xs4 relative">
                 <span class="color-green font-w700">Maximum Amount</span>
-                <input name="max" required class="layui-input margin-top-5" placeholder="Maximum payment amount" value="{$info.max}">
+                <input name="max" required class="layui-input margin-top-5" placeholder="Maximum payment amount" value="{$info.max|default='100000.00'}">
+            </label>
+            <label class="layui-col-xs4 relative">
+                <span class="color-green font-w700">Sort Priority (排序，数字越大越靠前)</span>
+                <input name="sort" class="layui-input margin-top-5" placeholder="100" value="{$info.sort|default='50'}">
             </label>
         </div>
+
         <div class="layui-form-item layui-row layui-col-space15">
-            <label class="layui-col-xs9 relative">
-                <span class="color-green font-w700">Fee / Commission Rate</span>
-                <input name="pay_commission" required class="layui-input margin-top-5" placeholder="Fee rate e.g. 0 for none" value="{$info.pay_commission}">
+            <label class="layui-col-xs6 relative">
+                <span class="color-green font-w700">Fee / Commission Rate (手续费率，如 0 为无手续费)</span>
+                <input name="pay_commission" class="layui-input margin-top-5" placeholder="0" value="{$info.pay_commission|default='0.00'}">
+            </label>
+            <label class="layui-col-xs6 relative">
+                <span class="color-green font-w700">Status (状态)</span>
+                <div class="margin-top-10">
+                    <input type="radio" name="status" value="1" title="Enabled (启用)" {if !isset($info.status) || $info.status == 1}checked{/if}>
+                    <input type="radio" name="status" value="0" title="Disabled (禁用)" {if isset($info.status) && $info.status == 0}checked{/if}>
+                </div>
             </label>
         </div>
+
         <div class="layui-form-item text-center padding-top-20">
-            <button class="layui-btn btn-op-blue" type="submit">Save Payment Method</button>
-            <button class="layui-btn layui-btn-danger" ng-click="hsitoryBack()" type="button">Cancel</button>
+            <button class="layui-btn btn-op-blue" type="submit" style="background: #B83A2E; color: #fff; padding: 0 30px; font-weight: 700;">Save Payment Method / Wallet</button>
+            <button class="layui-btn layui-btn-primary" ng-click="hsitoryBack()" type="button">Cancel</button>
         </div>
     </div>
 </form>

@@ -2,23 +2,25 @@
 
 {block name="content"}
 <div class="think-box-shadow">
-    <!--<a class="layui-btn layui-btn layui-btn" data-open="{:url('add_banner',['id'=>0])}" data-value="id#0" style='background:green;'>新增</a>-->
-    <table class="layui-table margin-top-15" lay-skin="line">
+    <div class="margin-bottom-15">
+        <a class="layui-btn layui-btn-sm" data-open="{:url('add')}" style="background: #B83A2E; color: #fff; font-weight: 700; border-radius: 4px; padding: 0 16px;">
+            + Add New Wallet / Payment Channel (新增钱包/充值方式)
+        </a>
+    </div>
+
+    <table class="layui-table margin-top-10" lay-skin="line">
         {notempty name='list'}
         <thead>
         <tr>
-            <th class='text-left nowrap'>
-                <button type="button" data-reload class="layui-btn layui-btn-xs">刷 新</button>
-            </th>
-            <th class='text-left nowrap'>名称</th>
-            <th class='text-left nowrap'>标识</th>
-            <th class='text-left nowrap'>最小金额</th>
-            <th class='text-left nowrap'>最大金额</th>
-            <th class='text-left nowrap'>手续费</th>
-            <th class='text-left nowrap'>状态</th>
-            <th class='text-left nowrap'>代付状态</th>
+            <th class='text-center nowrap' style="width: 60px;">Sort</th>
+            <th class='text-center nowrap' style="width: 60px;">Icon</th>
+            <th class='text-left nowrap'>Channel Name</th>
+            <th class='text-left nowrap'>Wallet Address / Account</th>
+            <th class='text-center nowrap' style="width: 70px;">QR Code</th>
+            <th class='text-left nowrap'>Min - Max Amount</th>
+            <th class='text-center nowrap' style="width: 80px;">Status</th>
             {if auth("edit")}
-            <th class='text-left nowrap'>操作</th>
+            <th class='text-center nowrap' style="width: 160px;">Actions</th>
             {/if}
         </tr>
         </thead>
@@ -26,40 +28,57 @@
         <tbody>
         {foreach $list as $key=>$vo}
         <tr>
-            <td class='list-table-sort-td'>
-                <input data-action-blur="{:request()->url()}" data-value="id#{$vo.id};action#sort;sort#{value}" data-loading="false" value="{$vo.sort}" class="list-sort-input">
+            <td class='list-table-sort-td text-center'>
+                <input data-action-blur="{:request()->url()}" data-value="id#{$vo.id};action#sort;sort#{value}" data-loading="false" value="{$vo.sort}" class="list-sort-input text-center">
             </td>
-            <td class='text-left nowrap'>{$vo.name}</td>
-            <td class='text-left nowrap'>{$vo.name2}</td>
-            <td class='text-left nowrap'>{$vo.min}</td>
-            <td class='text-left nowrap'>{$vo.max}</td>
-            <td class='text-left nowrap'>{$vo.pay_commission}</td>
-            <td class='text-left nowrap'>
-                {eq name='vo.status' value='0'}<span class="color-red">已禁用</span>{else}<span
-                    class="color-green">使用中</span>{/eq}
-            </td>
-            <td class='text-left nowrap'>
-                {eq name='vo.is_payout' value='0'}
-                <span class="color-red">未使用</span>
+            <td class='text-center'>
+                {if !empty($vo.ico)}
+                <img src="{$vo.ico}" style="width: 28px; height: 28px; object-fit: contain;">
                 {else}
-                <span class="color-green">使用中</span>
+                <span class="color-desc">-</span>
+                {/if}
+            </td>
+            <td class='text-left nowrap'>
+                <strong style="font-size: 13.5px; color: #1e293b;">{$vo.name}</strong>
+                {if !empty($vo.name2)}
+                <span class="layui-badge layui-bg-gray" style="margin-left: 6px;">{$vo.name2}</span>
+                {/if}
+            </td>
+            <td class='text-left' style="max-width: 260px; word-break: break-all;">
+                {if !empty($vo.usercode)}
+                <code style="background: #f8fafc; padding: 3px 6px; border-radius: 4px; border: 1px solid #e2e8f0; font-size: 11.5px; color: #0f172a;">{$vo.usercode}</code>
+                {else}
+                <span class="color-desc">Not configured</span>
+                {/if}
+            </td>
+            <td class='text-center'>
+                {if !empty($vo.ewm)}
+                <a data-image="{$vo.ewm}">
+                    <img src="{$vo.ewm}" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;">
+                </a>
+                {else}
+                <span class="color-desc">-</span>
+                {/if}
+            </td>
+            <td class='text-left nowrap'>
+                {$vo.min|default='1'} - {$vo.max|default='100000'}
+            </td>
+            <td class='text-center nowrap'>
+                {eq name='vo.status' value='1'}
+                <span class="layui-badge layui-bg-green" style="padding: 3px 8px; border-radius: 4px;">Active (启用)</span>
+                {else}
+                <span class="layui-badge layui-bg-red" style="padding: 3px 8px; border-radius: 4px;">Disabled (禁用)</span>
                 {/eq}
             </td>
             {if auth("edit")}
-            <td class='text-left nowrap'>
-                <a data-dbclick class="layui-btn layui-btn-xs" data-title="编辑"
-                   data-open='{:url("edit")}?id={$vo.id}'>编 辑</a>
+            <td class='text-center nowrap'>
+                <a class="layui-btn layui-btn-xs" style="background: #0284c7; color: #fff;" data-open='{:url("edit")}?id={$vo.id}'>Edit (编辑)</a>
                 {if $vo.status eq 1}
-                <a class="layui-btn layui-btn-warm layui-btn-xs" data-action="{:url('forbid')}"
-                   data-value="id#{$vo.id};status#0" data-csrf="{:systoken('forbid')}">禁用代收</a>
-                {elseif $vo.status eq 0}
-                <a class="layui-btn layui-btn-warm layui-btn-xs" data-action="{:url('resume')}"
-                   data-value="id#{$vo.id};status#1" data-csrf="{:systoken('resume')}">启用代收</a>
+                <a class="layui-btn layui-btn-xs layui-btn-warm" data-action="{:url('forbid')}" data-value="id#{$vo.id};status#0" data-csrf="{:systoken('forbid')}">Disable</a>
+                {else}
+                <a class="layui-btn layui-btn-xs layui-btn-normal" data-action="{:url('resume')}" data-value="id#{$vo.id};status#1" data-csrf="{:systoken('resume')}">Enable</a>
                 {/if}
-                {if $vo.is_payout eq 0}
-                <a class="layui-btn layui-btn-warm layui-btn-xs" data-action="{:url('set_payout')}"
-                   data-value="id#{$vo.id};is_payout#1" data-csrf="{:systoken('set_payout')}">启用代付</a>
-                {/if}
+                <a class="layui-btn layui-btn-xs layui-btn-danger" data-confirm="Are you sure you want to delete this payment method?" data-action="{:url('del')}" data-value="id#{$vo.id}" data-csrf="{:systoken('del')}">Delete</a>
             </td>
             {/if}
         </tr>
