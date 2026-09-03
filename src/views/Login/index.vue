@@ -33,6 +33,7 @@
               type="tel" 
               placeholder="Please enter phone number"
               class="underline-input"
+              autocomplete="off"
               required
             />
           </div>
@@ -47,6 +48,7 @@
               :type="showPwd ? 'text' : 'password'" 
               placeholder="Please enter password"
               class="underline-input"
+              autocomplete="new-password"
               required
             />
             <span class="eye-toggle" @click="showPwd = !showPwd">
@@ -89,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Request from '@/services/index.js'
 import { showSuccessToast, showFailToast } from 'vant'
@@ -101,6 +103,11 @@ const password = ref('')
 const showPwd = ref(false)
 const agreed = ref(true)
 const loginLoading = ref(false)
+
+onMounted(() => {
+  username.value = ''
+  password.value = ''
+})
 
 const currentLangName = ref('English')
 

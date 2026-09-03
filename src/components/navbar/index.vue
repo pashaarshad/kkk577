@@ -27,7 +27,7 @@
       <div class='navbar-right'>
         <slot name='right'>
           <img :src='langImg' alt='US Flag' class='flag-img' @click='showBottom = true'>
-          <div class="bell-box" @click="$router.push('/message')">
+          <div class="bell-box" @click="onBellClick">
             <svg viewBox="0 0 24 24" class="bell-svg">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -63,12 +63,23 @@
 <script setup>
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { getAssetURL } from '@/utils/get_assets_img.js'
 import officialLogo from '@/assets/img/main/official_logo.png'
 
+const router = useRouter()
 const { t, locale } = useI18n()
 const langImg = ref(getAssetURL('main/en-US.png'))
 const nationIndex = ref(0)
+
+const onBellClick = () => {
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+    return
+  }
+  router.push('/message')
+}
 
 const nationList = [
   {
