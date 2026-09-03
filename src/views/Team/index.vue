@@ -3,28 +3,36 @@
     <!-- Top Invitation Box -->
     <div class="invitation-box">
       <div class="invite-item">
-        <span class="lbl">Invitation code:</span>
-        <span class="code-val">{{ userData.invite_code || '------' }}</span>
+        <div class="code-info">
+          <span class="lbl">Invitation code:</span>
+          <span class="code-val">{{ userData.invite_code || '------' }}</span>
+        </div>
         <button class="copy-btn" @click="copyCode">Copy</button>
       </div>
       
       <div class="invite-link-box">
         <span class="lbl">Share your referral link and start earning</span>
         <div class="link-row">
-          <span class="link-val">{{ getReferralLink }}</span>
+          <input 
+            type="text" 
+            readonly 
+            :value="getReferralLink" 
+            class="link-input" 
+            @click="copyLink"
+          />
           <button class="copy-btn" @click="copyLink">Copy</button>
         </div>
       </div>
       
       <!-- Social icons row -->
       <div class="social-icons">
-        <span class="social-icon icon-x">𝕏</span>
-        <span class="social-icon icon-fb">f</span>
-        <span class="social-icon icon-tg">✈</span>
-        <span class="social-icon icon-in">in</span>
-        <span class="social-icon icon-wa">💬</span>
-        <span class="social-icon icon-tt">🎵</span>
-        <span class="social-icon icon-share">🔗</span>
+        <div class="social-icon icon-x" title="Share on X (Twitter)" @click="shareOn('x')">𝕏</div>
+        <div class="social-icon icon-fb" title="Share on Facebook" @click="shareOn('fb')">f</div>
+        <div class="social-icon icon-tg" title="Share on Telegram" @click="shareOn('tg')">✈</div>
+        <div class="social-icon icon-in" title="Share on LinkedIn" @click="shareOn('in')">in</div>
+        <div class="social-icon icon-wa" title="Share on WhatsApp" @click="shareOn('wa')">💬</div>
+        <div class="social-icon icon-tt" title="Share on TikTok" @click="shareOn('tt')">🎵</div>
+        <div class="social-icon icon-share" title="Copy Link" @click="copyLink">🔗</div>
       </div>
     </div>
 
@@ -32,7 +40,13 @@
     <div class="period-header">
       <span class="title-text">Selection period</span>
       <div class="tab-group">
-        <div v-for="item in navList" :key="item.id" class="tab-btn" :class="{ 'active': item.id === selectedItemId }" @click="onClickTab(item.id)">
+        <div 
+          v-for="item in navList" 
+          :key="item.id" 
+          class="tab-btn" 
+          :class="{ 'active': item.id === selectedItemId }" 
+          @click="onClickTab(item.id)"
+        >
           {{ item.title }}
         </div>
       </div>
@@ -40,7 +54,7 @@
 
     <!-- Statistics Panel -->
     <div class="team-stats-panel">
-      <div class="stats-row">
+      <div class="stats-row top-row">
         <div class="stat-cell">
           <span class="lbl">Team size</span>
           <span class="val">{{ data?.data?.team_count || 0 }}</span>
@@ -66,68 +80,107 @@
       </div>
     </div>
 
-    <!-- VIP Level Cards -->
+    <!-- VIP Level Cards Redesigned for Spacious & Elegant Layout -->
     <div class="level-cards-list">
       <!-- Level 1 -->
       <div class="level-card card-lvl-1">
-        <div class="card-left">
-          <span class="level-badge-lbl">LEVEL 1</span>
-        </div>
-        <div class="card-middle">
-          <div class="meta-row">
-            <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team1_count || 0 }}/0</span></div>
-            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[0] * 100).toFixed(0) : 15 }}%</span></div>
+        <div class="card-header">
+          <div class="header-left">
+            <span class="level-badge badge-1">LEVEL 1</span>
+            <span class="commission-tag">1st Tier Members</span>
           </div>
-          <div class="meta-row">
-            <div>Task rebate: <span class="bold-txt">5%</span></div>
-            <div>Total income: <span class="bold-txt">$ {{ data?.data?.team1_yj || '0.00' }}</span></div>
+          <button class="details-pill-btn" @click="showLevelDetails(1)">
+            Details <van-icon name="arrow" size="12" />
+          </button>
+        </div>
+        <div class="card-body-grid">
+          <div class="grid-cell">
+            <span class="cell-label">Register / Valid</span>
+            <span class="cell-val">{{ data?.data?.team1_count || 0 }} / 0</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Commission Rate</span>
+            <span class="cell-val highlight-val">{{ data?.tj_bili ? (data.tj_bili[0] * 100).toFixed(0) : 15 }}%</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Task Rebate</span>
+            <span class="cell-val">5%</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Total Income</span>
+            <span class="cell-val income-val">$ {{ data?.data?.team1_yj || '0.00' }}</span>
           </div>
         </div>
-        <button class="details-pill-btn" @click="showLevelDetails(1)">Details</button>
       </div>
 
       <!-- Level 2 -->
       <div class="level-card card-lvl-2">
-        <div class="card-left">
-          <span class="level-badge-lbl">LEVEL 2</span>
-        </div>
-        <div class="card-middle">
-          <div class="meta-row">
-            <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team2_count || 0 }}/0</span></div>
-            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[1] * 100).toFixed(0) : 5 }}%</span></div>
+        <div class="card-header">
+          <div class="header-left">
+            <span class="level-badge badge-2">LEVEL 2</span>
+            <span class="commission-tag">2nd Tier Members</span>
           </div>
-          <div class="meta-row">
-            <div>Task rebate: <span class="bold-txt">3%</span></div>
-            <div>Total income: <span class="bold-txt">$ {{ data?.data?.team2_yj || '0.00' }}</span></div>
+          <button class="details-pill-btn" @click="showLevelDetails(2)">
+            Details <van-icon name="arrow" size="12" />
+          </button>
+        </div>
+        <div class="card-body-grid">
+          <div class="grid-cell">
+            <span class="cell-label">Register / Valid</span>
+            <span class="cell-val">{{ data?.data?.team2_count || 0 }} / 0</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Commission Rate</span>
+            <span class="cell-val highlight-val">{{ data?.tj_bili ? (data.tj_bili[1] * 100).toFixed(0) : 5 }}%</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Task Rebate</span>
+            <span class="cell-val">3%</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Total Income</span>
+            <span class="cell-val income-val">$ {{ data?.data?.team2_yj || '0.00' }}</span>
           </div>
         </div>
-        <button class="details-pill-btn" @click="showLevelDetails(2)">Details</button>
       </div>
 
       <!-- Level 3 -->
       <div class="level-card card-lvl-3">
-        <div class="card-left">
-          <span class="level-badge-lbl">LEVEL 3</span>
-        </div>
-        <div class="card-middle">
-          <div class="meta-row">
-            <div>Register/Valid: <span class="bold-txt">{{ data?.data?.team3_count || 0 }}/0</span></div>
-            <div>Commission Percentage: <span class="bold-txt">{{ data?.tj_bili ? (data.tj_bili[2] * 100).toFixed(0) : 3 }}%</span></div>
+        <div class="card-header">
+          <div class="header-left">
+            <span class="level-badge badge-3">LEVEL 3</span>
+            <span class="commission-tag">3rd Tier Members</span>
           </div>
-          <div class="meta-row">
-            <div>Task rebate: <span class="bold-txt">1%</span></div>
-            <div>Total income: <span class="bold-txt">$ {{ data?.data?.team3_yj || '0.00' }}</span></div>
+          <button class="details-pill-btn" @click="showLevelDetails(3)">
+            Details <van-icon name="arrow" size="12" />
+          </button>
+        </div>
+        <div class="card-body-grid">
+          <div class="grid-cell">
+            <span class="cell-label">Register / Valid</span>
+            <span class="cell-val">{{ data?.data?.team3_count || 0 }} / 0</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Commission Rate</span>
+            <span class="cell-val highlight-val">{{ data?.tj_bili ? (data.tj_bili[2] * 100).toFixed(0) : 3 }}%</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Task Rebate</span>
+            <span class="cell-val">1%</span>
+          </div>
+          <div class="grid-cell">
+            <span class="cell-label">Total Income</span>
+            <span class="cell-val income-val">$ {{ data?.data?.team3_yj || '0.00' }}</span>
           </div>
         </div>
-        <button class="details-pill-btn" @click="showLevelDetails(3)">Details</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { showSuccessToast } from 'vant'
-import { computed, ref } from 'vue'
+import { showSuccessToast, showToast } from 'vant'
+import { computed, ref, onMounted } from 'vue'
 import Request from '@/services/index.js'
 
 const navList = [
@@ -140,33 +193,139 @@ const selectedItemId = ref(1)
 const data = ref({})
 const userData = ref({})
 
-Request.get({ url: 'index/user/team' }).then(res => {
-  data.value = res
-})
+const loadData = async () => {
+  try {
+    const res = await Request.get({ url: 'index/user/team' })
+    if (res) data.value = res
+  } catch (e) {
+    console.error('Failed to load team data:', e)
+  }
 
-Request.get({ url: 'index/user/info' }).then(res => {
-  userData.value = res.info || {}
+  try {
+    const uRes = await Request.get({ url: 'index/user/info' })
+    if (uRes && uRes.info) userData.value = uRes.info
+  } catch (e) {
+    console.error('Failed to load user info:', e)
+  }
+}
+
+onMounted(() => {
+  loadData()
 })
 
 const getReferralLink = computed(() => {
-  const host = window.location.origin
-  return `${host}/#/register?invite_code=${userData.value.invite_code || ''}`
+  const origin = window.location.origin
+  const code = userData.value.invite_code || ''
+  return `${origin}/#/register?invite_code=${code}`
 })
 
 const onClickTab = (id) => {
   selectedItemId.value = id
 }
 
+// Universal copy function that works on HTTPS, plain HTTP, IP addresses, localhost, and mobile
+const copyToClipboard = (text, successMsg = 'Copied to clipboard!') => {
+  if (!text) {
+    showToast('No content to copy')
+    return
+  }
+
+  // 1. Try modern clipboard API if supported and in secure context
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        showSuccessToast(successMsg)
+      })
+      .catch(() => {
+        fallbackCopy(text, successMsg)
+      })
+    return
+  }
+
+  // 2. Fallback for non-HTTPS / HTTP / Mobile browsers
+  fallbackCopy(text, successMsg)
+}
+
+const fallbackCopy = (text, successMsg) => {
+  try {
+    const textArea = document.createElement('textarea')
+    textArea.value = text
+    // Prevent zooming and scrolling
+    textArea.style.position = 'fixed'
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.width = '2em'
+    textArea.style.height = '2em'
+    textArea.style.padding = '0'
+    textArea.style.border = 'none'
+    textArea.style.outline = 'none'
+    textArea.style.boxShadow = 'none'
+    textArea.style.background = 'transparent'
+    textArea.setAttribute('readonly', '')
+    document.body.appendChild(textArea)
+    
+    // Select text across iOS and desktop
+    textArea.focus()
+    textArea.select()
+    textArea.setSelectionRange(0, 99999)
+    
+    const successful = document.execCommand('copy')
+    document.body.removeChild(textArea)
+    
+    if (successful) {
+      showSuccessToast(successMsg)
+    } else {
+      window.prompt('Copy this text manually:', text)
+    }
+  } catch (err) {
+    window.prompt('Copy this text manually:', text)
+  }
+}
+
 const copyCode = () => {
-  if (userData.value.invite_code) {
-    navigator.clipboard.writeText(userData.value.invite_code)
-    showSuccessToast('Invitation code copied')
+  const code = userData.value.invite_code
+  if (code) {
+    copyToClipboard(code, 'Invitation code copied!')
+  } else {
+    showToast('Loading invitation code...')
   }
 }
 
 const copyLink = () => {
-  navigator.clipboard.writeText(getReferralLink.value)
-  showSuccessToast('Referral link copied')
+  copyToClipboard(getReferralLink.value, 'Referral link copied!')
+}
+
+const shareOn = (platform) => {
+  const link = getReferralLink.value
+  const text = `Join my team and start earning daily commissions! Sign up now: ${link}`
+  copyToClipboard(link, 'Referral link copied! Opening share...')
+
+  let shareUrl = ''
+  switch (platform) {
+    case 'tg':
+      shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`
+      break
+    case 'wa':
+      shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`
+      break
+    case 'x':
+      shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`
+      break
+    case 'fb':
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`
+      break
+    case 'in':
+      shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`
+      break
+    case 'tt':
+    default:
+      // Link already copied
+      return
+  }
+
+  if (shareUrl) {
+    window.open(shareUrl, '_blank')
+  }
 }
 
 const showLevelDetails = (lvl) => {
@@ -184,58 +343,69 @@ const showLevelDetails = (lvl) => {
   .invitation-box {
     background: #ffffff;
     border: 1.5px solid #E86C3F;
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 10px rgba(184, 58, 46, 0.08);
+    border-radius: 16px;
+    padding: 18px 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 14px rgba(184, 58, 46, 0.08);
 
     .invite-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
 
-      .lbl {
-        font-size: 13px;
-        color: #86909c;
-        font-weight: 500;
-      }
+      .code-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
 
-      .code-val {
-        font-size: 16px;
-        font-weight: 800;
-        color: #B83A2E;
-        letter-spacing: 1px;
+        .lbl {
+          font-size: 13px;
+          color: #64748b;
+          font-weight: 500;
+        }
+
+        .code-val {
+          font-size: 17px;
+          font-weight: 800;
+          color: #B83A2E;
+          letter-spacing: 1px;
+        }
       }
     }
 
     .invite-link-box {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
 
       .lbl {
-        font-size: 11px;
-        color: #86909c;
+        font-size: 12px;
+        color: #64748b;
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
       }
 
       .link-row {
         display: flex;
         align-items: center;
-        gap: 10px;
-        background: #fff5f3;
-        padding: 8px 12px;
-        border-radius: 8px;
-        border: 1px dashed #fdece8;
+        gap: 8px;
+        background: #faf4f3;
+        border: 1px solid #ebd3d0;
+        border-radius: 10px;
+        padding: 4px 6px 4px 12px;
 
-        .link-val {
+        .link-input {
           flex: 1;
-          font-size: 11px;
-          color: #1f1a1a;
+          background: transparent;
+          border: none;
+          outline: none;
+          font-size: 12.5px;
+          color: #334155;
+          font-weight: 500;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          cursor: pointer;
         }
       }
     }
@@ -244,31 +414,44 @@ const showLevelDetails = (lvl) => {
       background: linear-gradient(135deg, #B83A2E, #E86C3F);
       color: #ffffff;
       border: none;
-      padding: 6px 16px;
-      border-radius: 16px;
+      border-radius: 20px;
+      padding: 6px 18px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(184, 58, 46, 0.2);
+      box-shadow: 0 2px 6px rgba(184, 58, 46, 0.25);
+      transition: opacity 0.15s;
+
+      &:active {
+        opacity: 0.85;
+      }
     }
 
     .social-icons {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-top: 4px;
 
       .social-icon {
-        width: 32px;
-        height: 32px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         background: #fff0ed;
         color: #B83A2E;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: bold;
         border: 1px solid #fdece8;
+        cursor: pointer;
+        transition: transform 0.15s, background 0.15s;
+
+        &:active {
+          transform: scale(0.92);
+          background: #fde2dc;
+        }
       }
     }
   }
@@ -311,19 +494,22 @@ const showLevelDetails = (lvl) => {
 
   .team-stats-panel {
     background: linear-gradient(135deg, #B83A2E, #E86C3F);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 16px;
+    border-radius: 16px;
+    padding: 18px 16px;
+    margin-bottom: 18px;
     color: #ffffff;
-    box-shadow: 0 4px 14px rgba(184, 58, 46, 0.2);
+    box-shadow: 0 6px 18px rgba(184, 58, 46, 0.22);
 
     .stats-row {
       display: flex;
       justify-content: space-around;
       align-items: center;
 
+      &.top-row {
+        padding-bottom: 14px;
+      }
+
       &.three-cols {
-        margin-top: 14px;
         padding-top: 14px;
         border-top: 1px solid rgba(255, 255, 255, 0.2);
       }
@@ -332,76 +518,151 @@ const showLevelDetails = (lvl) => {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 4px;
+        gap: 5px;
 
         .lbl {
-          font-size: 10.5px;
-          opacity: 0.85;
+          font-size: 11px;
+          opacity: 0.9;
           text-align: center;
+          font-weight: 500;
         }
 
         .val {
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 800;
+          letter-spacing: 0.5px;
         }
       }
     }
   }
 
+  /* Spacious, modern, premium Level Cards layout */
   .level-cards-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 
     .level-card {
       background: #ffffff;
-      border: 1.5px solid #E86C3F;
-      border-radius: 12px;
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(184, 58, 46, 0.06);
+      border: 1.5px solid #f2deda;
+      border-radius: 16px;
+      padding: 16px 16px 18px;
+      box-shadow: 0 4px 16px rgba(184, 58, 46, 0.07);
+      transition: transform 0.2s, box-shadow 0.2s;
 
-      .card-left {
-        .level-badge-lbl {
-          font-size: 11px;
-          font-weight: 800;
-          padding: 4px 10px;
-          border-radius: 6px;
-          color: #ffffff;
-          background: linear-gradient(135deg, #B83A2E, #E86C3F);
-        }
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(184, 58, 46, 0.12);
       }
 
-      .card-middle {
-        flex: 1;
+      &.card-lvl-1 {
+        border-color: #f1b3a8;
+      }
+      &.card-lvl-2 {
+        border-color: #fed7aa;
+      }
+      &.card-lvl-3 {
+        border-color: #e2e8f0;
+      }
+
+      .card-header {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed #fce9e6;
 
-        .meta-row {
+        .header-left {
           display: flex;
-          justify-content: space-between;
-          font-size: 10.5px;
-          color: #86909c;
+          align-items: center;
+          gap: 10px;
 
-          .bold-txt {
-            color: #1f1a1a;
-            font-weight: 700;
+          .level-badge {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 5px 12px;
+            border-radius: 8px;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+
+            &.badge-1 {
+              background: linear-gradient(135deg, #B83A2E, #E86C3F);
+              box-shadow: 0 2px 8px rgba(184, 58, 46, 0.25);
+            }
+            &.badge-2 {
+              background: linear-gradient(135deg, #ea580c, #f59e0b);
+              box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
+            }
+            &.badge-3 {
+              background: linear-gradient(135deg, #475569, #64748b);
+              box-shadow: 0 2px 8px rgba(71, 85, 105, 0.25);
+            }
+          }
+
+          .commission-tag {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+          }
+        }
+
+        .details-pill-btn {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+          background: #fff0ed;
+          color: #B83A2E;
+          border: 1px solid #fdece8;
+          padding: 5px 12px;
+          border-radius: 14px;
+          font-size: 11.5px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: background 0.15s;
+
+          &:hover, &:active {
+            background: #fde2dc;
           }
         }
       }
 
-      .details-pill-btn {
-        background: #fff0ed;
-        color: #B83A2E;
-        border: 1px solid #fdece8;
-        padding: 5px 12px;
-        border-radius: 14px;
-        font-size: 11px;
-        font-weight: 700;
-        cursor: pointer;
+      .card-body-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+
+        .grid-cell {
+          background: #fff8f7;
+          border: 1px solid #fae8e5;
+          border-radius: 10px;
+          padding: 10px 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .cell-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 500;
+          }
+
+          .cell-val {
+            font-size: 14px;
+            font-weight: 800;
+            color: #1e293b;
+
+            &.highlight-val {
+              color: #ea580c;
+              font-size: 15px;
+            }
+
+            &.income-val {
+              color: #B83A2E;
+              font-size: 15px;
+            }
+          }
+        }
       }
     }
   }

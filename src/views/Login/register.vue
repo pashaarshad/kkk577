@@ -131,14 +131,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import Request from '@/services/index.js'
 import { showSuccessToast, showFailToast } from 'vant'
 
 const router = useRouter()
+const route = useRoute()
 
 const invite_code = ref('')
+
+// Extract referral/invite code from route query or raw URL
+const extractInviteCode = () => {
+  if (route.query && (route.query.invite_code || route.query.code)) {
+    return String(route.query.invite_code || route.query.code).trim()
+  }
+  const href = window.location.href
+  const m = href.match(/[?&](invite_code|code)=([^&#]+)/i)
+  if (m && m[2]) {
+    return decodeURIComponent(m[2]).trim()
+  }
+  return ''
+}
+
+onMounted(() => {
+  const code = extractInviteCode()
+  if (code) {
+    invite_code.value = code
+  }
+})
 const tel = ref('')
 const pwd = ref('')
 const confirm_pwd = ref('')
