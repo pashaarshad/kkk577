@@ -15,6 +15,12 @@ import NavBar from '@/components/navbar/index.vue'
 
 <style lang='less' scoped>
 .id {
-  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #fff9f8;
+  position: relative;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.06);
 }
 </style>

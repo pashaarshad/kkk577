@@ -48,7 +48,7 @@ const router = createRouter({
       name: 'login',
       meta: {
         tabbarShow: false,
-        navbarShow: true
+        navbarShow: false
       },
       component: () => import('@/views/Login/index.vue')
     },
@@ -57,7 +57,7 @@ const router = createRouter({
       name: 'register',
       meta: {
         tabbarShow: false,
-        navbarShow: true
+        navbarShow: false
       },
       component: () => import('@/views/Login/register.vue')
     },

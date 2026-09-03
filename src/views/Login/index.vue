@@ -160,6 +160,9 @@ const goRegister = () => {
 <style lang="less" scoped>
 .login-page-container {
   min-height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
   background: #fff9f8;
   padding: 16px 20px 40px;
   box-sizing: border-box;
