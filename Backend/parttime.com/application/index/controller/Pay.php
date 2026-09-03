@@ -427,7 +427,32 @@ class Pay extends Base
      */
     public function get_pay_list()
     {
-        $list = Db::name('xy_pay')->where('status', 1)->order('sort desc, id asc')->select();
+        // Auto-migration for VPS: If reference channels are missing in xy_pay, auto-seed them immediately
+        $hasTrc20 = Db::name('xy_pay')->where('name', 'TRC20-USDT')->count();
+        if (!$hasTrc20) {
+            // Disable legacy / test channels like Qeapay
+            Db::name('xy_pay')->where('name', 'like', '%Qeapay%')->update(['status' => 0]);
+            $channels = [
+                ['name' => 'TRC20-USDT', 'name2' => 'TRC20', 'ico' => '/static/image/trc20-usdt.jpg', 'usercode' => 'TXYZo89h129kJs99aLqP10x992KmNsQW1a', 'min' => 1, 'max' => 100000, 'sort' => 100, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'TRX', 'name2' => 'TRX', 'ico' => '/static/image/trx.webp', 'usercode' => 'TXYZo89h129kJs99aLqP10x992KmNsQW1a', 'min' => 1, 'max' => 100000, 'sort' => 95, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'BEP20-USDT', 'name2' => 'BEP20', 'ico' => '/static/image/bep20-usdt.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 90, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'BNB', 'name2' => 'BNB', 'ico' => '/static/image/bnb.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 85, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'BEP20-USDC', 'name2' => 'BEP20', 'ico' => '/static/image/bep20-usdc.png', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 80, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'POLYGON-USDT', 'name2' => 'POLYGON', 'ico' => '/static/image/polygon-usdt.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 75, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'ETH-USDT', 'name2' => 'ERC20', 'ico' => '/static/image/eth-usdt.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 70, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'POLYGON-USDC', 'name2' => 'POLYGON', 'ico' => '/static/image/polygon-usdc.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 65, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'ETH-USDC', 'name2' => 'ERC20', 'ico' => '/static/image/eth-usdc.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 60, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'ETH', 'name2' => 'ETH', 'ico' => '/static/image/eth.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 55, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'POLYGON', 'name2' => 'POLYGON', 'ico' => '/static/image/polygon.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 50, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'ETH-PYUSD', 'name2' => 'ERC20', 'ico' => '/static/image/eth-pyusd.webp', 'usercode' => '0x4f85459F610376Ee6Ad77216785582c55817d5bc', 'min' => 1, 'max' => 100000, 'sort' => 45, 'status' => 1, 'is_payout' => 1],
+                ['name' => 'PHP', 'name2' => 'PHP', 'ico' => '/static/image/flb.webp', 'usercode' => '09123456789', 'min' => 1, 'max' => 100000, 'sort' => 40, 'status' => 1, 'is_payout' => 1]
+            ];
+            foreach ($channels as $c) {
+                Db::name('xy_pay')->insert($c);
+            }
+        }
+
+        $list = Db::name('xy_pay')->where('status', 1)->where('name', 'not like', '%Qeapay%')->order('sort desc, id asc')->select();
         foreach ($list as &$item) {
             if (!empty($item['ewm']) && strpos($item['ewm'], 'http') !== 0) {
                 $item['ewm'] = request()->domain() . $item['ewm'];

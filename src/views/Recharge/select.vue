@@ -41,6 +41,22 @@ import request from '@/services/index.js'
 
 const router = useRouter()
 const route = useRoute()
+const defaultReferenceChannels = [
+  { id: 1, name: 'TRC20-USDT', name2: 'TRC20', ico: '/static/image/trc20-usdt.jpg', status: 1 },
+  { id: 2, name: 'TRX', name2: 'TRX', ico: '/static/image/trx.webp', status: 1 },
+  { id: 3, name: 'BEP20-USDT', name2: 'BEP20', ico: '/static/image/bep20-usdt.webp', status: 1 },
+  { id: 4, name: 'BNB', name2: 'BNB', ico: '/static/image/bnb.webp', status: 1 },
+  { id: 5, name: 'BEP20-USDC', name2: 'BEP20', ico: '/static/image/bep20-usdc.png', status: 1 },
+  { id: 6, name: 'POLYGON-USDT', name2: 'POLYGON', ico: '/static/image/polygon-usdt.webp', status: 1 },
+  { id: 7, name: 'ETH-USDT', name2: 'ERC20', ico: '/static/image/eth-usdt.webp', status: 1 },
+  { id: 8, name: 'POLYGON-USDC', name2: 'POLYGON', ico: '/static/image/polygon-usdc.webp', status: 1 },
+  { id: 9, name: 'ETH-USDC', name2: 'ERC20', ico: '/static/image/eth-usdc.webp', status: 1 },
+  { id: 10, name: 'ETH', name2: 'ETH', ico: '/static/image/eth.webp', status: 1 },
+  { id: 11, name: 'POLYGON', name2: 'POLYGON', ico: '/static/image/polygon.webp', status: 1 },
+  { id: 12, name: 'ETH-PYUSD', name2: 'ERC20', ico: '/static/image/eth-pyusd.webp', status: 1 },
+  { id: 13, name: 'PHP', name2: 'PHP', ico: '/static/image/flb.webp', status: 1 }
+]
+
 const payList = ref([])
 const amount = route.query.amount || 0
 const vipId = route.query.vip_id || 0
@@ -74,16 +90,22 @@ const getChannelIcon = (item) => {
 const fetchPayList = async () => {
   try {
     const res = await request.get('/index/pay/get_pay_list')
-    if (res && res.code === 0 && res.data) {
-      payList.value = res.data.sort((a, b) => {
-        if (b.status !== a.status) return b.status - a.status
-        if (b.sort !== a.sort) return (b.sort || 0) - (a.sort || 0)
-        return a.id - b.id
-      })
+    if (res && res.code === 0 && res.data && res.data.length > 0) {
+      const validChannels = res.data.filter(item => item.name && !item.name.toLowerCase().includes('qeapay'))
+      if (validChannels.length > 0) {
+        payList.value = validChannels.sort((a, b) => {
+          if (b.status !== a.status) return b.status - a.status
+          if (b.sort !== a.sort) return (b.sort || 0) - (a.sort || 0)
+          return a.id - b.id
+        })
+        return
+      }
     }
   } catch (e) {
     console.error('Failed to fetch payment channels:', e)
   }
+  // Fallback to reference channels if backend returned empty or legacy only
+  payList.value = defaultReferenceChannels
 }
 
 const onSelectCurrency = (item) => {
