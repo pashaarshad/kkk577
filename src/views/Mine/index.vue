@@ -75,14 +75,27 @@ const navList = [
 ]
 
 const router = useRouter()
+
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
+
 const toViews = (path) => {
+  if (!sessionStorage.getItem('token')) {
+    router.replace('/login')
+    return
+  }
   router.push(path)
 }
 
 const data = ref({})
-Request.get({ url: 'index/user/info' }).then(res => {
-  data.value = res.info || {}
-})
+if (sessionStorage.getItem('token')) {
+  Request.get({ url: 'index/user/info' }).then(res => {
+    data.value = res.info || {}
+  }).catch(() => {
+    router.replace('/login')
+  })
+}
 
 const mitt = useMitt()
 const goBack = () => {

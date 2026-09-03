@@ -73,7 +73,7 @@ const langImg = ref(getAssetURL('main/en-US.png'))
 const nationIndex = ref(0)
 
 const onBellClick = () => {
-  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   if (!token) {
     router.push('/login')
     return

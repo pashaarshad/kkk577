@@ -134,12 +134,12 @@ const onSubmit = async () => {
     if (res && res.code === 0) {
       showSuccessToast('Login successful!')
       const userToken = res.token || ('user_token_' + Date.now())
-      localStorage.setItem('token', userToken)
       sessionStorage.setItem('token', userToken)
       if (res.user_id) {
-        localStorage.setItem('user_id', res.user_id)
         sessionStorage.setItem('user_id', res.user_id)
       }
+      localStorage.removeItem('token')
+      localStorage.removeItem('user_id')
       setTimeout(() => {
         router.push('/home')
       }, 600)

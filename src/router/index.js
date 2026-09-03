@@ -219,7 +219,11 @@ const router = createRouter({
 
 // 全局守卫：严格登录拦截（只有首页和登录/注册页面可免登录访问）
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  // Clear any legacy persistent tokens to guarantee real-time session gating
+  if (localStorage.getItem('token')) {
+    localStorage.removeItem('token')
+  }
+  const token = sessionStorage.getItem('token')
   const publicRoutes = ['home', 'login', 'register', 'forgotPassword']
   if (!token) {
     if (publicRoutes.includes(to.name)) {

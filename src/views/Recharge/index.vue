@@ -84,6 +84,10 @@ import Request from '@/services/index.js'
 const { t } = i18n.global
 const router = useRouter()
 
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
+
 const defaultMoneyList = [30, 50, 100, 300, 500, 1000, 3000, 5000, 10000, 30000]
 const money = ref(30)
 const activeList = ref({ name: 'USDT / Crypto & Payment Gateways' })

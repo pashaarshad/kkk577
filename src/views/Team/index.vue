@@ -181,7 +181,10 @@
 <script setup>
 import { showSuccessToast, showToast } from 'vant'
 import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Request from '@/services/index.js'
+
+const router = useRouter()
 
 const navList = [
   { id: 1, title: 'Today' },
@@ -194,22 +197,38 @@ const data = ref({})
 const userData = ref({})
 
 const loadData = async () => {
+  const token = sessionStorage.getItem('token')
+  if (!token) {
+    router.replace('/login')
+    return
+  }
+
+  try {
+    const uRes = await Request.get({ url: 'index/user/info' })
+    if (uRes && uRes.info) {
+      userData.value = uRes.info
+    } else {
+      router.replace('/login')
+      return
+    }
+  } catch (e) {
+    router.replace('/login')
+    return
+  }
+
   try {
     const res = await Request.get({ url: 'index/user/team' })
     if (res) data.value = res
   } catch (e) {
     console.error('Failed to load team data:', e)
   }
-
-  try {
-    const uRes = await Request.get({ url: 'index/user/info' })
-    if (uRes && uRes.info) userData.value = uRes.info
-  } catch (e) {
-    console.error('Failed to load user info:', e)
-  }
 }
 
 onMounted(() => {
+  if (!sessionStorage.getItem('token')) {
+    router.replace('/login')
+    return
+  }
   loadData()
 })
 

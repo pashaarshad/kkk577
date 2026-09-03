@@ -144,6 +144,10 @@ import Request from '@/services/index.js'
 
 const router = useRouter()
 
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
+
 const userBalance = ref('0')
 const amount = ref('')
 const address = ref('')

@@ -36,6 +36,15 @@ class Request {
         .request(config)
         .then((res) => {
           if (res?.data?.code !== 0) {
+            const infoMsg = String(res?.data?.info || '')
+            if (infoMsg.includes('login') || infoMsg.includes('no_login') || infoMsg.includes('登录')) {
+              sessionStorage.clear()
+              localStorage.clear()
+              const currentHash = window.location.hash || ''
+              if (!currentHash.includes('#/login') && !currentHash.includes('#/register') && !currentHash.includes('#/home')) {
+                window.location.hash = '#/login'
+              }
+            }
             if (config.showToast && res?.data?.info) {
               showFailToast(res.data.info)
             }
@@ -46,6 +55,15 @@ class Request {
         })
         .catch((err) => {
           console.log('request err:', err)
+          const errStatus = err?.response?.status
+          if (errStatus === 401 || errStatus === 403) {
+            sessionStorage.clear()
+            localStorage.clear()
+            const currentHash = window.location.hash || ''
+            if (!currentHash.includes('#/login') && !currentHash.includes('#/register') && !currentHash.includes('#/home')) {
+              window.location.hash = '#/login'
+            }
+          }
           const errData = err?.response?.data || err?.data || err || {}
           reject(errData.info ? errData : { info: errData.message || err?.message || 'Network request failed' })
         })

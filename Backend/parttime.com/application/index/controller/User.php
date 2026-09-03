@@ -149,7 +149,11 @@ class User extends Controller
     }
 
     public function check_login() {
-
+        $uid = session('user_id');
+        if ($uid && Db::name('xy_users')->where('id', $uid)->count('id')) {
+            return json(['code' => 0, 'is_login' => 1, 'user_id' => $uid]);
+        }
+        return json(['code' => 1, 'is_login' => 0, 'info' => 'no_login']);
     }
 
     public function info() {

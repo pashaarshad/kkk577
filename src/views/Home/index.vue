@@ -256,12 +256,12 @@ const computedVideoStyle = computed(() => {
 })
 
 const loginShow = computed(() => {
-  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   return !!token && !!data.value?.user_info
 })
 
 const onMenuClick = (path) => {
-  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   if (!token) {
     router.push('/login')
     return
@@ -270,7 +270,7 @@ const onMenuClick = (path) => {
 }
 
 const toGrab = (item) => {
-  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
+  const token = sessionStorage.getItem('token')
   if (!token) {
     router.push('/login')
     return

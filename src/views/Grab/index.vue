@@ -97,10 +97,17 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Request from '@/services/index.js'
 import { formatDate } from '@/utils/format-date.js'
 import { showSuccessToast } from 'vant'
 import Loading from './cpns/loading.vue'
+
+const router = useRouter()
+
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
 
 const currentPage = ref(1)
 const show = ref(true)

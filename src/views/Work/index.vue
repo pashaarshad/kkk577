@@ -80,13 +80,26 @@ import Request from '@/services/index.js'
 import { useRouter } from 'vue-router'
 import ItemList from '@/views/Order/cpns/item-list.vue'
 
-const list = ref([])
-Request.get({ url: 'index/user/vip' }).then(res => {
-  list.value = res.data
-})
-
 const router = useRouter()
+
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
+
+const list = ref([])
+if (sessionStorage.getItem('token')) {
+  Request.get({ url: 'index/user/vip' }).then(res => {
+    list.value = res.data
+  }).catch(() => {
+    router.replace('/login')
+  })
+}
+
 const toGrab = (item) => {
+  if (!sessionStorage.getItem('token')) {
+    router.replace('/login')
+    return
+  }
   router.push('/grab')
 }
 

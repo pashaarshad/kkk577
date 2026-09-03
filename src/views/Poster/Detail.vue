@@ -12,16 +12,28 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import Request from '@/services/index.js'
 import { formatDate } from '@/utils/format-date.js'
 
 const route = useRoute()
+const router = useRouter()
+
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
+
 const detail = ref({})
 
 const getDetail = () => {
+  if (!sessionStorage.getItem('token')) {
+    router.replace('/login')
+    return
+  }
   Request.get({ url: `index/index/get_msg?id=${route.params.id}` }).then(res => {
     detail.value = res.data || {}
+  }).catch(() => {
+    router.replace('/login')
   })
 }
 

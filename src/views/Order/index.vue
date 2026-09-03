@@ -13,9 +13,16 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import Request from '@/services/index.js'
 import ItemList from '@/views/Order/cpns/item-list.vue'
 import { i18n } from '@/lang/index.js'
+
+const router = useRouter()
+
+if (!sessionStorage.getItem('token')) {
+  router.replace('/login')
+}
 
 const { t } = i18n.global
 
