@@ -9,8 +9,7 @@ import 'vant/es/image-preview/style'
 import 'vant/es/notify/style'
 import 'vant/es/dialog/style'
 import 'vant/es/toast/style'
-import 'amfe-flexible'
-import '../src/utils/rem.js'
+import '@/utils/rem.js'
 
 
 createApp(App).use(i18n).use(router).use(store).mount('#app')
