@@ -217,13 +217,12 @@ const router = createRouter({
   ]
 })
 
-// 全局守卫：严格登录拦截（只有首页和登录/注册页面可免登录访问）
+// 全局守卫：未登录时只能访问首页和登录/注册，登录后持久保持登录状态
 router.beforeEach((to, from, next) => {
-  // Clear any legacy persistent tokens to guarantee real-time session gating
-  if (localStorage.getItem('token')) {
-    localStorage.removeItem('token')
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (token && !sessionStorage.getItem('token')) {
+    sessionStorage.setItem('token', token)
   }
-  const token = sessionStorage.getItem('token')
   const publicRoutes = ['home', 'login', 'register', 'forgotPassword']
   if (!token) {
     if (publicRoutes.includes(to.name)) {

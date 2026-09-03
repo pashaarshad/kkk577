@@ -61,7 +61,6 @@ import { ref } from 'vue'
 import { useMitt } from '@/utils/mitt.js'
 
 const navList = [
-  { path: '/bankCard', icon: 'card', title: 'Account Binding', bgClass: 'bg-crimson' },
   { path: '/recharge', icon: 'gold-coin', title: 'Recharge / Deposit', bgClass: 'bg-orange' },
   { path: '/withdraw', icon: 'balance-pay', title: 'Withdrawal', bgClass: 'bg-crimson' },
   { path: '/order', icon: 'orders-o', title: 'Task & Order History', bgClass: 'bg-orange' },
@@ -75,13 +74,15 @@ const navList = [
 ]
 
 const router = useRouter()
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-if (!sessionStorage.getItem('token')) {
+if (!token) {
   router.replace('/login')
 }
 
 const toViews = (path) => {
-  if (!sessionStorage.getItem('token')) {
+  const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (!currentToken) {
     router.replace('/login')
     return
   }
@@ -89,7 +90,7 @@ const toViews = (path) => {
 }
 
 const data = ref({})
-if (sessionStorage.getItem('token')) {
+if (token) {
   Request.get({ url: 'index/user/info' }).then(res => {
     data.value = res.info || {}
   }).catch(() => {

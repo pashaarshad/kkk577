@@ -83,8 +83,9 @@ import Request from '@/services/index.js'
 
 const { t } = i18n.global
 const router = useRouter()
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-if (!sessionStorage.getItem('token')) {
+if (!token) {
   router.replace('/login')
 }
 

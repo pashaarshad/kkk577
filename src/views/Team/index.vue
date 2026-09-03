@@ -197,7 +197,7 @@ const data = ref({})
 const userData = ref({})
 
 const loadData = async () => {
-  const token = sessionStorage.getItem('token')
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
   if (!token) {
     router.replace('/login')
     return
@@ -225,7 +225,8 @@ const loadData = async () => {
 }
 
 onMounted(() => {
-  if (!sessionStorage.getItem('token')) {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (!token) {
     router.replace('/login')
     return
   }

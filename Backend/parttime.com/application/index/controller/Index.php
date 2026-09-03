@@ -46,8 +46,11 @@ class Index extends Controller
             $item['id'] = hideStr($item['id']);
         }
         $data->deposit_list = $deposit_list;
-        $uid = session('user_id');
+        $uid = session('user_id') ?: cookie('user_id');
         if ($uid) {
+            if (!session('user_id')) {
+                session('user_id', $uid);
+            }
             $data->user_info = Db::name('xy_users')->field('tel,invite_code,balance,level')->find($uid);
         } else {
             $data->user_info = null;

@@ -18,15 +18,17 @@ import { formatDate } from '@/utils/format-date.js'
 
 const route = useRoute()
 const router = useRouter()
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-if (!sessionStorage.getItem('token')) {
+if (!token) {
   router.replace('/login')
 }
 
 const detail = ref({})
 
 const getDetail = () => {
-  if (!sessionStorage.getItem('token')) {
+  const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (!currentToken) {
     router.replace('/login')
     return
   }

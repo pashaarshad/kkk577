@@ -82,12 +82,13 @@ import ItemList from '@/views/Order/cpns/item-list.vue'
 
 const router = useRouter()
 
-if (!sessionStorage.getItem('token')) {
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+if (!token) {
   router.replace('/login')
 }
 
 const list = ref([])
-if (sessionStorage.getItem('token')) {
+if (token) {
   Request.get({ url: 'index/user/vip' }).then(res => {
     list.value = res.data
   }).catch(() => {
@@ -96,7 +97,8 @@ if (sessionStorage.getItem('token')) {
 }
 
 const toGrab = (item) => {
-  if (!sessionStorage.getItem('token')) {
+  const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token')
+  if (!currentToken) {
     router.replace('/login')
     return
   }

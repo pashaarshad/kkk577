@@ -104,8 +104,9 @@ import { showSuccessToast } from 'vant'
 import Loading from './cpns/loading.vue'
 
 const router = useRouter()
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-if (!sessionStorage.getItem('token')) {
+if (!token) {
   router.replace('/login')
 }
 

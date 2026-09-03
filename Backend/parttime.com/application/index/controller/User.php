@@ -143,23 +143,30 @@ class User extends Controller
             Db::table($this->table)->where('id', $userinfo['id'])->update(['pwd_error_num' => 0, 'allow_login_time' => 0, 'login_status' => 1]);
             session('user_id', $userinfo['id']);
             session('avatar', $userinfo['headpic']);
-    
+            cookie('user_id', $userinfo['id'], 30 * 86400);
+
             return json(['code' => 0, 'info' => lang('loging_ok')]);
         // return json($res);
     }
 
     public function check_login() {
-        $uid = session('user_id');
+        $uid = session('user_id') ?: cookie('user_id');
         if ($uid && Db::name('xy_users')->where('id', $uid)->count('id')) {
+            if (!session('user_id')) {
+                session('user_id', $uid);
+            }
             return json(['code' => 0, 'is_login' => 1, 'user_id' => $uid]);
         }
         return json(['code' => 1, 'is_login' => 0, 'info' => 'no_login']);
     }
 
     public function info() {
-        $uid = session('user_id');
+        $uid = session('user_id') ?: cookie('user_id');
         if (!$uid) {
             return json(['code' => 1, 'info' => lang('login_first')]);
+        }
+        if (!session('user_id')) {
+            session('user_id', $uid);
         }
         $data = Db::name('xy_users')->field('id,tel,username,balance,freeze_balance,invite_code,level,credit_score')->find($uid);
         $data['level_name'] = Db::name('xy_level')->where('id', $data['level'])->value('name') ?:'Free';
@@ -170,6 +177,7 @@ class User extends Controller
     {
         \Session::delete('user_id');
         \Session::delete('user_join_chats');
+        cookie('user_id', null);
         return json(['code' => 0, 'info' => lang('czcg')]);
     }
 

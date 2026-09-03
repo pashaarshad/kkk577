@@ -19,8 +19,9 @@ import ItemList from '@/views/Order/cpns/item-list.vue'
 import { i18n } from '@/lang/index.js'
 
 const router = useRouter()
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-if (!sessionStorage.getItem('token')) {
+if (!token) {
   router.replace('/login')
 }
 

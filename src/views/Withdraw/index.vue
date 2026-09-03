@@ -143,8 +143,9 @@ import { showToast, showDialog, showNotify, showSuccessToast } from 'vant'
 import Request from '@/services/index.js'
 
 const router = useRouter()
+const token = localStorage.getItem('token') || sessionStorage.getItem('token')
 
-if (!sessionStorage.getItem('token')) {
+if (!token) {
   router.replace('/login')
 }
 
