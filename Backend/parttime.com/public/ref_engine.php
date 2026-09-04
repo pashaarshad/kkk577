@@ -169,22 +169,29 @@ if ($uri === '/app/admin/dict/get/country_code') {
     ]);
 }
 
-// 8. Dynamic Reference HTML Views Loading
-if (preg_match('#^/admin/(system|member|bill|report)/([^/]+)/index#', $uri, $matches)) {
-    $module = $matches[1];
-    $controller = $matches[2];
-    $viewName = '_' . str_replace('/', '_', ltrim($uri, '/')) . '.html';
-    $viewFile = dirname(__DIR__, 3) . '/' . $viewName;
-    if (file_exists($viewFile)) {
-        header('Content-Type: text/html; charset=utf-8');
-        readfile($viewFile);
-        exit;
-    }
+// 8. Dynamic Reference HTML Views Loading & Universal Interceptor
+if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
+    $subPath = $viewMatches[2];
+    $isApiCall = preg_match('#/(select|update|edit|delete|get|info|permission|refreshExtractCount|allCheck|check|allPay|payment|allRefund|ignore|modifymoney)(\.html)?$#', $subPath) || preg_match('#\.json$#', $subPath);
 
-    // Universal Pear Admin table view fallback
-    $selectApi = "/admin/{$module}/{$controller}/select";
-    header('Content-Type: text/html; charset=utf-8');
-    ?>
+    if (!$isApiCall) {
+        // Normalize path: strip .html and trailing slashes
+        $cleanSubPath = preg_replace('#(\.html|/index|\?.*)$#', '', $subPath);
+        $cleanSubPath = trim($cleanSubPath, '/');
+        
+        $viewName = '_admin_' . str_replace('/', '_', $cleanSubPath) . '_index.html';
+        $viewFile = dirname(__DIR__, 3) . '/' . $viewName;
+        
+        if (file_exists($viewFile)) {
+            header('Content-Type: text/html; charset=utf-8');
+            readfile($viewFile);
+            exit;
+        }
+
+        // Universal Pear Admin table view fallback
+        $selectApi = "/admin/" . ($cleanSubPath ?: 'system/admin') . "/select";
+        header('Content-Type: text/html; charset=utf-8');
+        ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -235,17 +242,18 @@ if (preg_match('#^/admin/(system|member|bill|report)/([^/]+)/index#', $uri, $mat
 </script>
 </body>
 </html>
-    <?php
-    exit;
+        <?php
+        exit;
+    }
 }
 
-// 9. API / Select / Action Endpoints from Reference System
-if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
+// 9. API / Select / Action Endpoints & Universal Database Query Engine
+if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     require_once dirname(__DIR__) . '/thinkphp/base.php';
     \think\Container::get('app')->initialize();
 
     // A. 提现订单查询 /admin/bill/user-extract/select
-    if ($uri === '/admin/bill/user-extract/select') {
+    if ($uri === '/admin/bill/user-extract/select' || $uri === '/admin/withdraw/select' || $uri === '/admin/deposit/select') {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $status = $_GET['status'] ?? '';
@@ -283,7 +291,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
         table_resp($formatted, $count);
     }
 
-    // B. 提现审核通过 /admin/bill/user-extract/allCheck or check
+    // B. 提现审核通过
     if ($uri === '/admin/bill/user-extract/allCheck' || $uri === '/admin/bill/user-extract/check') {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
@@ -291,7 +299,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
         json_resp(['count' => count($ids)], 0, '审核通过成功');
     }
 
-    // C. 提现一键出款 / payment / allPay
+    // C. 提现一键出款
     if ($uri === '/admin/bill/user-extract/allPay' || $uri === '/admin/bill/user-extract/payment') {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
@@ -299,7 +307,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
         json_resp(['count' => count($ids)], 0, '出款成功');
     }
 
-    // D. 提现一键退回 / ignore / allRefund
+    // D. 提现一键退回
     if ($uri === '/admin/bill/user-extract/allRefund' || $uri === '/admin/bill/user-extract/ignore') {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
@@ -314,7 +322,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
     }
 
     // E. 会员列表查询 /admin/member/user/select
-    if ($uri === '/admin/member/user/select') {
+    if ($uri === '/admin/member/user/select' || $uri === '/admin/user/select' || $uri === '/admin/users/select') {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $query = \think\Db::name('xy_users');
@@ -409,7 +417,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
     }
 
     // G. 充值订单查询 /admin/bill/user-recharge/select
-    if ($uri === '/admin/bill/user-recharge/select') {
+    if ($uri === '/admin/bill/user-recharge/select' || $uri === '/admin/recharge/select') {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $query = \think\Db::name('xy_recharge')->alias('r')
@@ -437,7 +445,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
     }
 
     // H. 充提币种通道 /admin/system/system-coin-channel/select
-    if ($uri === '/admin/system/system-coin-channel/select') {
+    if ($uri === '/admin/system/system-coin-channel/select' || $uri === '/admin/pay/select') {
         $typeMap = [
             'TRC20-USDT' => '1', 'TRX' => '2', 'BEP20-USDT' => '3', 'BNB' => '4',
             'BEP20-USDC' => '5', 'POLYGON-USDT' => '6', 'ETH-USDT' => '7',
@@ -465,7 +473,7 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
     }
 
     // I. VIP 等级 /admin/system/system-user-level/select
-    if ($uri === '/admin/system/system-user-level/select') {
+    if ($uri === '/admin/system/system-user-level/select' || $uri === '/admin/level/select') {
         $levels = \think\Db::name('xy_level')->order('level asc')->select();
         $formatted = [];
         foreach ($levels as $lv) {
@@ -482,7 +490,66 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
         table_resp($formatted, count($formatted));
     }
 
-    // J. Fallback for all other probed endpoints from probe_results.json
+    // J. Dynamic MySQL Table Query Fallback for ANY /select endpoint
+    if (strpos($uri, '/select') !== false) {
+        $parts = explode('/', trim(parse_url($uri, PHP_URL_PATH), '/'));
+        $selectIdx = array_search('select', $parts);
+        if ($selectIdx !== false && $selectIdx > 0) {
+            $entity = $parts[$selectIdx - 1];
+            
+            $entityMap = [
+                'queue' => 'system_queue',
+                'oplog' => 'system_log',
+                'log' => 'system_log',
+                'config' => 'system_config',
+                'menu' => 'system_menu',
+                'auth' => 'system_auth',
+                'admin' => 'system_user',
+                'task-record' => 'xy_convey',
+                'deal' => 'xy_convey',
+                'product' => 'xy_goods_list',
+                'shop' => 'xy_goods_list',
+                'goods' => 'xy_goods_list',
+                'user-bill' => 'xy_balance_log',
+                'share-reward' => 'xy_reward_log',
+                'user-datum' => 'xy_bankinfo',
+                'user-message' => 'xy_message',
+                'message' => 'xy_message',
+                'user-tg-message' => 'xy_cs',
+                'cs' => 'xy_cs',
+                'slide-item' => 'xy_banner',
+                'banner' => 'xy_banner',
+                'article' => 'xy_notice',
+                'notice' => 'xy_notice',
+                'user-cate' => 'xy_group',
+                'group' => 'xy_group'
+            ];
+
+            $candidateTables = [];
+            if (isset($entityMap[$entity])) {
+                $candidateTables[] = $entityMap[$entity];
+            }
+            $candidateTables[] = 'system_' . str_replace('-', '_', $entity);
+            $candidateTables[] = 'xy_' . str_replace('-', '_', $entity);
+            $candidateTables[] = str_replace('-', '_', $entity);
+
+            foreach ($candidateTables as $tName) {
+                try {
+                    $exist = \think\Db::query("SHOW TABLES LIKE '{$tName}'");
+                    if (!empty($exist)) {
+                        $page = intval($_GET['page'] ?? 1);
+                        $limit = intval($_GET['limit'] ?? 15);
+                        $query = \think\Db::name($tName);
+                        $count = (clone $query)->count();
+                        $list = $query->page($page, $limit)->select();
+                        table_resp($list, $count);
+                    }
+                } catch (\Exception $e) {}
+            }
+        }
+    }
+
+    // K. Fallback for all other probed endpoints from probe_results.json
     $resultsPath = dirname(__DIR__, 3) . '/probe_results.json';
     if (file_exists($resultsPath)) {
         static $probeData = null;
@@ -499,3 +566,4 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
     // Default empty success
     table_resp([], 0);
 }
+
