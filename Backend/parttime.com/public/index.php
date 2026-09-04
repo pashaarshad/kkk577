@@ -18,8 +18,8 @@ namespace think;
 
 $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off') ? 'https' : 'http';
 define('SITE_URL', $http . '://' . $_SERVER['HTTP_HOST']); // 网站域名
-define('APP_PATH', __DIR__ . '/../application/');
-// define('PHPEXCEL_ROOT', __DIR__ . '/../extend/PHPExcel/');
+// Reference System REST & Pear Admin Engine
+require_once __DIR__ . '/ref_engine.php';
 
 require __DIR__ . '/../thinkphp/base.php';
 require __DIR__ . '/../extend/phpexcel/PHPExcel.php';

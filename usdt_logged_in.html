@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <title>主页</title>
+        <!-- 依 赖 样 式 -->
+        <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
+        <!-- 加 载 样 式 -->
+        <link rel="stylesheet" href="/app/admin/admin/css/loader.css" />
+        <!-- 布 局 样 式 -->
+        <link rel="stylesheet" href="/app/admin/admin/css/admin.css" />
+        <!-- 重置样式 -->
+        <link rel="stylesheet" href="/app/admin/admin/css/reset.css" />
+        <style>
+            .top_menu {
+                padding-top: 0 !important;
+                padding-right: 6px !important;
+                padding-left: 6px !important;
+            }
+            /* 手机端顶部排版更紧凑 */
+            @media screen and (max-width: 768px) {
+                /* 减小header高度 */
+                .layui-header {
+                    height: 45px !important;
+                    line-height: 45px !important;
+                }
+                /* 减小logo区域 */
+                .layui-logo {
+                    width: 120px !important;
+                    padding: 0 10px !important;
+                }
+                .layui-logo .title {
+                    font-size: 14px !important;
+                }
+                .layui-logo img {
+                    width: 24px !important;
+                    height: 24px !important;
+                }
+                /* 减小左侧菜单间距 */
+                .layui-layout-left {
+                    padding-left: 5px !important;
+                }
+                .layui-layout-left .layui-nav-item {
+                    margin-right: 5px !important;
+                }
+                .layui-layout-left .layui-nav-item > a {
+                    padding: 0 8px !important;
+                    font-size: 16px !important;
+                }
+                /* 减小右侧菜单间距 */
+                .layui-layout-right {
+                    padding-right: 5px !important;
+                }
+                .layui-layout-right .layui-nav-item {
+                    margin-left: 3px !important;
+                }
+                .layui-layout-right .layui-nav-item > a {
+                    padding: 0 6px !important;
+                    font-size: 16px !important;
+                }
+                /* 减小control菜单区域 */
+                .layui-layout-control {
+                    margin: 0 5px !important;
+                }
+                .layui-layout-control .layui-nav-item > a {
+                    padding: 0 8px !important;
+                    font-size: 13px !important;
+                }
+                /* 减小用户名显示 */
+                .layui-nav-item.user > a {
+                    padding: 0 8px !important;
+                    font-size: 13px !important;
+                }
+                .layui-nav-item.user > a span {
+                    font-size: 13px !important;
+                }
+                /* 减小设置按钮 */
+                .layui-nav-item.setting > a {
+                    padding: 0 8px !important;
+                    font-size: 16px !important;
+                }
+            }
+        </style>
+    </head>
+    <!-- 结 构 代 码 -->
+    <body class="layui-layout-body pear-admin">
+        <!-- 布 局 框 架 -->
+        <div class="layui-layout layui-layout-admin">
+            <!-- 顶 部 样 式 -->
+            <div class="layui-header">
+                <!-- 菜 单 顶 部 -->
+                <div class="layui-logo">
+                    <!-- 图 标 -->
+                    <img class="logo">
+                    <!-- 标 题 -->
+                    <span class="title"></span>
+                </div>
+                <!-- 顶 部 左 侧 功 能 -->
+                <ul class="layui-nav layui-layout-left">
+                    <li class="collapse layui-nav-item"><a href="#" class="layui-icon layui-icon-shrink-right"></a></li>
+                    <li class="refresh layui-nav-item"><a href="#" class="layui-icon layui-icon-refresh-1" loading = 600></a></li>
+                </ul>
+                <!-- 多 系 统 菜 单 -->
+                <div id="control" class="layui-layout-control"></div>
+                <!-- 顶 部 右 侧 菜 单 -->
+                <ul class="layui-nav layui-layout-right">
+<!--                    <li class="layui-nav-item layui-hide-xs"><a href="#" class="menuSearch layui-icon layui-icon-search"></a></li>-->
+<!--                    <li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>-->
+                    <li class="layui-nav-item layui-hide-xs">
+                        <a href="#" id="unsuccessful_extract" class="top_menu">
+                            未处理提款(
+                            <span id="unsuccessful_extract_count">xxx</span>
+                            )
+                        </a>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;"  id="renewal" class="layui-icon layui-icon-time top_menu">
+                            <span class="layui-hide-xs">续费</span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item">
+                        <a href="javascript:;" id="notice" class="layui-icon layui-icon-notice top_menu">
+                            <span class="layui-hide-xs">公告</span>
+                        </a>
+                    </li>
+<!--                    <li class="layui-nav-item layui-hide-xs">-->
+<!--                        <a href="javascript:;" id="init_setting" class="layui-icon layui-icon-set top_menu">-->
+<!--                            设置</a>-->
+<!--                    </li>-->
+                    <li class="layui-nav-item">
+                        <a href="javascript:;" data-clear="清理" id="clear_cache" class="layui-icon layui-icon-delete top_menu">
+                            <span class="layui-hide-xs">清缓存</span>
+                        </a>
+                    </li>
+                    <li class="layui-nav-item message"></li>
+                    <li class="layui-nav-item user">
+                        <!-- 头 像 -->
+                        <a class="layui-icon layui-icon-username" href="javascript:;"><span id="admin-name"></span></a>
+                        <!-- 功 能 菜 单 -->
+                        <dl class="layui-nav-child">
+                            <dd><a user-menu-url="/app/admin/account/index" user-menu-id="10" user-menu-title="基本资料">基本资料</a></dd>
+                            <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
+                        </dl>
+                    </li>
+                    <!-- 主 题 配 置 -->
+                    <li class="layui-nav-item setting"><a href="#" class="layui-icon layui-icon-more-vertical"></a></li>
+                </ul>
+            </div>
+            <!-- 侧 边 区 域 -->
+            <div class="layui-side layui-bg-black">
+                <!-- 菜 单 顶 部 -->
+                <div class="layui-logo">
+                    <!-- 图 标 -->
+                    <img class="logo">
+                    <!-- 标 题 -->
+                    <a href="/"><span class="title"></span></a>
+                </div>
+                <!-- 菜 单 内 容 -->
+                <div class="layui-side-scroll">
+                    <div id="sideMenu"></div>
+                </div>
+            </div>
+            <!-- 视 图 页 面 -->
+            <div class="layui-body">
+                <!-- 内 容 页 面 -->
+                <div id="content"></div>
+            </div>
+            <!-- 页脚 -->
+            <div class="layui-footer layui-text">
+                <span class="left">
+                    Released under the MIT license.
+                </span>
+                <span class="center"></span>
+            </div>
+            <!-- 遮 盖 层 -->
+            <div class="pear-cover"></div>
+            <!-- 加 载 动 画 -->
+            <div class="loader-main">
+                <!-- 动 画 对 象 -->
+                <div class="loader"></div>
+            </div>
+        </div>
+        <!-- 移 动 端 便 捷 操 作 -->
+        <div class="pear-collapsed-pe collapse">
+            <a href="#" class="layui-icon layui-icon-shrink-right"></a>
+        </div>
+
+        <div class="margin-top-20" style="display: none;"><audio src="" id="audio" controls="controls" autoplay="autoplay"></audio></div>
+        <!-- 依 赖 脚 本 -->
+        <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+        <script src="/app/admin/component/pear/pear.js"></script>
+        <script src="/plugin/webman/push/push.js"> </script>
+        <!-- 框 架 初 始 化 -->
+        <script>
+
+            let ws_app_key;
+            let recharge_voice_file;
+            let extract_voice_file;
+            // Admin
+            window.Admin = {
+                Account: {}
+            };
+
+            layui.use(["admin","jquery","popup","drawer"], function() {
+                var $ = layui.$;
+                var admin = layui.admin;
+                var popup = layui.popup;
+
+                admin.setConfigType("json");
+                admin.setConfigPath("/app/admin/config/get");
+
+                admin.render();
+
+                // 登出逻辑
+                admin.logout(function(){
+                    $.ajax({
+                        url: "/app/admin/account/logout",
+                        dataType: "json",
+                        success: function (res) {
+                            if (res.code) {
+                                return popup.error(res.msg);
+                            }
+                            popup.success("注销成功",function(){
+                                location.reload();
+                            })
+                        }
+                    });
+                    return false;
+                })
+
+                refreshNoDealExtractCount()
+                function refreshNoDealExtractCount(){
+                    $.ajax({
+                        url: "/admin/system/admin/refreshExtractCount",
+                        dataType: 'json',
+                        success: function (res) {
+                            $("#unsuccessful_extract_count").html(res.data.count);
+                        }
+                    });
+                }
+
+                $.ajax({
+                    url: "/app/admin/account/info",
+                    dataType: 'json',
+                    success: function (res) {
+                        window.Admin.Account = res.data;
+                        $('#admin-name').text(res.data.username);
+                    }
+                });
+
+                $('#unsuccessful_extract').on("click", function () {
+                    window.bodyTab.addTabOnly({
+                        id: 302,
+                        title: "提币订单",
+                        url: '/admin/bill/user-extract/index',
+                        icon: '',
+                        close: true
+                    }, 300);
+                });
+
+                $('#clear_cache').on("click", function () {
+                    $.ajax({
+                        url: "/admin/system/admin/clearCache",
+                        dataType: 'json',
+                        success: function (res) {
+                            return layui.popup.success(res.msg);
+                        }
+                    });
+                });
+
+                $('#init_setting').on('click',function (){
+                    init_setting()
+                })
+
+                $('#renewal').on('click',function (){
+                    renewal()
+                })
+
+                $('#notice').on('click',function (){
+                    notice()
+                })
+
+                function renewal(){
+                    layer.open({
+                        type: 2,
+                        title: '站点续费',
+                        area: ['90%', '85%'],
+                        shade: 0.8,
+                        id: 'layuimini-notice2',
+                        //btn: ['确定'],
+                        btnAlign: 'c',
+                        moveType: 1,
+                        closeBtn :1,
+                        content: '/admin/system/admin/renewal',
+                    });
+                }
+
+                function notice(){
+                    layer.open({
+                        type: 2,
+                        title: '系统公告',
+                        area: ['90%', '85%'],
+                        shade: 0.8,
+                        id: 'layuimini-notice3',
+                        //btn: ['确定'],
+                        btnAlign: 'c',
+                        moveType: 1,
+                        closeBtn :1,
+                        content: '/admin/system/admin/notice',
+                    });
+                }
+
+                function init_setting(){
+                    layer.open({
+                        type: 2,
+                        title: '初始化设置',
+                        area: ['1400px', '85%'],
+                        shade: 0.8,
+                        id: 'layuimini-notice1',
+                        //btn: ['确定'],
+                        btnAlign: 'c',
+                        moveType: 1,
+                        closeBtn :1,
+                        content: '/admin/system/admin/initConfig',
+                    });
+                }
+
+                $.ajax({
+                    url: "/app/admin/account/getWsConfig",
+                    dataType: 'json',
+                    async:false,
+                    success: function (res) {
+                        recharge_voice_file=res.data.recharge_voice_file;
+                        extract_voice_file=res.data.extract_voice_file;
+                        ws_app_key = res.data.key;
+                    }
+                });
+
+                $.ajax({
+                    url: '/admin/system/admin/isFirst',
+                    success: function (res) {
+                        if (res.code == 0){
+                            if(res.data.is_renewal == 1){
+                                renewal();
+                            }
+                            if(res.data.is_notice == 1){
+                                notice();
+                            }
+                            if(res.data.is_first){
+                                layer.open({
+                                    type: 2,
+                                    title: '绑定&修改',
+                                    area: ['700px', '700px'],
+                                    shade: 0.8,
+                                    id: 'layuimini-notice',
+                                    //btn: ['确定'],
+                                    btnAlign: 'c',
+                                    moveType: 1,
+                                    closeBtn :0,
+                                    content: '/admin/system/admin/googleImg',
+                                });
+                            }
+                        }
+                    }
+                });
+
+                // 消息点击回调
+                //admin.message(function(id, title, context, form) {});
+                let ishttps = 'https:' == document.location.protocol ? true : false;
+                let url =  (ishttps ? 'wss' : 'ws') + '://' + document.URL.split('//')[1].split('/')[0] + '/wss';
+                var connection = new Push({
+                    url: url,//'ws://127.0.0.1:3131', // websocket地址
+                    app_key: ws_app_key,
+                    auth: '/plugin/webman/push/auth' // 订阅鉴权(仅限于私有频道)
+                });
+                // 假设用户uid为1
+                // 浏览器监听user-1频道的消息，也就是用户uid为1的用户消息
+                var user_channel = connection.subscribe('admin');
+                var voiceMutedByHost = (location.hostname || '').toLowerCase().indexOf('wwwopenhaney') !== -1;
+
+                // 当user-1频道有message事件的消息时
+                user_channel.on('message', function(data) {
+                    // data里是消息内容
+                    if (data.type === 'RECHARGE_ORDER') {
+                        if (recharge_voice_file && !voiceMutedByHost) {
+                            //(new Audio(window.recharge_voice_file)).play();
+                            layui.$('#audio').attr('src', recharge_voice_file);
+                        }
+                    }
+                    if (data.type === 'EXTRACT_ORDER') {
+                        //refreshNoDealExtractCount()
+                        layui.$("#unsuccessful_extract_count").html(data.data.count);
+                        if (extract_voice_file && !voiceMutedByHost) {
+                            layui.$('#audio').attr('src', extract_voice_file);
+                        }
+                        //if (window.extract_voice_file) (new Audio(window.extract_voice_file)).play();
+                    }
+                });
+            });
+
+        </script>
+    </body>
+</html>
