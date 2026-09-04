@@ -481,7 +481,7 @@ class Pay extends Base
      */
     public function submit_recharge()
     {
-        $uid = session('user_id') ?: cookie('user_id') ?: input('post.uid/d', 0);
+        $uid = $this->_uid ?: session('user_id') ?: cookie('user_id') ?: input('post.uid/d', 0);
         if (!$uid) {
             $hdrUid = request()->header('user-id') ?: request()->header('uid');
             if ($hdrUid) $uid = intval($hdrUid);

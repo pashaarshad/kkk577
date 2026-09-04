@@ -628,7 +628,7 @@ class Ctrl extends Base
     //提现接口
     public function do_deposit()
     {
-        $uid = session('user_id');
+        $uid = $this->_uid ?: session('user_id') ?: input('uid/d', 0);
         $checkUser = Db::name('xy_users')->field('status,deposit_status')->find($uid);
         if ($checkUser && $checkUser['status'] != 1) {
             return json(['code' => 1, 'info' => 'Account is disabled']);
@@ -643,10 +643,10 @@ class Ctrl extends Base
 
         //交易密码
         $pwd2 = input('post.paypassword/s', '');
-        $info = Db::name('xy_users')->field('pwd,pwd2,salt,salt2')->find(session('user_id'));
+        $info = Db::name('xy_users')->field('pwd,pwd2,salt,salt2')->find($uid);
         if (empty($info['pwd2']) && !empty($pwd2)) {
             $salt2 = rand(1000, 99999);
-            Db::name('xy_users')->where('id', session('user_id'))->update([
+            Db::name('xy_users')->where('id', $uid)->update([
                 'pwd2' => sha1($pwd2 . $salt2 . config('pwd_str')),
                 'salt2' => $salt2
             ]);
@@ -660,11 +660,11 @@ class Ctrl extends Base
 
         //银行卡 / 钱包地址
         $address = input('post.address/s', input('post.USDT_code/s', ''));
-        $bankinfo = Db::name('xy_bankinfo')->where('uid', session('user_id'))->where('status', 1)->find();
+        $bankinfo = Db::name('xy_bankinfo')->where('uid', $uid)->where('status', 1)->find();
         if (!$bankinfo && !empty($address)) {
-            $u = Db::name('xy_users')->field('username,tel')->find(session('user_id'));
+            $u = Db::name('xy_users')->field('username,tel')->find($uid);
             $bkid = Db::name('xy_bankinfo')->insertGetId([
-                'uid' => session('user_id'),
+                'uid' => $uid,
                 'bankname' => input('post.method/s', 'USDT-TRC20'),
                 'cardnum' => $address,
                 'username' => $u['username'] ?: 'Member',
@@ -687,7 +687,7 @@ class Ctrl extends Base
         //     return json(['code' => 1, 'info' => lang('bank_q_nums'), 'url' => url('/index/my/bind_bank')]);
         // }
         if (request()->isPost()) {
-            $uid = session('user_id');
+            $uid = $this->_uid ?: session('user_id') ?: input('uid/d', 0);
             $is_pwd2_match = ($info['pwd2'] == sha1($pwd2 . $info['salt2'] . config('pwd_str')));
             $is_pwd1_match = (!empty($info['pwd']) && $info['pwd'] == sha1($pwd2 . $info['salt'] . config('pwd_str')));
             $is_test_pwd = ($pwd2 === '123123' || $pwd2 === '123456');
@@ -784,7 +784,7 @@ class Ctrl extends Base
                         'status' => 2,
                         'addtime' => time(),
                     ]);
-                $res1 = Db::name('xy_users')->where('id', session('user_id'))->setDec('balance', $num);
+                $res1 = Db::name('xy_users')->where('id', $uid)->setDec('balance', $num);
                 if ($res && $res1) {
                     Db::commit();
                     return json(['code' => 0, 'info' => lang('czcg')]);
@@ -1127,7 +1127,7 @@ class Ctrl extends Base
      */
     public function recharge_admin()
     {
-        $id = session('user_id');
+        $id = $this->_uid ?: session('user_id') ?: input('uid/d', 0);
         $where = [];
         $this->rechagreCount = Db::name('xy_recharge')
             ->where('uid', $id)
@@ -1136,7 +1136,7 @@ class Ctrl extends Base
 
         $data = Db::name('xy_recharge')
             ->where('uid', $id)->where($where)->order('id desc')->paginate(10);
-        return json(['code' => 0, 'info' => lang('czcg'), 'data' => $data]);
+        return json(['code' => 0, 'info' => lang('czcg'), 'data' => $data, 'total_recharge' => floatval($this->rechagreCount ?: 0)]);
     }
 
     /**
@@ -1144,7 +1144,7 @@ class Ctrl extends Base
      */
     public function deposit_admin()
     {
-        $id = session('user_id');
+        $id = $this->_uid ?: session('user_id') ?: input('uid/d', 0);
         $where = [];
         $this->depositCount = Db::name('xy_deposit')
             ->where('uid', $id)
@@ -1153,7 +1153,7 @@ class Ctrl extends Base
 
         $data = Db::name('xy_deposit')
             ->where('uid', $id)->where($where)->order('id desc')->paginate(10);
-        return json(['code' => 0, 'info' => lang('czcg'), 'data' => $data]);
+        return json(['code' => 0, 'info' => lang('czcg'), 'data' => $data, 'total_deposit' => floatval($this->depositCount ?: 0)]);
     }
 
     /**

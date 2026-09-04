@@ -1,0 +1,42 @@
+{
+  "code": 0,
+  "msg": "ok",
+  "data": [
+    {
+      "name": "United States (+1)",
+      "value": "US"
+    },
+    {
+      "name": "China (+86)",
+      "value": "CN"
+    },
+    {
+      "name": "Hong Kong (+852)",
+      "value": "HK"
+    },
+    {
+      "name": "United Kingdom (+44)",
+      "value": "GB"
+    },
+    {
+      "name": "Brazil (+55)",
+      "value": "BR"
+    },
+    {
+      "name": "India (+91)",
+      "value": "IN"
+    },
+    {
+      "name": "Philippines (+63)",
+      "value": "PH"
+    },
+    {
+      "name": "Vietnam (+84)",
+      "value": "VN"
+    },
+    {
+      "name": "Indonesia (+62)",
+      "value": "ID"
+    }
+  ]
+}

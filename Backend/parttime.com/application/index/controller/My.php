@@ -230,7 +230,7 @@ class My extends Base
 
     public function caiwu()
     {
-        $id = session('user_id');
+        $id = $this->_uid ?: session('user_id') ?: input('uid/d', 0);
         $day = input('get.day/s', '');
         $where = [];
         if ($day) {

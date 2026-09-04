@@ -201,23 +201,19 @@
             permission="admin.bill.userextract.query">查询
     </button>
     {{#  } }}
-    {{#  if(d.status === 0 || d.status===4){ }}
-    <button class="pear-btn pear-btn-success pear-btn-xs" lay-event="check" permission="admin.bill.userextract.check">审核
+    {{#  if(d.status === 0 || d.status === 1 || d.status === 4){ }}
+    <button class="pear-btn pear-btn-success pear-btn-xs" lay-event="check" title="审核通过">审核
     </button>
     {{#  } else { }}
-    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="check"
-            permission="admin.bill.userextract.check">审核
+    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="check">审核
     </button>
     {{#  } }}
     <br/>
-    {{#  if(d.status === 0){ }}
-    <button class="pear-btn pear-btn-primary pear-btn-xs" lay-event="ignore" permission="admin.bill.userextract.ignore">
-        忽略
+    {{#  if(d.status === 0 || d.status === 1){ }}
+    <button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="ignore" title="驳回退回余额">驳回
     </button>
     {{#  } else { }}
-    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="ignore"
-            permission="admin.bill.userextract.ignore">
-        忽略
+    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="ignore">驳回
     </button>
     {{#  } }}
     {{#  if((d.status===5 || d.tx_status ===2 || d.status===6 || d.status===1) && d.status != 3){ }}

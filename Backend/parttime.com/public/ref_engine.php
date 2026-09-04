@@ -247,7 +247,7 @@ if ($uri === '/admin/system/admin/refreshExtractCount') {
 }
 
 // 7b. Country Code Dictionary Endpoint
-if ($uri === '/app/admin/dict/get/country_code') {
+if ($uri === '/app/admin/dict/get/country_code' || $uri === '/admin/dict/get/country_code') {
     json_resp([
         ['name' => 'United States (+1)', 'value' => 'US'],
         ['name' => 'China (+86)', 'value' => 'CN'],
@@ -665,12 +665,31 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     }
 
     // G. 充值订单查询
+    // G. 充值订单查询
     if (strpos($uri, 'user-recharge/select') !== false || strpos($uri, 'user_recharge') !== false || strpos($uri, 'recharge/select') !== false) {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $query = \think\Db::name('xy_recharge')->alias('r')
             ->leftJoin('xy_users u', 'r.uid = u.id')
-            ->field('r.*, u.username as account, u.tel');
+            ->field('r.*, u.username as account, u.tel, u.balance as user_balance');
+            
+        // Filters
+        $orderNo = trim($_GET['order_no'] ?? '');
+        if ($orderNo !== '') {
+            $query->where('r.id', 'like', "%{$orderNo}%");
+        }
+        $searchUid = trim($_GET['uid'] ?? '');
+        if ($searchUid !== '') {
+            $query->where('r.uid', $searchUid);
+        }
+        $account = trim($_GET['account'] ?? '');
+        if ($account !== '') {
+            $query->where('u.username|u.tel', 'like', "%{$account}%");
+        }
+        if (isset($_GET['status']) && $_GET['status'] !== '' && $_GET['status'] !== '-') {
+            $query->where('r.status', intval($_GET['status']));
+        }
+        
         $count = (clone $query)->count();
         $list = $query->order('r.addtime desc')->page($page, $limit)->select();
         $formatted = [];
@@ -680,12 +699,18 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
                 'uid' => $rc['uid'],
                 'order_no' => $rc['id'],
                 'money' => number_format($rc['num'], 2, '.', ''),
+                'original_money' => number_format($rc['num'], 2, '.', ''),
                 'status' => intval($rc['status']),
                 'channel' => $rc['pay_name'] ?: 'TRC20-USDT',
+                'pay_name' => $rc['pay_name'] ?: 'TRC20-USDT',
+                'pic' => $rc['pic'] ?: '',
                 'add_time' => date('Y-m-d H:i:s', $rc['addtime']),
+                'endtime' => !empty($rc['endtime']) ? date('Y-m-d H:i:s', $rc['endtime']) : '-',
                 'user' => [
                     'uid' => $rc['uid'],
-                    'account' => $rc['account'] ?: $rc['tel']
+                    'account' => $rc['account'] ?: $rc['tel'],
+                    'tel' => $rc['tel'] ?: '',
+                    'balance' => $rc['user_balance'] ?? 0
                 ]
             ];
         }
@@ -724,24 +749,77 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
 
     // G1. 充值审核通过
     if ($uri === '/admin/bill/user-recharge/check' || $uri === '/admin/bill/user-recharge/allCheck' || strpos($uri, 'user_recharge/check') !== false) {
-        $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
-        if (empty($ids)) json_resp(null, 1, '请选择订单');
+        $rawIds = $_POST['ids'] ?? [$_POST['id'] ?? 0];
+        if (is_string($rawIds)) {
+            $ids = explode(',', $rawIds);
+        } else {
+            $ids = (array)$rawIds;
+        }
+        $ids = array_filter(array_map('trim', $ids));
+        if (empty($ids)) json_resp(null, 1, 'Please select orders to approve');
+        $approvedCount = 0;
         foreach ($ids as $id) {
             $recharge = \think\Db::name('xy_recharge')->where('id', $id)->find();
-            if ($recharge && $recharge['status'] == 1) {
+            if ($recharge && intval($recharge['status']) === 1) {
+                // 1. Credit user balance
                 \think\Db::name('xy_users')->where('id', $recharge['uid'])->setInc('balance', $recharge['num']);
-                \think\Db::name('xy_recharge')->where('id', $id)->update(['status' => 2]);
+                \think\Db::name('xy_users')->where('id', $recharge['uid'])->setInc('all_recharge_num', $recharge['num']);
+                \think\Db::name('xy_users')->where('id', $recharge['uid'])->setInc('all_recharge_count', 1);
+
+                // 2. Mark recharge completed
+                \think\Db::name('xy_recharge')->where('id', $id)->update([
+                    'status' => 2,
+                    'endtime' => time()
+                ]);
+
+                // 3. Insert balance log so it appears in user's Bill List!
+                try {
+                    \think\Db::name('xy_balance_log')->insert([
+                        'uid' => $recharge['uid'],
+                        'oid' => $id,
+                        'num' => $recharge['num'],
+                        'type' => 1, // 1 = recharge
+                        'status' => 1,
+                        'addtime' => time()
+                    ]);
+                } catch (\Exception $e) {}
+
+                // 4. Also check / trigger VIP upgrade if user qualifies
+                try {
+                    $totalRecharge = \think\Db::name('xy_recharge')->where('uid', $recharge['uid'])->where('status', 2)->sum('num');
+                    $levels = \think\Db::name('xy_level')->order('num asc')->select();
+                    $targetLevel = 0;
+                    foreach ($levels as $lv) {
+                        if ($totalRecharge >= $lv['num']) {
+                            $targetLevel = $lv['level'];
+                        }
+                    }
+                    if ($targetLevel > 0) {
+                        \think\Db::name('xy_users')->where('id', $recharge['uid'])->where('level', '<', $targetLevel)->update(['level' => $targetLevel]);
+                    }
+                } catch (\Exception $e) {}
+
+                $approvedCount++;
             }
         }
-        json_resp(['count' => count($ids)], 0, '充值审核成功');
+        json_resp(['count' => $approvedCount], 0, 'Recharge approved successfully! Funds credited to user balance.');
     }
 
     // G2. 充值审核驳回
     if ($uri === '/admin/bill/user-recharge/ignore' || $uri === '/admin/bill/user-recharge/allRefund' || strpos($uri, 'user_recharge/ignore') !== false) {
-        $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
-        if (empty($ids)) json_resp(null, 1, '请选择订单');
-        \think\Db::name('xy_recharge')->where('id', 'in', $ids)->update(['status' => 3]);
-        json_resp(['count' => count($ids)], 0, '充值已驳回');
+        $rawIds = $_POST['ids'] ?? [$_POST['id'] ?? 0];
+        if (is_string($rawIds)) {
+            $ids = explode(',', $rawIds);
+        } else {
+            $ids = (array)$rawIds;
+        }
+        $ids = array_filter(array_map('trim', $ids));
+        if (empty($ids)) json_resp(null, 1, 'Please select orders to reject');
+        \think\Db::name('xy_recharge')->where('id', 'in', $ids)->update([
+            'status' => 3,
+            'endtime' => time()
+        ]);
+        json_resp(['count' => count($ids)], 0, 'Recharge order(s) rejected successfully.');
     }
 
     // G3. 通用删除接口
