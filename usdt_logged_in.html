@@ -397,6 +397,18 @@
                         //if (window.extract_voice_file) (new Audio(window.extract_voice_file)).play();
                     }
                 });
+
+                // 注销登录
+                layui.$('body').on('click', '.logout', function (e) {
+                    e.preventDefault();
+                    layer.confirm('确定要注销登录吗？', { icon: 3, title: '提示' }, function(index) {
+                        layer.close(index);
+                        layui.$.post('/app/admin/account/logout', function() {
+                            document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+                            location.href = '/owe9j2/login';
+                        });
+                    });
+                });
             });
 
         </script>
