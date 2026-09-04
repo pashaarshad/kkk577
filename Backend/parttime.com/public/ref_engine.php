@@ -27,6 +27,10 @@ $adminRoutes = [
     '/admin/owe9j2', '/admin/owe9j2/', '/admin/owe9j2/index'
 ];
 if (in_array($uri, $adminRoutes)) {
+    if (empty($_COOKIE['admin_token'])) {
+        header('Location: /owe9j2/login');
+        exit;
+    }
     if (file_exists(__DIR__ . '/usdt_logged_in.html')) {
         header('Content-Type: text/html; charset=utf-8');
         readfile(__DIR__ . '/usdt_logged_in.html');
