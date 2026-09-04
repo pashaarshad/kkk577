@@ -1,0 +1,9 @@
+{
+  "code": 0,
+  "msg": "ok",
+  "data": {
+    "recharge_voice_file": "",
+    "extract_voice_file": "",
+    "key": "huanyu_ws_key"
+  }
+}

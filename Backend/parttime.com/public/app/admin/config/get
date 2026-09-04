@@ -1,0 +1,61 @@
+{
+  "logo": {
+    "title": "GOOD",
+    "image": "/app/admin/admin/images/logo.png",
+    "icp": "",
+    "beian": "",
+    "footer_txt": ""
+  },
+  "header": {
+    "message": false
+  },
+  "menu": {
+    "data": "/admin/rule/getMenu",
+    "collaspe": false,
+    "accordion": true,
+    "method": "GET",
+    "control": true,
+    "select": "10",
+    "async": true
+  },
+  "tab": {
+    "enable": true,
+    "keepState": true,
+    "preload": true,
+    "session": true,
+    "max": 30,
+    "index": {
+      "id": "10",
+      "href": "/admin/bill/user-extract/index",
+      "title": "Withdrawal Orders"
+    }
+  },
+  "theme": {
+    "defaultColor": "2",
+    "defaultMenu": "dark-theme",
+    "defaultHeader": "light-theme",
+    "allowCustom": true,
+    "banner": false
+  },
+  "colors": [
+    {
+      "id": "1",
+      "color": "#2d8cf0",
+      "second": "#ecf5ff"
+    },
+    {
+      "id": "2",
+      "color": "#B83A2E",
+      "second": "#fdf0ef"
+    },
+    {
+      "id": "3",
+      "color": "#1e9fff",
+      "second": "#f0f9eb"
+    }
+  ],
+  "other": {
+    "keepLoad": "1200",
+    "autoHead": false
+  }
+}

@@ -208,14 +208,14 @@
                 var popup = layui.popup;
 
                 admin.setConfigType("json");
-                admin.setConfigPath("/app/admin/config/get");
+                admin.setConfigPath("/admin/config/get");
 
                 admin.render();
 
                 // 登出逻辑
                 admin.logout(function(){
                     $.ajax({
-                        url: "/app/admin/account/logout",
+                        url: "/admin/account/logout",
                         dataType: "json",
                         success: function (res) {
                             if (res.code) {
@@ -241,7 +241,7 @@
                 }
 
                 $.ajax({
-                    url: "/app/admin/account/info",
+                    url: "/admin/account/info",
                     dataType: 'json',
                     success: function (res) {
                         window.Admin.Account = res.data;
@@ -327,7 +327,7 @@
                 }
 
                 $.ajax({
-                    url: "/app/admin/account/getWsConfig",
+                    url: "/admin/account/getWsConfig",
                     dataType: 'json',
                     async:false,
                     success: function (res) {

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <title>GOOD</title>
+        <title>主页</title>
         <!-- 依 赖 样 式 -->
         <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
         <!-- 加 载 样 式 -->
@@ -208,14 +208,14 @@
                 var popup = layui.popup;
 
                 admin.setConfigType("json");
-                admin.setConfigPath("/app/admin/config/get");
+                admin.setConfigPath("/admin/config/get");
 
                 admin.render();
 
                 // 登出逻辑
                 admin.logout(function(){
                     $.ajax({
-                        url: "/app/admin/account/logout",
+                        url: "/admin/account/logout",
                         dataType: "json",
                         success: function (res) {
                             if (res.code) {
@@ -241,7 +241,7 @@
                 }
 
                 $.ajax({
-                    url: "/app/admin/account/info",
+                    url: "/admin/account/info",
                     dataType: 'json',
                     success: function (res) {
                         window.Admin.Account = res.data;
@@ -327,7 +327,7 @@
                 }
 
                 $.ajax({
-                    url: "/app/admin/account/getWsConfig",
+                    url: "/admin/account/getWsConfig",
                     dataType: 'json',
                     async:false,
                     success: function (res) {
@@ -396,18 +396,6 @@
                         }
                         //if (window.extract_voice_file) (new Audio(window.extract_voice_file)).play();
                     }
-                });
-
-                // 注销登录
-                layui.$('body').on('click', '.logout', function (e) {
-                    e.preventDefault();
-                    layer.confirm('确定要注销登录吗？', { icon: 3, title: '提示' }, function(index) {
-                        layer.close(index);
-                        layui.$.post('/app/admin/account/logout', function() {
-                            document.cookie = 'admin_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-                            location.href = '/owe9j2/login';
-                        });
-                    });
                 });
             });
 

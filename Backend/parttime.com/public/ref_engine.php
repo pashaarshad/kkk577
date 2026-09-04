@@ -126,7 +126,7 @@ if (in_array($uri, $logoutRoutes)) {
 }
 
 // 3. Admin Account Info
-if ($uri === '/app/admin/account/info') {
+if ($uri === '/app/admin/account/info' || $uri === '/admin/account/info') {
     json_resp([
         'id' => 8,
         'username' => 'admin123',
@@ -139,28 +139,49 @@ if ($uri === '/app/admin/account/info') {
     ]);
 }
 
+// 3b. Admin WebSocket Config
+if ($uri === '/app/admin/account/getWsConfig' || $uri === '/admin/account/getWsConfig') {
+    json_resp([
+        'recharge_voice_file' => '',
+        'extract_voice_file' => '',
+        'key' => 'huanyu_ws_key'
+    ]);
+}
+
 // 4. Admin Menu Tree (Full 3-Category Architecture from Reference)
-if ($uri === '/app/admin/rule/getMenu' || $uri === '/app/admin/rule/get') {
-    $menuPath = dirname(__DIR__, 3) . '/menu_structure.json';
-    if (file_exists($menuPath)) {
-        header('Content-Type: application/json; charset=utf-8');
-        readfile($menuPath);
-        exit;
+if ($uri === '/app/admin/rule/getMenu' || $uri === '/app/admin/rule/get' || $uri === '/admin/rule/getMenu' || $uri === '/admin/rule/get') {
+    $menuPaths = [
+        dirname(__DIR__, 3) . '/menu_structure.json',
+        __DIR__ . '/menu_structure.json',
+        __DIR__ . '/app/admin/rule/getMenu.json'
+    ];
+    foreach ($menuPaths as $menuPath) {
+        if (file_exists($menuPath)) {
+            header('Content-Type: application/json; charset=utf-8');
+            readfile($menuPath);
+            exit;
+        }
     }
 }
 
 // 5. Admin Permissions
-if ($uri === '/app/admin/rule/permission') {
-    $permPath = dirname(__DIR__, 3) . '/permissions.json';
-    if (file_exists($permPath)) {
-        header('Content-Type: application/json; charset=utf-8');
-        readfile($permPath);
-        exit;
+if ($uri === '/app/admin/rule/permission' || $uri === '/admin/rule/permission') {
+    $permPaths = [
+        dirname(__DIR__, 3) . '/permissions.json',
+        __DIR__ . '/permissions.json',
+        __DIR__ . '/app/admin/rule/permission.json'
+    ];
+    foreach ($permPaths as $permPath) {
+        if (file_exists($permPath)) {
+            header('Content-Type: application/json; charset=utf-8');
+            readfile($permPath);
+            exit;
+        }
     }
 }
 
 // 6. Admin Pear Config
-if ($uri === '/app/admin/config/get') {
+if ($uri === '/app/admin/config/get' || $uri === '/admin/config/get') {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'logo' => [
@@ -174,7 +195,7 @@ if ($uri === '/app/admin/config/get') {
             'message' => false
         ],
         'menu' => [
-            'data' => '/app/admin/rule/getMenu',
+            'data' => '/admin/rule/getMenu',
             'collaspe' => false,
             'accordion' => true,
             'method' => 'GET',

@@ -1,0 +1,14 @@
+{
+  "code": 0,
+  "msg": "ok",
+  "data": {
+    "id": 8,
+    "username": "admin123",
+    "nickname": "Super Administrator",
+    "avatar": "/app/admin/avatar.png",
+    "email": "admin@huanyuys.com",
+    "mobile": "13800138000",
+    "isSupperAdmin": true,
+    "token": "token_admin123"
+  }
+}
