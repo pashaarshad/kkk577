@@ -177,7 +177,7 @@ layui.use(['table', 'form', 'popup', 'layer', 'jquery'], function () {
                 align: "center",
                 templet: function (d) {
                     if (d.pic && d.pic.trim() !== '' && !d.pic.includes('sample_voucher.png')) {
-                        return '<img src="' + d.pic + '" style="max-width:36px;max-height:36px;border-radius:4px;cursor:pointer;" onclick="window.open('' + d.pic + '')" />';
+                        return '<a href="' + d.pic + '" target="_blank" rel="noreferrer"><img src="' + d.pic + '" style="max-width:36px;max-height:36px;border-radius:4px;cursor:pointer;border:1px solid #e2e2e2;" title="Click to view voucher" /></a>';
                     }
                     return '<span style="color:#bbb;">None</span>';
                 }
@@ -362,6 +362,10 @@ layui.use(['table', 'form', 'popup', 'layer', 'jquery'], function () {
         });
         return false;
     });
+
+    window.refreshTable = function () {
+        table.reload("data-table");
+    };
 });
 </script>
 
