@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="utf-8">
+    <title>浏览页面</title>
+    <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
+    <link rel="stylesheet" href="/app/admin/component/jsoneditor/css/jsoneditor.css" />
+    <link rel="stylesheet" href="/app/admin/admin/css/reset.css" />
+    <style>
+        .html-render-wrap {
+            position: relative;
+            min-height: 100px;
+            line-height: 20px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            overflow-y: auto;
+            resize: height;
+            max-height: 300px;
+        }
+    </style>
+</head>
+
+<body class="pear-container"><a href="https://api.huanyuys.com/cdn-cgi/content?id=Pv4UgP.EA8opvDCu73RYpZ8NQLJT2o4k4Pt9_lCNHu4-1788501760.3237736-1.2.1.1-6dqnCZJZw8QLmvzOR2gGZ85vONQb0opdV5iFIifsIUd0uO10isAIdmShPZfqXAbE" aria-hidden="true" rel="nofollow noopener" style="display: none !important; visibility: hidden !important"></a>
+<!-- 数据表格 -->
+<form class="layui-form" action="">
+    <div class="mainBox">
+        <div class="main-container mr-5">
+            <div class="layui-row layui-col-space10">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header">
+                            原文
+                        </div>
+                        <div class="layui-card-body">
+                                <textarea id="original_text" name="original_text" placeholder="请输入内容"
+                                          class="layui-textarea"
+                                          style="min-height: 100px; max-height: 300px; overflow-y: auto;"></textarea>
+                        </div>
+                        <div style="text-align: center;margin-top: 5px">
+                            <button type="button" class="layui-btn layui-btn-primary" id="translate">免费翻译</button>
+                            <button type="button" class="layui-btn layui-btn-primary" id="translate2">收费翻译</button>
+                            </br>
+                            <span style="color: red">如果翻译内容过大耐心等待，如果一直报错请到谷歌翻译网站进行翻译</span></br>
+                            <a target="_blank"
+                               href="https://translate.google.com/">谷歌翻译网址：https://translate.google.com/</a>
+                        </div>
+                    </div>
+                </div>
+
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>英语</div>
+                            <button type="button" id="edit_en" data-target="en"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="en" name="en"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_en" name="en">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>法语</div>
+                            <button type="button" id="edit_fr" data-target="fr"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="fr" name="fr"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_fr" name="fr">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>意大利语</div>
+                            <button type="button" id="edit_it" data-target="it"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="it" name="it"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_it" name="it">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>日语</div>
+                            <button type="button" id="edit_ja" data-target="ja"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="ja" name="ja"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_ja" name="ja">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>韩语</div>
+                            <button type="button" id="edit_ko" data-target="ko"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="ko" name="ko"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_ko" name="ko">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>德语</div>
+                            <button type="button" id="edit_de" data-target="de"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="de" name="de"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_de" name="de">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>俄语</div>
+                            <button type="button" id="edit_ru" data-target="ru"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="ru" name="ru"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_ru" name="ru">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>越南语</div>
+                            <button type="button" id="edit_vi" data-target="vi"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="vi" name="vi"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_vi" name="vi">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>葡萄牙语（葡萄牙、巴西）</div>
+                            <button type="button" id="edit_pt" data-target="pt"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="pt" name="pt"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_pt" name="pt">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>土耳其语</div>
+                            <button type="button" id="edit_tr" data-target="tr"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="tr" name="tr"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_tr" name="tr">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>西班牙语</div>
+                            <button type="button" id="edit_es" data-target="es"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="es" name="es"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_es" name="es">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>波斯语</div>
+                            <button type="button" id="edit_fa" data-target="fa"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="fa" name="fa"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_fa" name="fa">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>阿拉伯语</div>
+                            <button type="button" id="edit_ar" data-target="ar"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="ar" name="ar"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_ar" name="ar">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>印度尼西亚语</div>
+                            <button type="button" id="edit_id" data-target="id"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="id" name="id"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_id" name="id">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>希腊文</div>
+                            <button type="button" id="edit_el" data-target="el"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="el" name="el"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_el" name="el">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>马来语</div>
+                            <button type="button" id="edit_ms" data-target="ms"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="ms" name="ms"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_ms" name="ms">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>泰语</div>
+                            <button type="button" id="edit_th" data-target="th"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="th" name="th"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_th" name="th">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>拉丁文</div>
+                            <button type="button" id="edit_la" data-target="la"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="la" name="la"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_la" name="la">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>印地语</div>
+                            <button type="button" id="edit_hi" data-target="hi"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="hi" name="hi"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_hi" name="hi">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>孟加拉文</div>
+                            <button type="button" id="edit_bn" data-target="bn"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="bn" name="bn"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_bn" name="bn">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>乌尔都语</div>
+                            <button type="button" id="edit_ur" data-target="ur"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="ur" name="ur"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_ur" name="ur">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header flex items-center justify-between">
+                            <div>繁体中文</div>
+                            <button type="button" id="edit_zh-TW" data-target="zh-TW"
+                                    class="pear-btn pear-btn-primary pear-btn-xs edit-btn"> 编辑
+                            </button>
+                        </div>
+                        <div class="layui-card-body">
+                            <!-- <textarea id="zh-TW" name="zh-TW"
+                                  class="layui-textarea"></textarea> -->
+
+                            <!--富文本渲染区域-->
+                            <div class="html-render-wrap " id="html_zh-TW" name="zh-TW">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            </div>
+        </div>
+    </div>
+    <input type="hidden" id="type" name="type" class="layui-input" value="">
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-md" lay-submit="" lay-filter="save">
+                提交
+            </button>
+            <button type="reset" class="pear-btn pear-btn-md">
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+
+<script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script src="/app/admin/component/pear/pear.js"></script>
+<script src="/app/admin/admin/js/permission.js"></script>
+<script src="/app/admin/admin/js/common.js"></script>
+
+<script>
+
+    // 相关常量
+    const PRIMARY_KEY = "id";
+    const SELECT_API = "/admin/system/article/select";
+    const TRANSLATE_URL = "/admin/system/notice-template/translate";
+    const UPDATE_API = "/admin/system/article/update";
+    const DELETE_API = "/admin/system/article/delete";
+    const INSERT_URL = "/admin/system/article/insert";
+    const UPDATE_URL = "/admin/system/article/update";
+
+    layui.use(["form", "util", "popup", "tinymce", "loading"], function () {
+        let $ = layui.$;
+        let tinymce = layui.tinymce;
+        let loading = layui.loading;
+
+        /*
+        {
+            'en':{
+                isEditing:false,
+                content:'',
+                editInstance:null
+            }
+        } */
+        // 译文数据实例等对象
+        let translateData = {}
+
+        // 实例数组
+        let edit_map = [];
+
+        function cleanStyles(code) {
+            if (code) {
+                code = code.replace(/ style="[^"]+"/ig, '').replace(/ class="[^"]+"/ig, '');
+                //if (document.getElementById('clearLink').checked) {
+                code = code.replace(/\<a [^\>]+\>/ig, '').replace(/\<\/a>/ig, '');
+                //}
+            }
+            return code;
+        }
+        function addEditor(selector) {
+            // 检查是否已经是TinyMCE实例
+            if (!edit_map[selector]) {
+                //tinymce.init({selector: '#' + selector});
+                edit_map[selector] = tinymce.render({
+                    elem: "#" + selector,
+                    height: 300,
+                    resize:true,
+                    convert_urls: false,
+                    paste_preprocess: function (plugin, args) {
+                        // 如果是第一次粘贴，清理样式
+                        args.content = cleanStyles(args.content);
+                    },
+                    'images_upload_url': "/app/admin/upload/image",
+                });
+                edit_map[selector].on("blur", function () {
+                    layui.$("#" + selector).val(edit_map[selector].getContent());
+                });
+            }
+            return edit_map[selector]
+        }
+
+        addEditor('original_text');
+
+        // 获取译文数据
+        $.ajax({
+            url: SELECT_API + '?type=' + $('#type').val(),
+            dataType: "json",
+            async: false,
+            success: function (res) {
+                // 给表单初始化数据
+                layui.each(res.data, function (key, value) {
+                    $('#html_' + value.lang).html(value.content)
+
+                    if (!translateData[value.lang]) {
+                        translateData[value.lang] = {
+                            isEditing: false,
+                            content: value.content,
+                            editInstance: null
+                        }
+                    } else {
+                        translateData[value.lang] = {
+                            isEditing: false,
+                            content: value.content,
+                            editInstance: null
+                        }
+                    }
+                });
+                // ajax返回失败
+                if (res.code) {
+                    layui.popup.failure(res.msg);
+                }
+
+            }
+        });
+
+
+        $('#translate').click(function () {
+            // 点击事件触发的代码
+            let content = edit_map['original_text'].getContent();
+            let par = {
+                remarks: content,
+            };
+            loading.Load(4, '翻译中');
+            $.ajax({
+                url: TRANSLATE_URL, // url---->地址
+                type: "POST", // type ---> 请求方式
+                async: true, // async----> 同步：false，异步：true
+                data: par,
+                success: function (result) {
+                    if (result.code == 1) {
+                        layui.popup.success(result.msg);
+
+                        $.each(result.data, function (key, value) {
+                            if (translateData[key]) {
+                                const currnetInstance = translateData[key]
+                                translateData[key].content = value
+
+                                if (currnetInstance.isEditing && currnetInstance.editInstance) {
+                                    currnetInstance.editInstance.setContent(value)
+                                } else {
+                                    $('#html_' + key).html(value)
+                                }
+                            }
+                        });
+                    } else {
+                        layui.popup.failure(result.msg);
+                    }
+                    loading.loadRemove(1000);
+                }
+            });
+        });
+
+        function countWithChineseAsTwo(str) {
+            return str.length;
+        }
+        $('#translate2').click(function () {
+            // 点击事件触发的代码
+            let content = edit_map['original_text'].getContent();
+            let par = {
+                remarks: content,
+                type: 'html',
+                channel:'2',
+            };
+            let length = countWithChineseAsTwo(content);
+            layer.confirm("收费翻译将会根据字符数量扣除对应积分,每100万字符30积分，本次翻译一个语言预估"+length+"字符，确定使用收费翻译吗？", {
+                icon: 3,
+                title: "提示"
+            }, function (index) {
+                layer.close(index);
+                loading.Load(4, '翻译中');
+                $.ajax({
+                    url: TRANSLATE_URL, // url---->地址
+                    type: "POST", // type ---> 请求方式
+                    async: true, // async----> 同步：false，异步：true
+                    data: par,
+                    success: function (result) {
+                        if (result.code == 1) {
+                            layui.popup.success(result.msg);
+                            $.each(result.data, function (key, value) {
+                                if (translateData[key]) {
+                                    const currnetInstance = translateData[key]
+                                    translateData[key].content = value
+
+                                    if (currnetInstance.isEditing && currnetInstance.editInstance) {
+                                        currnetInstance.editInstance.setContent(value)
+                                    } else {
+                                        $('#html_' + key).html(value)
+                                    }
+                                }
+                            });
+                        } else {
+                            layui.popup.failure(result.msg);
+                        }
+                        loading.loadRemove(1000);
+                    }
+                });
+            });
+        });
+
+        // 编辑按钮点击事件
+        $('.edit-btn').click(function () {
+            const target = $(this).data('target');
+
+            // 编辑器状态
+            if (translateData[target].isEditing) {
+                $(`#edit_${target}`).text('编辑')
+
+                translateData[target].content = translateData[target].editInstance.getContent()
+
+                translateData[target].editInstance.hide()
+
+
+                $(`#html_${target}`).html(translateData[target].content)
+
+                translateData[target].isEditing = false
+
+            }
+            // 富文本渲染状态
+            else {
+                $(`#edit_${target}`).text('完成')
+
+                translateData[target].isEditing = true
+                if (translateData[target].editInstance) {
+                    translateData[target].editInstance.show()
+                } else {
+                    tinymce.init({
+                        selector: `#html_${target}`,
+                        'images_upload_url': "/app/admin/upload/image",
+                        height: 300,
+                        resize:true,
+                        setup: function (editor) {
+                            editor.on('init', function () {
+                                editor.setContent(translateData[target].content);
+                            });
+                            editor.on('show', function () {
+                                editor.setContent(translateData[target].content)
+                            })
+                        }
+                    });
+                    translateData[target].editInstance = tinymce.get(`#html_${target}`)
+                }
+            }
+        });
+
+        layui.form.on("submit(save)", function (data) {
+            //data.field[PRIMARY_KEY] = layui.url().search[PRIMARY_KEY];
+            let params = {
+                original_text: edit_map['original_text'].getContent(),
+                type: $(`#type`).val()
+            }
+
+            $.each(translateData, function (key, value) {
+                const currnetInstance = translateData[key]
+                if (currnetInstance.isEditing) {
+                    params[key] = currnetInstance.editInstance.getContent()
+                } else {
+                    params[key] = currnetInstance.content
+                }
+            });
+
+            layui.$.ajax({
+                url: UPDATE_API,
+                type: "POST",
+                dateType: "json",
+                data: params,
+                success: function (res) {
+                    if (res.code) {
+                        return layui.popup.failure(res.msg);
+                    }
+                    return layui.popup.success("操作成功", function () {
+                        location.reload();
+                        //refreshTable();
+                        //parent.layer.close(parent.layer.getFrameIndex(window.name));
+                    });
+                }
+            });
+            return false;
+        });
+
+        // 监听页面刷新或关闭事件
+        window.addEventListener('beforeunload', function (event) {
+            // 销毁所有TinyMCE实例
+            edit_map.forEach(function (editor) {
+                editor.remove();
+            });
+
+            $.each(translateData, function (key, value) {
+                const currnetInstance = translateData[key]
+                if (currnetInstance.editInstance) {
+                    currnetInstance.editInstance.remove()
+                }
+            });
+        });
+    });
+    // 表格渲染
+
+</script>
+</body>
+
+</html>

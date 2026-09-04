@@ -170,7 +170,9 @@ if ($uri === '/app/admin/dict/get/country_code') {
 }
 
 // 8. Dynamic Reference HTML Views Loading
-if (preg_match('#^/admin/(system|member|bill|report)/(.+)/index$#', $uri, $matches)) {
+if (preg_match('#^/admin/(system|member|bill|report)/([^/]+)/index#', $uri, $matches)) {
+    $module = $matches[1];
+    $controller = $matches[2];
     $viewName = '_' . str_replace('/', '_', ltrim($uri, '/')) . '.html';
     $viewFile = dirname(__DIR__, 3) . '/' . $viewName;
     if (file_exists($viewFile)) {
@@ -178,6 +180,63 @@ if (preg_match('#^/admin/(system|member|bill|report)/(.+)/index$#', $uri, $match
         readfile($viewFile);
         exit;
     }
+
+    // Universal Pear Admin table view fallback
+    $selectApi = "/admin/{$module}/{$controller}/select";
+    header('Content-Type: text/html; charset=utf-8');
+    ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Admin View</title>
+    <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="/app/admin/admin/css/reset.css"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="data-table" lay-filter="data-table"></table>
+    </div>
+</div>
+<script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script src="/app/admin/component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'jquery'], function () {
+        let table = layui.table;
+        let $ = layui.$;
+
+        $.ajax({
+            url: "<?= $selectApi ?>",
+            dataType: "json",
+            success: function (res) {
+                let data = res.data || [];
+                let cols = [];
+                if (data.length > 0) {
+                    let first = data[0];
+                    Object.keys(first).forEach(function(k) {
+                        if (typeof first[k] !== 'object') {
+                            cols.push({ field: k, title: k, align: 'center' });
+                        }
+                    });
+                } else {
+                    cols = [{ field: 'id', title: 'ID' }, { field: 'name', title: 'Name' }];
+                }
+                table.render({
+                    elem: "#data-table",
+                    url: "<?= $selectApi ?>",
+                    page: true,
+                    cols: [cols],
+                    skin: "line"
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
+    <?php
+    exit;
 }
 
 // 9. API / Select / Action Endpoints from Reference System
