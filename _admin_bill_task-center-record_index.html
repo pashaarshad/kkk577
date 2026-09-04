@@ -294,7 +294,7 @@
                 field: "uid",
                 templet: function (d) {
                     let account = '';
-                    if (d.user !== null) {
+                    if (d && d.user) {
                         account = d.user.account;
                     }
                     return '<a style="color: #1aa094" data-table-info="' + d.uid + '">' + d.uid + ' / ' + account + '</a>';
@@ -316,7 +316,7 @@
                 field: "task_id",
                 templet: function (d) {
                     let name = '';
-                    if (d.task !== null) {
+                    if (d && d.task) {
                         name = d.task.title;
                     }
                     return d.task_id + ' / ' + name + '</a>';

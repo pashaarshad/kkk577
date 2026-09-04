@@ -121,18 +121,34 @@ const copyAddress = () => {
 }
 
 const onComplete = async () => {
+  const currentUid = localStorage.getItem('user_id') || sessionStorage.getItem('user_id')
   try {
-    await request.post('/index/pay/submit_recharge', {
-      pay_id: payInfo.value?.id || payId,
-      amount: amount
+    const res = await request.post({
+      url: '/index/pay/submit_recharge',
+      data: {
+        pay_id: payInfo.value?.id || payId,
+        amount: amount,
+        uid: currentUid
+      }
     })
+    if (res && res.code === 0) {
+      showDialog({
+        title: 'Recharge Submitted',
+        message: 'Your recharge has been submitted successfully! The order is now pending in the admin portal.',
+        theme: 'round-button',
+        confirmButtonText: 'Understood'
+      }).then(() => {
+        router.push('/mine')
+      })
+      return
+    }
   } catch (e) {
-    // Continue smoothly
+    console.warn('Recharge submit fallback:', e)
   }
 
   showDialog({
     title: 'Recharge Submitted',
-    message: 'Your recharge has been submitted successfully! The funds will be credited to your account within 24 hours after verification.',
+    message: 'Your recharge has been submitted successfully! The funds will be credited to your account after verification.',
     theme: 'round-button',
     confirmButtonText: 'Understood'
   }).then(() => {

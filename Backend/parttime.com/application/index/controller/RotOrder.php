@@ -135,8 +135,7 @@ class RotOrder extends Base
             }
             $res = model('admin/Convey')->create_order_group($uid, $cid);
         } else {
-            return json(['code' => 1, 'info' => lang('no_group')]);
-            // $res = model('admin/Convey')->create_order($uid, $cid);
+            $res = model('admin/Convey')->create_order($uid, $cid);
         }
 
         return json($res);

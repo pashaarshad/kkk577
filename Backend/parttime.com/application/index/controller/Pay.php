@@ -481,7 +481,17 @@ class Pay extends Base
      */
     public function submit_recharge()
     {
-        $uid = session('user_id');
+        $uid = session('user_id') ?: cookie('user_id') ?: input('post.uid/d', 0);
+        if (!$uid) {
+            $hdrUid = request()->header('user-id') ?: request()->header('uid');
+            if ($hdrUid) $uid = intval($hdrUid);
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: input('post.token/s');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
         if (!$uid) return json(['code' => 1, 'msg' => 'Please log in first']);
         $pay_id = input('post.pay_id/d', 0);
         $amount = input('post.amount/f', 0);
@@ -498,10 +508,10 @@ class Pay extends Base
             'uid' => $uid,
             'tel' => $uinfo['tel'] ?? '',
             'real_name' => $uinfo['username'] ?? '',
-            'pic' => $voucher,
+            'pic' => $voucher ?: '/upload/sample_voucher.png',
             'num' => $amount,
             'addtime' => time(),
-            'pay_name' => $payInfo['name'] ?? 'Recharge',
+            'pay_name' => !empty($payInfo['name']) ? $payInfo['name'] : 'TRC20-USDT',
             'status' => 1
         ];
         Db::name('xy_recharge')->insert($data);

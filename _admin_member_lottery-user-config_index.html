@@ -209,7 +209,7 @@
             }, {
                 field: 'uid', title: '用户信息', align: "left", templet: function (d) {
                     let amount = '';
-                    if (d.user !== null) {
+                    if (d && d.user) {
                         amount = d.user.account;
                     }
                     return d.uid + '/' + amount;
@@ -229,7 +229,7 @@
             }, {
                 field: 'prize.money', title: '奖项金额', templet: function (d) {
                     let money = '';
-                    if (d.prize !== null) {
+                    if (d && d.prize) {
                         money = d.prize.money;
                     }
                     return money + ' USDT';

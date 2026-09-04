@@ -159,7 +159,7 @@
                 title: "中奖用户", align: "center",
                 field: "uid",
                 templet: function (d) {
-                    if(d.user !== null){
+                    if (d && d.user){
                         return '<a style="color: #1aa094" data-table-info="' + d.uid + '">' + d.uid + ' / ' + d.user.account + '</a>';
                     }else{
                         return '<a style="color: #1aa094" data-table-info="' + d.uid + '">' + d.uid + ' / ' + '--' + '</a>';

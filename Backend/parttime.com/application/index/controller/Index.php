@@ -70,8 +70,8 @@ class Index extends Controller
         $intro_msg = Db::name('xy_index_msg')->where('id', 16)->find();
         $data->intro_title = ($intro_msg && !empty($intro_msg['title'])) ? $intro_msg['title'] : 'Platform Introduction';
         $data->intro_desc = ($intro_msg && !empty($intro_msg['content'])) ? strip_tags($intro_msg['content']) : 'Welcome to the Platform. Complete daily interactive tasks, lock investments, and claim massive yield rewards instantly.';
-        $data->intro_video = sysconf('home_video_url') ?: sysconf('intro_video_url') ?: 'https://www.w3schools.com/html/mov_bbb.mp4';
-        $data->intro_ratio = sysconf('home_video_ratio') ?: 'auto';
+        $data->intro_video = Db::name('system_config')->where('name', 'home_video_url')->value('value') ?: sysconf('home_video_url') ?: sysconf('intro_video_url') ?: 'https://www.w3schools.com/html/mov_bbb.mp4';
+        $data->intro_ratio = Db::name('system_config')->where('name', 'home_video_ratio')->value('value') ?: sysconf('home_video_ratio') ?: 'auto';
         $notice = Db::name('xy_index_msg')->where('id', 1)->value('content');
         $data->notice = $notice ? strip_tags(htmlspecialchars_decode($notice)) : 'Welcome to the platform! Earn commissions by completing daily tasks.';
         $data->chats_link = sysconf('chats_link') ?: 'https://wa.me/553588236216?text=Hello';

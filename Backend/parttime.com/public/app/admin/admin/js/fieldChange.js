@@ -138,7 +138,7 @@ function spreadInfoChange(data, level) {
     if (data[s_id]) {
         real_id = data[s_id];
     }
-    if (data[s_name] !== null && data[s_name]['account'] !== null) {
+    if (data && data[s_name] && data[s_name]["account"]) {
         real_name = data[s_name]['account'];
     }
     return '<a style="color: #1aa094" data-spread-table-info="' + real_id + '">' + real_id + '/' + real_name + '</a>';
@@ -172,6 +172,7 @@ function statusChange(value) {
 }
 
 function userChange(data) {
+    if (!data) return '';
     var str = '';
     let account = '';
     let add_ip_area = '';
@@ -179,24 +180,34 @@ function userChange(data) {
     let one_user = '';
     let first_spread_uid = '';
     let one_spread_uid = '';
-    if(data['user'] !== null){
-        account = data['user']['account'];
-        add_ip_area = data['user']['add_ip_area'];
+    if (data['user']) {
+        account = data['user']['account'] || '';
+        add_ip_area = data['user']['add_ip_area'] || '';
+    } else if (data['account']) {
+        account = data['account'] || '';
+        add_ip_area = data['add_ip_area'] || '';
     }
-    if(data['user1'] !== null && data['user1']['firstUser'] !== null){
-        first_user = data['user1']['firstUser']['account'];
-        first_spread_uid = data['user1']['firstUser']['uid'];
+    if (data['user1'] && data['user1']['firstUser']) {
+        first_user = data['user1']['firstUser']['account'] || '';
+        first_spread_uid = data['user1']['firstUser']['uid'] || '';
+    } else if (data['firstUser']) {
+        first_user = data['firstUser']['account'] || '';
+        first_spread_uid = data['firstUser']['uid'] || '';
     }
-    if(data['user'] !== null && data['user']['userOne'] != null){
-        one_user = data['user']['userOne']['account'];
-        one_spread_uid = data['user']['userOne']['uid'];
+    if (data['user'] && data['user']['userOne']) {
+        one_user = data['user']['userOne']['account'] || '';
+        one_spread_uid = data['user']['userOne']['uid'] || '';
+    } else if (data['userOne']) {
+        one_user = data['userOne']['account'] || '';
+        one_spread_uid = data['userOne']['uid'] || '';
     }
 
+    let uid = data['uid'] || data['id'] || '';
     str = str +
-        '<a style="color: #1aa094" data-table-info="' + data['uid'] + '">' + '用户：' + data['uid'] + '/' + account + '</a>' +
-        '<li>' + '国家：' + add_ip_area + '</li>' +
-        '<li>' + '顶级上级：'+ first_spread_uid + '/' + first_user + '</li>' +
-        '<li>' + '一级上级：'+ one_spread_uid + '/' + one_user + '</li>';
+        '<a style="color: #1aa094" data-table-info="' + uid + '">' + '用户：' + uid + '/' + (account || '-') + '</a>' +
+        '<li>' + '国家：' + (add_ip_area || '-') + '</li>' +
+        '<li>' + '顶级上级：'+ (first_spread_uid || '-') + '/' + (first_user || '-') + '</li>' +
+        '<li>' + '一级上级：'+ (one_spread_uid || '-') + '/' + (one_user || '-') + '</li>';
     return str;
 }
 
@@ -676,6 +687,7 @@ function moneyChange(data) {
 }
 
 function userRechargeChange(data) {
+    if (!data) return '';
     var str = '';
     let account = '';
     let add_ip_area = '';
@@ -683,24 +695,34 @@ function userRechargeChange(data) {
     let one_user = '';
     let first_spread_uid = '';
     let one_spread_uid = '';
-    if(data['user'] !== null){
-        account = data['user']['account'];
-        add_ip_area = data['user']['add_ip_area'];
+    if (data['user']) {
+        account = data['user']['account'] || '';
+        add_ip_area = data['user']['add_ip_area'] || '';
+    } else if (data['account']) {
+        account = data['account'] || '';
+        add_ip_area = data['add_ip_area'] || '';
     }
-    if(data['user1'] !== null && data['user1']['firstUser'] !== null){
-        first_user = data['user1']['firstUser']['account'];
-        first_spread_uid = data['user1']['firstUser']['uid'];
+    if (data['user1'] && data['user1']['firstUser']) {
+        first_user = data['user1']['firstUser']['account'] || '';
+        first_spread_uid = data['user1']['firstUser']['uid'] || '';
+    } else if (data['firstUser']) {
+        first_user = data['firstUser']['account'] || '';
+        first_spread_uid = data['firstUser']['uid'] || '';
     }
-    if(data['user'] !== null && data['user']['userOne'] != null){
-        one_user = data['user']['userOne']['account'];
-        one_spread_uid = data['user']['userOne']['uid'];
+    if (data['user'] && data['user']['userOne']) {
+        one_user = data['user']['userOne']['account'] || '';
+        one_spread_uid = data['user']['userOne']['uid'] || '';
+    } else if (data['userOne']) {
+        one_user = data['userOne']['account'] || '';
+        one_spread_uid = data['userOne']['uid'] || '';
     }
 
+    let uid = data['uid'] || data['id'] || '';
     str = str +
-        '<a style="color: #1aa094" data-table-info="' + data['uid'] + '">' + '用户：' + data['uid'] + '/' + account + '</a>' +
-        '<li>' + '国家：' + add_ip_area + '</li>' +
-        '<li>' + '顶级上级：'+ first_spread_uid + '/' + first_user + '</li>' +
-        '<li>' + '一级上级：'+ one_spread_uid + '/' + one_user + '</li>';
+        '<a style="color: #1aa094" data-table-info="' + uid + '">' + '用户：' + uid + '/' + (account || '-') + '</a>' +
+        '<li>' + '国家：' + (add_ip_area || '-') + '</li>' +
+        '<li>' + '顶级上级：'+ (first_spread_uid || '-') + '/' + (first_user || '-') + '</li>' +
+        '<li>' + '一级上级：'+ (one_spread_uid || '-') + '/' + (one_user || '-') + '</li>';
     return str;
 }
 
@@ -736,15 +758,16 @@ function userExtractOrderChange(data) {
 }
 
 function userRechargeOrderChange(data) {
+    if (!data) return '';
     var str = '';
     let account = '';
-    if(data['user'] !== null){
-        account = data['user']['account'];
+    if (data['user']) {
+        account = data['user']['account'] || '';
     }
     str = str +
-        '<li>' + '订单号：' + data['order_no'] + '</li>' +
-        '<li>' + '发送地址：' + data['from_address'] + '</li>' +
-        '<li>' + '接收地址：' + data['to_address'] + '</li>';
+        '<li>' + '订单号：' + (data['order_no'] || data['id'] || '-') + '</li>' +
+        '<li>' + '发送地址：' + (data['from_address'] || '-') + '</li>' +
+        '<li>' + '接收地址：' + (data['to_address'] || '-') + '</li>';
     return str;
 }
 
@@ -1118,7 +1141,7 @@ function collectChange(data) {
             status_text = '未知';
     }
     var collect_status_text = ''
-    if(data['collect'] === null){
+    if (!data || !data["collect"]){
         collect_status_text =  '--';
     }else{
         if (data['collect']['status'] === 1) {
@@ -1145,7 +1168,7 @@ function collectChange(data) {
 }
 
 function collectInfoChange(data) {
-    if(data['collect'] === null){
+    if (!data || !data["collect"]){
         return '--';
     }
     var str= '';
@@ -1158,7 +1181,7 @@ function collectInfoChange(data) {
 }
 
 function collectTxChange(data) {
-    if(data['collect'] === null){
+    if (!data || !data["collect"]){
         return '--';
     }
     var str= '';

@@ -511,7 +511,7 @@
 <script src="/app/admin/component/pear/pear.js"></script>
 <script src="/app/admin/admin/js/permission.js"></script>
 <script src="/app/admin/admin/js/common.js"></script>
-<script src="/app/admin/admin/js/fieldChange.js?v=1.0.8"></script>
+<script src="/app/admin/admin/js/fieldChange.js?v=3.0.0"></script>
 
 <script>
 
@@ -2244,11 +2244,7 @@
         }
 
         function cateStatus(data) {
-            if (data['cate_name'] !== null) {
-                return data['cate_name'];
-            } else {
-                return ''
-            }
+            return (data && data["cate_name"]) ? data["cate_name"] : "";
         }
 
         // 刷新表格数据

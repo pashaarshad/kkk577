@@ -894,7 +894,7 @@ layui.define(['message', 'table', 'jquery', 'element', 'yaml', 'form', 'tab', 'm
 			pearAdmin.bodyRender(param);
 			pearAdmin.themeRender(param);
 			pearAdmin.keepLoad(param);
-			if (param.header.message != false) {
+			if (param.header && param.header.message != false) {
 				pearAdmin.messageRender(param);
 			}
 		}

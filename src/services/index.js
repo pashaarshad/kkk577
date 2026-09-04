@@ -17,6 +17,16 @@ class Request {
       if (config.showLoading) {
         mainStore.isLoading = true
       }
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+      const userId = localStorage.getItem('user_id') || sessionStorage.getItem('user_id')
+      if (token) {
+        config.headers = config.headers || {}
+        config.headers['token'] = token
+      }
+      if (userId) {
+        config.headers = config.headers || {}
+        config.headers['user-id'] = userId
+      }
       return config
     }, err => {
       return err
@@ -70,16 +80,16 @@ class Request {
     })
   }
 
-  get(config) {
+  get(config, params) {
     if (typeof config === 'string') {
-      return this.request({ url: config, method: 'get' })
+      return this.request({ url: config, params, method: 'get' })
     }
     return this.request({ ...config, method: 'get' })
   }
 
-  post(config) {
+  post(config, postData) {
     if (typeof config === 'string') {
-      return this.request({ url: config, method: 'post' })
+      config = { url: config, data: postData }
     }
     let data = config.data
     if (data && typeof data === 'object' && !(data instanceof FormData) && !(data instanceof URLSearchParams)) {

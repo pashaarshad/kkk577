@@ -151,6 +151,15 @@ class User extends Controller
 
     public function check_login() {
         $uid = session('user_id') ?: cookie('user_id');
+        if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
         if ($uid && Db::name('xy_users')->where('id', $uid)->count('id')) {
             if (!session('user_id')) {
                 session('user_id', $uid);
@@ -163,6 +172,15 @@ class User extends Controller
     public function info() {
         $uid = session('user_id') ?: cookie('user_id');
         if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
+        if (!$uid) {
             return json(['code' => 1, 'info' => lang('login_first')]);
         }
         if (!session('user_id')) {
@@ -171,7 +189,7 @@ class User extends Controller
         $data = Db::name('xy_users')->field('id,tel,username,balance,freeze_balance,invite_code,level,credit_score,deposit_status,deal_status,up_status')->find($uid);
         $data['level_name'] = Db::name('xy_level')->where('level', $data['level'])->value('name') ?: ('VIP' . $data['level']);
         $data['recharge_amount'] = Db::name('xy_recharge')->where('uid', $uid)->where('status', 2)->sum('num') ?: 0;
-        return json(['code' => 0, 'info' => $data]);
+        return json(['code' => 0, 'info' => $data, 'data' => $data]);
     }
 
     public function logout()

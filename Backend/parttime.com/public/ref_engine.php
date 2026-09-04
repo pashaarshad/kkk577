@@ -5,6 +5,40 @@
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
+// 0. Strip virtual /owe9j2 prefix for nested static assets and API calls
+if (preg_match('#^/owe9j2/(app/|admin/|static/|upload/|public/)(.*)$#', $uri, $m)) {
+    $uri = '/' . $m[1] . $m[2];
+}
+
+// 0b. Serve static files directly if they exist in public directory
+$realFile = __DIR__ . $uri;
+if (is_file($realFile)) {
+    $ext = pathinfo($realFile, PATHINFO_EXTENSION);
+    $mimeTypes = [
+        'js' => 'application/javascript',
+        'css' => 'text/css',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'woff' => 'font/woff',
+        'woff2' => 'font/woff2',
+        'ttf' => 'font/ttf',
+        'svg' => 'image/svg+xml',
+        'mp4' => 'video/mp4',
+        'webm' => 'video/webm',
+        'mov' => 'video/quicktime',
+        'mkv' => 'video/x-matroska'
+    ];
+    if (isset($mimeTypes[$ext])) {
+        header('Content-Type: ' . $mimeTypes[$ext]);
+    }
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+    readfile($realFile);
+    exit;
+}
+
 // Helper function for JSON responses
 function json_resp($data, $code = 0, $msg = 'ok') {
     header('Content-Type: application/json; charset=utf-8');
@@ -17,6 +51,17 @@ function table_resp($data, $count = null) {
     if ($count === null) $count = is_array($data) ? count($data) : 0;
     echo json_encode(['code' => 0, 'msg' => 'ok', 'count' => $count, 'data' => $data], JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function param_val($key, $default = '') {
+    if (!isset($_GET[$key])) return $default;
+    $val = $_GET[$key];
+    if (is_array($val)) {
+        if (isset($val[1]) && is_string($val[1])) return trim($val[1]);
+        if (isset($val[0]) && is_string($val[0]) && $val[0] !== 'like') return trim($val[0]);
+        return $default;
+    }
+    return is_string($val) ? trim($val) : $default;
 }
 
 // 1. Static HTML Pages for Reference Admin
@@ -119,11 +164,14 @@ if ($uri === '/app/admin/config/get') {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'logo' => [
-            'title' => 'Global Overseas',
+            'title' => 'GOOD',
             'image' => '/app/admin/admin/images/logo.png',
             'icp' => '',
             'beian' => '',
             'footer_txt' => ''
+        ],
+        'header' => [
+            'message' => false
         ],
         'menu' => [
             'data' => '/app/admin/rule/getMenu',
@@ -195,15 +243,34 @@ if ($uri === '/app/admin/dict/get/country_code') {
 // 8. Dynamic Reference HTML Views Loading & Universal Interceptor
 if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
     $subPath = $viewMatches[2];
-    $isApiCall = preg_match('#/(select|update|edit|delete|get|info|permission|refreshExtractCount|allCheck|check|allPay|payment|allRefund|ignore|modifymoney)(\.html)?$#', $subPath) || preg_match('#\.json$#', $subPath);
+    $isApiCall = preg_match('#/(select|selectData|update|edit|delete|del|save|upload|get|info|permission|refreshExtractCount|allCheck|check|allPay|payment|allRefund|ignore|modifymoney|queryOrder|collect|export|insert)(\.html)?$#', $subPath) || preg_match('#\.json$#', $subPath);
 
     if (!$isApiCall) {
         // Normalize path: strip .html and trailing slashes
-        $cleanSubPath = preg_replace('#(\.html|/index|\?.*)$#', '', $subPath);
+        $cleanSubPath = preg_replace('#(\.html|/index|\?.*)+$#', '', $subPath);
+        $cleanSubPath = preg_replace('#(\.html|/index|\?.*)+$#', '', $cleanSubPath);
         $cleanSubPath = trim($cleanSubPath, '/');
         
-        $viewName = '_admin_' . str_replace('/', '_', $cleanSubPath) . '_index.html';
+        $routeAliases = [
+            'deal/user_recharge' => 'bill/user-recharge',
+            'deal/user-recharge' => 'bill/user-recharge',
+            'deal/deposit_list' => 'bill/user-extract',
+            'deal/deposit-list' => 'bill/user-extract',
+            'deal/order_list' => 'bill/task-center-record',
+            'user/index' => 'member/user',
+            'user' => 'member/user',
+            'help/video' => 'system/video'
+        ];
+        if (isset($routeAliases[$cleanSubPath])) {
+            $cleanSubPath = $routeAliases[$cleanSubPath];
+        }
+
+        $viewName = '_admin_' . str_replace('/', '_', str_replace('_', '-', $cleanSubPath)) . '_index.html';
         $viewFile = dirname(__DIR__, 3) . '/' . $viewName;
+        if (!file_exists($viewFile)) {
+            $viewName = '_admin_' . str_replace('/', '_', $cleanSubPath) . '_index.html';
+            $viewFile = dirname(__DIR__, 3) . '/' . $viewName;
+        }
         
         if (file_exists($viewFile)) {
             header('Content-Type: text/html; charset=utf-8');
@@ -293,15 +360,83 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     require_once dirname(__DIR__) . '/thinkphp/base.php';
     \think\Container::get('app')->initialize();
 
-    // A. 提现订单查询 /admin/bill/user-extract/select
-    if ($uri === '/admin/bill/user-extract/select' || $uri === '/admin/withdraw/select' || $uri === '/admin/deposit/select') {
+    // Video Settings API (Get, Save, Delete, Upload)
+    if (strpos($uri, 'system/video/get') !== false || strpos($uri, 'help/video/get') !== false) {
+        $url = \think\Db::name('system_config')->where('name', 'home_video_url')->value('value') ?: '';
+        $ratio = \think\Db::name('system_config')->where('name', 'home_video_ratio')->value('value') ?: 'auto';
+        json_resp(['video_url' => $url, 'video_ratio' => $ratio]);
+    }
+
+    if (strpos($uri, 'system/video/save') !== false || strpos($uri, 'help/video/save') !== false || ($uri === '/admin/help/video' && $_SERVER['REQUEST_METHOD'] === 'POST') || ($uri === '/admin/system/video' && $_SERVER['REQUEST_METHOD'] === 'POST')) {
+        $video_url = trim($_POST['video_url'] ?? '');
+        $video_ratio = trim($_POST['video_ratio'] ?? 'auto');
+
+        if (function_exists('sysconf')) {
+            sysconf('home_video_url', $video_url);
+            sysconf('home_video_ratio', $video_ratio);
+        }
+        $existUrl = \think\Db::name('system_config')->where('name', 'home_video_url')->find();
+        if ($existUrl) {
+            \think\Db::name('system_config')->where('name', 'home_video_url')->update(['value' => $video_url]);
+        } else {
+            \think\Db::name('system_config')->insert(['name' => 'home_video_url', 'value' => $video_url]);
+        }
+
+        $existRatio = \think\Db::name('system_config')->where('name', 'home_video_ratio')->find();
+        if ($existRatio) {
+            \think\Db::name('system_config')->where('name', 'home_video_ratio')->update(['value' => $video_ratio]);
+        } else {
+            \think\Db::name('system_config')->insert(['name' => 'home_video_ratio', 'value' => $video_ratio]);
+        }
+
+        try {
+            \think\facade\Cache::clear();
+        } catch (\Exception $e) {}
+
+        json_resp(['video_url' => $video_url, 'video_ratio' => $video_ratio], 0, 'Video settings saved successfully!');
+    }
+
+    if (strpos($uri, 'video/del') !== false || strpos($uri, 'del_video') !== false) {
+        \think\Db::name('system_config')->where('name', 'home_video_url')->update(['value' => '']);
+        json_resp(null, 0, 'Video removed successfully!');
+    }
+
+    if (strpos($uri, 'video/upload') !== false || strpos($uri, 'upload_video_file') !== false) {
+        if (empty($_FILES['file'])) {
+            json_resp(null, 1, 'No file uploaded');
+        }
+        $file = $_FILES['file'];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            json_resp(null, 1, 'File upload error code: ' . $file['error']);
+        }
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowed = ['mp4', 'mov', 'webm', 'mkv', 'avi', 'flv', 'wmv', 'ts', 'm4v', '3gp', 'mpeg'];
+        if (!in_array($ext, $allowed)) {
+            json_resp(null, 1, 'Unsupported video format: ' . $ext);
+        }
+        $dateDir = date('Ymd');
+        $saveDir = __DIR__ . '/upload/video/' . $dateDir . '/';
+        if (!is_dir($saveDir)) {
+            mkdir($saveDir, 0777, true);
+        }
+        $filename = md5(time() . rand(1000, 9999)) . '.' . $ext;
+        $targetFile = $saveDir . $filename;
+        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+            $url = '/upload/video/' . $dateDir . '/' . $filename;
+            json_resp(['url' => $url], 0, 'Upload success');
+        }
+        json_resp(null, 1, 'Failed to save file');
+    }
+
+    // A. 提现订单查询
+    if (strpos($uri, 'user-extract/select') !== false || strpos($uri, 'deposit_list') !== false || strpos($uri, 'withdraw/select') !== false || strpos($uri, 'deposit/select') !== false) {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $status = $_GET['status'] ?? '';
         $query = \think\Db::name('xy_deposit')->alias('d')
             ->leftJoin('xy_users u', 'd.uid = u.id')
             ->field('d.*, u.username as account, u.tel, u.level, u.balance as user_balance');
-        if ($status !== '' && $status !== null) {
+        if ($status !== '' && $status !== null && $status !== '-1') {
             $query->where('d.status', intval($status));
         }
         $count = (clone $query)->count();
@@ -333,7 +468,7 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     }
 
     // B. 提现审核通过
-    if ($uri === '/admin/bill/user-extract/allCheck' || $uri === '/admin/bill/user-extract/check') {
+    if ($uri === '/admin/bill/user-extract/allCheck' || $uri === '/admin/bill/user-extract/check' || strpos($uri, 'deposit_list/check') !== false) {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         \think\Db::name('xy_deposit')->where('id', 'in', $ids)->update(['status' => 2, 'endtime' => time()]);
@@ -341,7 +476,7 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     }
 
     // C. 提现一键出款
-    if ($uri === '/admin/bill/user-extract/allPay' || $uri === '/admin/bill/user-extract/payment') {
+    if ($uri === '/admin/bill/user-extract/allPay' || $uri === '/admin/bill/user-extract/payment' || strpos($uri, 'deposit_list/payment') !== false) {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         \think\Db::name('xy_deposit')->where('id', 'in', $ids)->update(['status' => 2, 'endtime' => time()]);
@@ -349,7 +484,7 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     }
 
     // D. 提现一键退回
-    if ($uri === '/admin/bill/user-extract/allRefund' || $uri === '/admin/bill/user-extract/ignore') {
+    if ($uri === '/admin/bill/user-extract/allRefund' || $uri === '/admin/bill/user-extract/ignore' || strpos($uri, 'deposit_list/ignore') !== false) {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         foreach ($ids as $id) {
@@ -362,15 +497,18 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         json_resp(['count' => count($ids)], 0, '退回成功，资金已返回用户余额');
     }
 
-    // E. 会员列表查询 /admin/member/user/select
-    if ($uri === '/admin/member/user/select' || $uri === '/admin/user/select' || $uri === '/admin/users/select') {
+    // E. 会员列表查询
+    if (strpos($uri, 'member/user/select') !== false || strpos($uri, 'user/index/select') !== false || strpos($uri, 'users/select') !== false || $uri === '/admin/user/select') {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $query = \think\Db::name('xy_users');
-        if (!empty($_GET['uid'])) $query->where('id', intval($_GET['uid']));
-        if (!empty($_GET['account'])) $query->where('username|tel', 'like', '%' . $_GET['account'] . '%');
-        if (isset($_GET['levels']) && $_GET['levels'] !== '' && $_GET['levels'] !== 'null') {
-            $query->where('level', intval($_GET['levels']));
+        $uid = param_val('uid');
+        if ($uid !== '') $query->where('id', intval($uid));
+        $acc = param_val('account');
+        if ($acc !== '') $query->where('username|tel', 'like', '%' . $acc . '%');
+        $levels = param_val('levels');
+        if ($levels !== '' && $levels !== 'null') {
+            $query->where('level', intval($levels));
         }
         $count = (clone $query)->count();
         $list = $query->order('id desc')->page($page, $limit)->select();
@@ -432,8 +570,29 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         table_resp($formatted, $count);
     }
 
-    // F. 会员状态修改 /admin/member/user/update
-    if ($uri === '/admin/member/user/update') {
+    // E1. 会员下拉框组件查询
+    if (strpos($uri, 'selectData') !== false) {
+        $page = intval($_GET['page'] ?? 1);
+        $limit = intval($_GET['limit'] ?? 10);
+        $query = \think\Db::name('xy_users');
+        $acc = param_val('account');
+        if ($acc !== '') {
+            $query->where('username|tel', 'like', '%' . $acc . '%');
+        }
+        $count = (clone $query)->count();
+        $list = $query->field('id as uid, username as account, tel')->page($page, $limit)->select();
+        $formatted = [];
+        foreach ($list as $u) {
+            $formatted[] = [
+                'uid' => $u['uid'],
+                'account' => $u['account'] ?: $u['tel'] ?: ('User #' . $u['uid'])
+            ];
+        }
+        table_resp($formatted, $count);
+    }
+
+    // F. 会员状态修改
+    if (strpos($uri, 'member/user/update') !== false) {
         $uid = intval($_POST['uid'] ?? 0);
         $data = [];
         if (isset($_POST['status'])) $data['status'] = intval($_POST['status']);
@@ -448,8 +607,8 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         json_resp(null, 1, '更新失败');
     }
 
-    // F2. 会员余额修改 /admin/member/user/modifymoney
-    if ($uri === '/admin/member/user/modifymoney') {
+    // F2. 会员余额修改
+    if (strpos($uri, 'member/user/modifymoney') !== false || strpos($uri, 'users/edit_money') !== false) {
         $uid = intval($_POST['uid'] ?? $_POST['id'] ?? 0);
         $money = floatval($_POST['money'] ?? $_POST['balance'] ?? 0);
         $type = intval($_POST['type'] ?? 1);
@@ -464,8 +623,8 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         json_resp(null, 1, '修改失败');
     }
 
-    // F3. 会员详情与修改 /admin/member/user/edit
-    if ($uri === '/admin/member/user/edit') {
+    // F3. 会员详情与修改
+    if (strpos($uri, 'member/user/edit') !== false) {
         $uid = intval($_REQUEST['uid'] ?? $_REQUEST['id'] ?? 0);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateData = [];
@@ -484,8 +643,8 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         }
     }
 
-    // G. 充值订单查询 /admin/bill/user-recharge/select
-    if ($uri === '/admin/bill/user-recharge/select' || $uri === '/admin/recharge/select') {
+    // G. 充值订单查询
+    if (strpos($uri, 'user-recharge/select') !== false || strpos($uri, 'user_recharge') !== false || strpos($uri, 'recharge/select') !== false) {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
         $query = \think\Db::name('xy_recharge')->alias('r')
@@ -512,8 +671,38 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         table_resp($formatted, $count);
     }
 
-    // G1. 充值审核通过 /admin/bill/user-recharge/check or allCheck
-    if ($uri === '/admin/bill/user-recharge/check' || $uri === '/admin/bill/user-recharge/allCheck') {
+    // G0. 任务订单/交易订单查询
+    if (strpos($uri, 'order_list') !== false || strpos($uri, 'task-record') !== false || strpos($uri, 'convey') !== false) {
+        $page = intval($_GET['page'] ?? 1);
+        $limit = intval($_GET['limit'] ?? 15);
+        $query = \think\Db::name('xy_convey')->alias('c')
+            ->leftJoin('xy_users u', 'c.uid = u.id')
+            ->leftJoin('xy_goods_list g', 'g.id = c.goods_id')
+            ->field('c.*, u.username as account, u.tel, g.goods_name, g.goods_price');
+        $count = (clone $query)->count();
+        $list = $query->order('c.id desc')->page($page, $limit)->select();
+        $formatted = [];
+        foreach ($list as $item) {
+            $formatted[] = [
+                'id' => $item['id'],
+                'uid' => $item['uid'],
+                'order_no' => $item['id'],
+                'goods_name' => $item['goods_name'] ?: 'Task Goods',
+                'goods_price' => number_format($item['num'] ?? $item['goods_price'] ?? 0, 2, '.', ''),
+                'commission' => number_format($item['commission'] ?? 0, 2, '.', ''),
+                'status' => intval($item['status']),
+                'add_time' => date('Y-m-d H:i:s', $item['addtime']),
+                'user' => [
+                    'uid' => $item['uid'],
+                    'account' => $item['account'] ?: $item['tel']
+                ]
+            ];
+        }
+        table_resp($formatted, $count);
+    }
+
+    // G1. 充值审核通过
+    if ($uri === '/admin/bill/user-recharge/check' || $uri === '/admin/bill/user-recharge/allCheck' || strpos($uri, 'user_recharge/check') !== false) {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         foreach ($ids as $id) {
@@ -526,15 +715,15 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         json_resp(['count' => count($ids)], 0, '充值审核成功');
     }
 
-    // G2. 充值审核驳回 /admin/bill/user-recharge/ignore or allRefund
-    if ($uri === '/admin/bill/user-recharge/ignore' || $uri === '/admin/bill/user-recharge/allRefund') {
+    // G2. 充值审核驳回
+    if ($uri === '/admin/bill/user-recharge/ignore' || $uri === '/admin/bill/user-recharge/allRefund' || strpos($uri, 'user_recharge/ignore') !== false) {
         $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         \think\Db::name('xy_recharge')->where('id', 'in', $ids)->update(['status' => 3]);
         json_resp(['count' => count($ids)], 0, '充值已驳回');
     }
 
-    // G3. 通用删除接口 /admin/{module}/{controller}/delete
+    // G3. 通用删除接口
     if (preg_match('#^/admin/([^/]+)/([^/]+)/delete$#', $uri, $delMatches)) {
         $mod = $delMatches[1];
         $ctrl = $delMatches[2];
@@ -543,10 +732,13 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         if (!empty($ids)) {
             $tableMap = [
                 'user-extract' => 'xy_deposit',
+                'deposit_list' => 'xy_deposit',
                 'user-recharge' => 'xy_recharge',
+                'user_recharge' => 'xy_recharge',
                 'user' => 'xy_users',
                 'product' => 'xy_goods_list',
                 'task-record' => 'xy_convey',
+                'order_list' => 'xy_convey',
                 'system-coin-channel' => 'xy_pay',
                 'system-user-level' => 'xy_level',
                 'admin' => 'system_user'
@@ -560,8 +752,8 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         json_resp(null, 0, '操作完成');
     }
 
-    // H. 充提币种通道 /admin/system/system-coin-channel/select
-    if ($uri === '/admin/system/system-coin-channel/select' || $uri === '/admin/pay/select') {
+    // H. 充提币种通道
+    if (strpos($uri, 'system-coin-channel/select') !== false || strpos($uri, 'pay/select') !== false) {
         $typeMap = [
             'TRC20-USDT' => '1', 'TRX' => '2', 'BEP20-USDT' => '3', 'BNB' => '4',
             'BEP20-USDC' => '5', 'POLYGON-USDT' => '6', 'ETH-USDT' => '7',
@@ -588,8 +780,8 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         table_resp($formatted, count($formatted));
     }
 
-    // I. VIP 等级 /admin/system/system-user-level/select
-    if ($uri === '/admin/system/system-user-level/select' || $uri === '/admin/level/select') {
+    // I. VIP 等级
+    if (strpos($uri, 'system-user-level/select') !== false || strpos($uri, 'level/select') !== false) {
         $levels = \think\Db::name('xy_level')->order('level asc')->select();
         $formatted = [];
         foreach ($levels as $lv) {
@@ -614,6 +806,18 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
             $entity = $parts[$selectIdx - 1];
             
             $entityMap = [
+                'user-recharge' => 'xy_recharge',
+                'user_recharge' => 'xy_recharge',
+                'recharge' => 'xy_recharge',
+                'deposit_list' => 'xy_deposit',
+                'deposit' => 'xy_deposit',
+                'withdraw' => 'xy_deposit',
+                'user-extract' => 'xy_deposit',
+                'order_list' => 'xy_convey',
+                'convey' => 'xy_convey',
+                'task' => 'xy_convey',
+                'users' => 'xy_users',
+                'user' => 'xy_users',
                 'queue' => 'system_queue',
                 'oplog' => 'system_log',
                 'log' => 'system_log',

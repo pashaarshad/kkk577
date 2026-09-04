@@ -161,6 +161,18 @@
               "type": 1,
               "weight": 950,
               "children": []
+            },
+            {
+              "id": 178,
+              "title": "Homepage Video",
+              "name": "Homepage Video",
+              "icon": "layui-icon layui-icon-video",
+              "key": "homepage_video",
+              "pid": 150,
+              "href": "/admin/system/video/index",
+              "type": 1,
+              "weight": 940,
+              "children": []
             }
           ]
         },
@@ -495,10 +507,10 @@
       "children": [
         {
           "id": 300,
-          "title": "Deposit Orders",
-          "name": "Deposit Orders",
+          "title": "Recharge Orders",
+          "name": "Recharge Orders",
           "icon": "layui-icon layui-icon-download-circle",
-          "key": "deposit_orders",
+          "key": "recharge_orders",
           "pid": 118,
           "href": "/admin/bill/user-recharge/index",
           "type": 1,

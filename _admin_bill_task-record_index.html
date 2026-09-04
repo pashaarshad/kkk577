@@ -470,11 +470,11 @@
                 templet: function (d) {
                     switch (d.task_type) {
                         case 4:
-                            return d.taskProduct !== null ? d.taskProduct.name : '-';
+                            return (d && d.taskProduct) ? d.taskProduct.name : "-";
                         case 5:
-                            return d.video !== null ? d.video.video_name : '-';
+                            return (d && d.video) ? d.video.video_name : "-";
                         default:
-                            return d.product !== null ? d.product.store_name : '-';
+                            return (d && d.product) ? d.product.store_name : "-";
                     }
 
                 }

@@ -25,6 +25,18 @@ class Base extends Controller
         if (!$uid) {
             $uid = cookie('user_id');
         }
+        if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
+        if ($uid) {
+            session('user_id', $uid);
+        }
         //echo App::VERSION;exit;
         /*if (request()->subDomain() == 'cs' || request()->subDomain() == '') {
             header('Location:' . 'https://www.' . \request()->rootDomain());
