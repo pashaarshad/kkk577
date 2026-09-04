@@ -184,7 +184,25 @@ if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
         
         if (file_exists($viewFile)) {
             header('Content-Type: text/html; charset=utf-8');
-            readfile($viewFile);
+            $htmlContent = file_get_contents($viewFile);
+            $poly = '<script>
+window.apiResults = window.apiResults || {};
+if (typeof COIN_CHANNEL_TYPE_MAP !== "undefined") { window.apiResults.type = COIN_CHANNEL_TYPE_MAP; }
+var apiResults = new Proxy(window.apiResults, {
+    get: function(target, prop) {
+        if (prop in target) return target[prop];
+        return new Proxy({}, {
+            get: function(t, p) { return p; }
+        });
+    }
+});
+</script>';
+            if (strpos($htmlContent, '<head>') !== false) {
+                $htmlContent = str_replace('<head>', '<head>' . "\n" . $poly, $htmlContent);
+            } else {
+                $htmlContent = $poly . "\n" . $htmlContent;
+            }
+            echo $htmlContent;
             exit;
         }
 
