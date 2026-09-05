@@ -71,6 +71,16 @@
         </tip>
     </div>
 
+    <div class="layui-form-item">
+        <label class="layui-form-label">面板语言</label>
+        <div class="layui-input-block">
+            <input type="checkbox" id="admin_lang_checkbox" lay-skin="switch" lay-filter="admin_lang_checkbox" lay-text="English|中文">
+            <tip class="tip_style" style="display: block; margin-top: 6px; color: #8c9ba5; font-size: 13px;">
+                开启后后台面板全部转换为英文，关闭则恢复默认语言 (Switch ON to translate entire admin panel to English, OFF for default Chinese).
+            </tip>
+        </div>
+    </div>
+
     <div id="login_page_image_div" hidden>
         <div class="layui-form-item">
             <label class="layui-form-label">登录页背景图</label>
@@ -442,6 +452,19 @@
             $("#skin_no_41").hide();
             $("#skin_no_43").hide();
         });
+
+        form.on('switch(admin_lang_checkbox)', function (data) {
+            let newLang = data.elem.checked ? 'en' : 'zh';
+            if (window.I18N) {
+                window.I18N.setLang(newLang);
+            }
+        });
+
+        // Initialize checkbox state based on current language
+        if (window.I18N && window.I18N.getLang() === 'en') {
+            $("#admin_lang_checkbox").prop('checked', true);
+            form.render('checkbox');
+        }
 
         let input2 = layui.$("#login_page_image").prev();
         input2.prev().attr("src", input2.val());

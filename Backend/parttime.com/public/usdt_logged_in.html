@@ -12,6 +12,8 @@
         <link rel="stylesheet" href="/app/admin/admin/css/admin.css" />
         <!-- 重置样式 -->
         <link rel="stylesheet" href="/app/admin/admin/css/reset.css" />
+        <!-- 国际化语言切换引擎 (i18n Engine) -->
+        <script src="/admin_i18n.js"></script>
         <style>
             .top_menu {
                 padding-top: 0 !important;
@@ -105,6 +107,16 @@
                 <div id="control" class="layui-layout-control"></div>
                 <!-- 顶 部 右 侧 菜 单 -->
                 <ul class="layui-nav layui-layout-right">
+                    <!-- 语言切换 Dongle (Language Switch Chinese <-> English) -->
+                    <li class="layui-nav-item" style="margin-right: 8px;">
+                        <div id="admin-lang-dongle" style="display: flex; align-items: center; background: rgba(0,0,0,0.25); padding: 3px 10px; border-radius: 20px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s; user-select: none;" title="切换语言 (Chinese / English)">
+                            <span id="dongle-text-zh" style="font-size: 12px; font-weight: bold; color: #ffb800; margin-right: 6px; transition: color 0.3s;">中文</span>
+                            <div id="dongle-track" style="position: relative; width: 38px; height: 20px; background: #555c6d; border-radius: 10px; transition: background 0.3s;">
+                                <div id="dongle-slider" style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #ffffff; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 4px rgba(0,0,0,0.4);"></div>
+                            </div>
+                            <span id="dongle-text-en" style="font-size: 12px; font-weight: bold; color: #94a3b8; margin-left: 6px; transition: color 0.3s;">EN</span>
+                        </div>
+                    </li>
 <!--                    <li class="layui-nav-item layui-hide-xs"><a href="#" class="menuSearch layui-icon layui-icon-search"></a></li>-->
 <!--                    <li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>-->
                     <li class="layui-nav-item layui-hide-xs">

@@ -387,7 +387,8 @@ var apiResults = new Proxy(window.apiResults, {
         });
     }
 });
-</script>';
+</script>
+<script src="/admin_i18n.js"></script>';
             if (strpos($htmlContent, '<head>') !== false) {
                 $htmlContent = str_replace('<head>', '<head>' . "\n" . $poly, $htmlContent);
             } else {
@@ -439,6 +440,7 @@ layui.use(["form", "jquery"], function() {
     <title>Admin View</title>
     <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css"/>
     <link rel="stylesheet" href="/app/admin/admin/css/reset.css"/>
+    <script src="/admin_i18n.js"></script>
 </head>
 <body class="pear-container">
 <div class="layui-card">
