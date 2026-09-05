@@ -788,26 +788,48 @@
                 layui.popup.warning("未选中数据");
                 return false;
             }
-            let value = checkIds.split(",");
-            layer.open({
-                type: 2,
-                title: "一键审核",
-                shade: 0.1,
-                maxmin: true,
-                area: [common.isModile() ? "100%" : "500px", common.isModile() ? "100%" : "450px"],
-                content: ALL_CHECK_URL + "?" + PRIMARY_KEY + "=" + value
-            });
-        }
-
-        let allPay = function (obj) {
-            layer.confirm("该操作将对转账失败状态的提现记录自动打款，需要一定执行时间，请勿短时间内重复操作，是否确认？", {
+            let ids = checkIds.split(",");
+            layer.confirm("是否确认批量审核通过选中的 " + ids.length + " 条提现订单？", {
                 icon: 3,
-                title: "提示"
+                title: "一键审核"
             }, function (index) {
                 layer.close(index);
-                let loading = layer.load();
+                let loading = layer.load(2);
+                $.ajax({
+                    url: ALL_CHECK_URL,
+                    data: { ids: ids },
+                    dataType: "json",
+                    type: "post",
+                    success: function (res) {
+                        layer.close(loading);
+                        if (res.code) {
+                            return layui.popup.failure(res.msg || "审核失败");
+                        }
+                        return layui.popup.success(res.msg || "审核通过成功", refreshTable);
+                    },
+                    error: function () {
+                        layer.close(loading);
+                        layui.popup.failure("网络异常");
+                    }
+                });
+            });
+        };
+
+        let allPay = function (obj) {
+            let checkIds = common.checkField(obj, PRIMARY_KEY);
+            let ids = checkIds ? checkIds.split(",") : [];
+            let confirmMsg = ids.length > 0 
+                ? ("是否确认对选中的 " + ids.length + " 条提现记录自动打款出款？") 
+                : "该操作将对未处理的提现记录自动打款，是否确认？";
+            layer.confirm(confirmMsg, {
+                icon: 3,
+                title: "一键出款"
+            }, function (index) {
+                layer.close(index);
+                let loading = layer.load(2);
                 $.ajax({
                     url: ALl_PAY_URL,
+                    data: ids.length > 0 ? { ids: ids } : {},
                     dataType: "json",
                     type: "post",
                     success: function (res) {
@@ -815,11 +837,15 @@
                         if (res.code) {
                             return layui.popup.failure(res.msg);
                         }
-                        return layui.popup.success(res.msg, refreshTable);
+                        return layui.popup.success(res.msg || "出款成功", refreshTable);
+                    },
+                    error: function () {
+                        layer.close(loading);
+                        layui.popup.failure("网络异常");
                     }
-                })
+                });
             });
-        }
+        };
 
         let allRefund = function (obj) {
             let checkIds = common.checkField(obj, PRIMARY_KEY);
@@ -828,29 +854,31 @@
                 return false;
             }
             let ids = checkIds.split(",");
-            let data = {};
-            data[PRIMARY_KEY] = ids;
-            layer.confirm("该操作将对余额不足状态的退回到余额，需要一定执行时间，请勿短时间内重复操作，是否确认?", {
-                icon: 3,
-                title: "提示"
+            layer.confirm("是否确认批量驳回选中的 " + ids.length + " 条提现订单？资金将自动退还至用户余额！", {
+                icon: 2,
+                title: "一键退回"
             }, function (index) {
                 layer.close(index);
-                let loading = layer.load();
+                let loading = layer.load(2);
                 $.ajax({
                     url: ALL_REFUND_URL,
-                    data: data,
+                    data: { ids: ids },
                     dataType: "json",
                     type: "post",
                     success: function (res) {
                         layer.close(loading);
                         if (res.code) {
-                            return layui.popup.failure(res.msg);
+                            return layui.popup.failure(res.msg || "驳回失败");
                         }
-                        return layui.popup.success("操作成功", refreshTable);
+                        return layui.popup.success(res.msg || "驳回成功，资金已返回用户余额", refreshTable);
+                    },
+                    error: function () {
+                        layer.close(loading);
+                        layui.popup.failure("网络异常");
                     }
-                })
+                });
             });
-        }
+        };
 
         let query = function (obj) {
             let data = {};

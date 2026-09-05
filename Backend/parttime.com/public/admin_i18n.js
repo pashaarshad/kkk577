@@ -133,6 +133,7 @@
         { zh: '原路退款', en: 'Refund' },
         { zh: '同意', en: 'Approve' },
         { zh: '通过', en: 'Approve' },
+        { zh: '审核', en: 'Approve' },
         { zh: '打款', en: 'Payout' },
         { zh: '打款出款', en: 'Payout' },
         { zh: '打款确认', en: 'Confirm Payout' },

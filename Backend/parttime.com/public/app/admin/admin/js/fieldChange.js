@@ -624,9 +624,9 @@ function addressChange(data) {
     } else {
         str = str +
             '<li>' + '币种：' + recharge_type + '</li>' +
-            '<li>' + '提现地址：' + data['withdrawal_address'] + '</li>' +
-            '<li>' + '出款地址：' + data['from_address'] + '</li>' +
-            '<li>' + '提款IP：' + data['user_ip'] + '</li>';
+            '<li>' + '提现地址：' + (data['withdrawal_address'] || '-') + '</li>' +
+            '<li>' + '出款地址：' + (data['from_address'] || '-') + '</li>' +
+            '<li>' + '提款IP：' + (data['user_ip'] || '-') + '</li>';
     }
 
     return str;
@@ -643,9 +643,9 @@ function convertChange(data) {
     }
     str  = str+
         '<li>'+'打款状态：'+status+'</li>'+
-        '<li>'+'出款金额：'+data['convert_money']+'</li>'+
-        '<li>'+'打款tx：'+data['tx']+'</li>'+
-        '<li>' + '平台单号：' + data['platform_order_no'] + '</li>';
+        '<li>'+'出款金额：'+(data['convert_money'] || data['actual_fee'] || data['extract_price'] || '0.00')+'</li>'+
+        '<li>'+'打款tx：'+(data['tx'] || '-')+'</li>'+
+        '<li>' + '平台单号：' + (data['platform_order_no'] || data['order_no'] || data['id'] || '-') + '</li>';
     return str;
 }
 
@@ -668,9 +668,9 @@ function checkStatusChange(data) {
     }
     str  = str+
         '<li>'+'审核状态：'+status+'</li>'+
-        '<li>'+'备注：'+data['mark']+'</li>'+
-        '<li>'+'操作员：'+ data['admin_uid'] + '/' + data['operator_user'] +'</li>'+
-        '<li>'+'操作时间：'+data['operator_time']+'</li>';
+        '<li>'+'备注：'+(data['mark'] || '-')+'</li>'+
+        '<li>'+'操作员：'+ (data['admin_uid'] ? (data['admin_uid'] + '/' + (data['operator_user'] || 'admin')) : '-') +'</li>'+
+        '<li>'+'操作时间：'+(data['operator_time'] || '-')+'</li>';
     return str;
 }
 
@@ -679,10 +679,10 @@ function moneyChange(data) {
     var recharge_type = '';
     let payment_type =  '';
     str  = str+
-        '<li>'+'提现金额：'+data['extract_price']+'</li>'+
-        '<li>'+'手续费：'+data['handling_fee']+'</li>'+
-        '<li>'+'税费：'+data['extract_tax']+'</li>'+
-        '<li>'+'实际到账：'+data['actual_fee']+'</li>';
+        '<li>'+'提现金额：'+(data['extract_price'] || '0.00')+'</li>'+
+        '<li>'+'手续费：'+(data['handling_fee'] || '0.00')+'</li>'+
+        '<li>'+'税费：'+(data['extract_tax'] || '0.00')+'</li>'+
+        '<li>'+'实际到账：'+(data['actual_fee'] || data['extract_price'] || '0.00')+'</li>';
     return str;
 }
 
@@ -750,10 +750,10 @@ function userExtractOrderChange(data) {
         payment_type = '24小时到账';
     }
     str = str +
-        '<li>' + '订单号：' + data['order_no'] + '</li>' +
+        '<li>' + '订单号：' + (data['order_no'] || data['id'] || '-') + '</li>' +
         '<li>'+'到账类型：'+payment_type+'</li>'+
-        '<li>' + '申请时间：' + data['add_time'] + '</li>' +
-        '<li>' + '最近充值：' + data['last_recharge_time'] + '</li>';
+        '<li>' + '申请时间：' + (data['add_time'] || '-') + '</li>' +
+        '<li>' + '最近充值：' + (data['last_recharge_time'] || '-') + '</li>';
     return str;
 }
 

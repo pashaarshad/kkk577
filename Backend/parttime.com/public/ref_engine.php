@@ -566,38 +566,78 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
     if (strpos($uri, 'user-extract/select') !== false || strpos($uri, 'deposit_list') !== false || strpos($uri, 'withdraw/select') !== false || strpos($uri, 'deposit/select') !== false) {
         $page = intval($_GET['page'] ?? 1);
         $limit = intval($_GET['limit'] ?? 15);
-        $status = $_GET['status'] ?? '';
+        $status = param_val('status');
+        $uid = param_val('uid');
+        $orderNo = param_val('order_no');
+        $withdrawalAddr = param_val('withdrawal_address');
+        $tx = param_val('tx');
+        $txStatus = param_val('tx_status');
+
         $query = \think\Db::name('xy_deposit')->alias('d')
             ->leftJoin('xy_users u', 'd.uid = u.id')
             ->field('d.*, u.username as account, u.tel, u.level, u.balance as user_balance');
+
         if ($status !== '' && $status !== null && $status !== '-1') {
             $query->where('d.status', intval($status));
         }
+        if ($uid !== '') {
+            $query->where('d.uid', intval($uid));
+        }
+        if ($orderNo !== '') {
+            $query->where('d.id', 'like', '%' . $orderNo . '%');
+        }
+        if ($withdrawalAddr !== '') {
+            $query->where('d.usdt', 'like', '%' . $withdrawalAddr . '%');
+        }
+        if ($tx !== '') {
+            $query->where('d.payout_id', 'like', '%' . $tx . '%');
+        }
+        if ($txStatus !== '' && $txStatus !== null && $txStatus !== '-1') {
+            $query->where('d.payout_status', intval($txStatus));
+        }
+
+        // 申请时间范围查询
+        if (isset($_GET['add_time']) && is_array($_GET['add_time'])) {
+            $t0 = trim($_GET['add_time'][0] ?? '');
+            $t1 = trim($_GET['add_time'][1] ?? '');
+            if ($t0 !== '' && $t1 !== '') {
+                $s = strtotime($t0);
+                $e = strtotime($t1);
+                if ($s && $e) $query->where('d.addtime', 'between', [$s, $e + 86399]);
+            }
+        }
+
         $count = (clone $query)->count();
         $list = $query->order('d.addtime desc')->page($page, $limit)->select();
         $formatted = [];
         foreach ($list as $item) {
+            $numVal = floatval($item['num'] ?? 0);
+            $realNumVal = floatval($item['real_num'] ?: $item['num']);
+            $feeVal = floatval($item['shouxu'] ?? 0);
             $formatted[] = [
                 'id' => $item['id'],
                 'uid' => $item['uid'],
                 'order_no' => $item['id'],
-                'extract_price' => number_format($item['num'], 2, '.', ''),
-                'handling_fee' => number_format(floatval($item['shouxu'] ?? 0), 2, '.', ''),
-                'actual_fee' => number_format(floatval($item['real_num'] ?: $item['num']), 2, '.', ''),
-                'convert_money' => number_format(floatval($item['real_num'] ?: $item['num']), 2, '.', ''),
+                'extract_price' => number_format($numVal, 2, '.', ''),
+                'handling_fee' => number_format($feeVal, 2, '.', ''),
+                'extract_tax' => '0.00',
+                'actual_fee' => number_format($realNumVal, 2, '.', ''),
+                'convert_money' => number_format($realNumVal, 2, '.', ''),
                 'withdrawal_address' => !empty($item['usdt']) ? $item['usdt'] : 'TRC20-Wallet',
+                'from_address' => '-',
+                'user_ip' => '127.0.0.1',
                 'tx' => $item['payout_id'] ?? '',
                 'money_type' => 1,
                 'status' => intval($item['status']),
                 'tx_status' => intval($item['payout_status'] ?? 0),
                 'platform_order_no' => $item['id'],
-                'mark' => $item['remark'] ?: ($item['payout_err_msg'] ?: ''),
+                'mark' => $item['remark'] ?: ($item['payout_err_msg'] ?: '-'),
                 'admin_uid' => '1',
                 'operator_user' => 'admin',
                 'payment_type' => 1,
-                'last_recharge_time' => '--',
+                'last_recharge_time' => '-',
                 'add_time' => date('Y-m-d H:i:s', $item['addtime']),
-                'operator_time' => $item['endtime'] ? date('Y-m-d H:i:s', $item['endtime']) : '--',
+                'operator_time' => $item['endtime'] ? date('Y-m-d H:i:s', $item['endtime']) : '-',
                 'user' => [
                     'uid' => $item['uid'],
                     'account' => $item['account'] ?: $item['tel'],
