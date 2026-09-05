@@ -582,17 +582,26 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
                 'uid' => $item['uid'],
                 'order_no' => $item['id'],
                 'extract_price' => number_format($item['num'], 2, '.', ''),
-                'handling_fee' => '0.00',
-                'actual_fee' => number_format($item['num'], 2, '.', ''),
+                'handling_fee' => number_format(floatval($item['shouxu'] ?? 0), 2, '.', ''),
+                'actual_fee' => number_format(floatval($item['real_num'] ?: $item['num']), 2, '.', ''),
+                'convert_money' => number_format(floatval($item['real_num'] ?: $item['num']), 2, '.', ''),
                 'withdrawal_address' => !empty($item['usdt']) ? $item['usdt'] : 'TRC20-Wallet',
                 'tx' => $item['payout_id'] ?? '',
                 'money_type' => 1,
                 'status' => intval($item['status']),
+                'tx_status' => intval($item['payout_status'] ?? 0),
+                'platform_order_no' => $item['id'],
+                'mark' => $item['remark'] ?: ($item['payout_err_msg'] ?: ''),
+                'admin_uid' => '1',
+                'operator_user' => 'admin',
+                'payment_type' => 1,
+                'last_recharge_time' => '--',
                 'add_time' => date('Y-m-d H:i:s', $item['addtime']),
                 'operator_time' => $item['endtime'] ? date('Y-m-d H:i:s', $item['endtime']) : '--',
                 'user' => [
                     'uid' => $item['uid'],
                     'account' => $item['account'] ?: $item['tel'],
+                    'tel' => $item['tel'] ?: '',
                     'status' => 1,
                     'online_status' => 1
                 ]
@@ -603,32 +612,170 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
 
     // B. 提现审核通过
     if ($uri === '/admin/bill/user-extract/allCheck' || $uri === '/admin/bill/user-extract/check' || strpos($uri, 'deposit_list/check') !== false) {
-        $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
+        $ids = $_POST['ids'] ?? ($_POST['id'] ? [$_POST['id']] : ($_GET['id'] ? [$_GET['id']] : []));
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         \think\Db::name('xy_deposit')->where('id', 'in', $ids)->update(['status' => 2, 'endtime' => time()]);
         json_resp(['count' => count($ids)], 0, '审核通过成功');
     }
 
-    // C. 提现一键出款
+    // C. 提现一键出款 / 打款
     if ($uri === '/admin/bill/user-extract/allPay' || $uri === '/admin/bill/user-extract/payment' || strpos($uri, 'deposit_list/payment') !== false) {
-        $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
+        $ids = $_POST['ids'] ?? ($_POST['id'] ? [$_POST['id']] : ($_GET['id'] ? [$_GET['id']] : []));
         if (empty($ids)) json_resp(null, 1, '请选择订单');
-        \think\Db::name('xy_deposit')->where('id', 'in', $ids)->update(['status' => 2, 'endtime' => time()]);
+        \think\Db::name('xy_deposit')->where('id', 'in', $ids)->update([
+            'status' => 2,
+            'payout_status' => 1,
+            'payout_time' => time(),
+            'endtime' => time()
+        ]);
         json_resp(['count' => count($ids)], 0, '出款成功');
     }
 
-    // D. 提现一键退回
+    // D. 提现一键退回 / 驳回
     if ($uri === '/admin/bill/user-extract/allRefund' || $uri === '/admin/bill/user-extract/ignore' || strpos($uri, 'deposit_list/ignore') !== false) {
-        $ids = $_POST['ids'] ?? [$_POST['id'] ?? 0];
+        $ids = $_POST['ids'] ?? ($_POST['id'] ? [$_POST['id']] : ($_GET['id'] ? [$_GET['id']] : []));
         if (empty($ids)) json_resp(null, 1, '请选择订单');
         foreach ($ids as $id) {
             $deposit = \think\Db::name('xy_deposit')->where('id', $id)->find();
-            if ($deposit && $deposit['status'] == 1) {
+            if ($deposit && intval($deposit['status']) !== 3) {
                 \think\Db::name('xy_users')->where('id', $deposit['uid'])->setInc('balance', $deposit['num']);
                 \think\Db::name('xy_deposit')->where('id', $id)->update(['status' => 3, 'endtime' => time()]);
             }
         }
-        json_resp(['count' => count($ids)], 0, '退回成功，资金已返回用户余额');
+        json_resp(['count' => count($ids)], 0, '驳回成功，资金已返回用户余额');
+    }
+
+    // D2. 提现订单编辑/保存
+    if ($uri === '/admin/bill/user-extract/update' || $uri === '/admin/bill/user-extract/save') {
+        $id = $_POST['id'] ?? '';
+        if (empty($id)) json_resp(null, 1, '订单ID不能为空');
+
+        $deposit = \think\Db::name('xy_deposit')->where('id', $id)->find();
+        if (!$deposit) json_resp(null, 1, '订单不存在');
+
+        $updateData = [];
+        $oldStatus = intval($deposit['status']);
+
+        if (isset($_POST['extract_price']) || isset($_POST['num'])) {
+            $num = floatval($_POST['extract_price'] ?? $_POST['num']);
+            if ($num > 0) {
+                $updateData['num'] = $num;
+            }
+        }
+        if (isset($_POST['actual_fee']) || isset($_POST['real_num'])) {
+            $realNum = floatval($_POST['actual_fee'] ?? $_POST['real_num']);
+            if ($realNum > 0) {
+                $updateData['real_num'] = $realNum;
+            }
+        }
+        if (isset($_POST['withdrawal_address']) || isset($_POST['usdt'])) {
+            $addr = trim($_POST['withdrawal_address'] ?? $_POST['usdt']);
+            $updateData['usdt'] = $addr;
+        }
+        if (isset($_POST['tx']) || isset($_POST['payout_id'])) {
+            $tx = trim($_POST['tx'] ?? $_POST['payout_id']);
+            $updateData['payout_id'] = $tx;
+            if (!empty($tx)) {
+                $updateData['payout_status'] = 1;
+            }
+        }
+        if (isset($_POST['mark']) || isset($_POST['remark']) || isset($_POST['payout_err_msg'])) {
+            $mark = trim($_POST['mark'] ?? $_POST['remark'] ?? $_POST['payout_err_msg']);
+            $updateData['remark'] = $mark;
+            $updateData['payout_err_msg'] = $mark;
+        }
+        if (isset($_POST['status'])) {
+            $newStatus = intval($_POST['status']);
+            $updateData['status'] = $newStatus;
+            $updateData['endtime'] = time();
+
+            // If changing to rejected, refund the user
+            if ($newStatus === 3 && $oldStatus !== 3) {
+                \think\Db::name('xy_users')->where('id', $deposit['uid'])->setInc('balance', $deposit['num']);
+            }
+            // If changing from rejected back to active, deduct user balance
+            if ($oldStatus === 3 && $newStatus !== 3) {
+                \think\Db::name('xy_users')->where('id', $deposit['uid'])->setDec('balance', $deposit['num']);
+            }
+        }
+
+        if (!empty($updateData)) {
+            \think\Db::name('xy_deposit')->where('id', $id)->update($updateData);
+        }
+        json_resp(['id' => $id], 0, '更新成功');
+    }
+
+    // D3. 提现订单编辑页面渲染 (iframe/直接访问兼容)
+    if ($uri === '/admin/bill/user-extract/edit') {
+        $id = $_GET['id'] ?? ($_POST['id'] ?? '');
+        $deposit = \think\Db::name('xy_deposit')->alias('d')
+            ->leftJoin('xy_users u', 'd.uid = u.id')
+            ->field('d.*, u.username as account, u.tel')
+            ->where('d.id', $id)->find();
+        if (!$deposit) {
+            echo '<h3>订单不存在</h3>';
+            exit;
+        }
+        $orderNo = htmlspecialchars($deposit['id']);
+        $uid = htmlspecialchars($deposit['uid']);
+        $acc = htmlspecialchars($deposit['account'] ?: $deposit['tel'] ?: $deposit['uid']);
+        $price = number_format(floatval($deposit['num']), 2, '.', '');
+        $actual = number_format(floatval($deposit['real_num'] ?: $deposit['num']), 2, '.', '');
+        $address = htmlspecialchars($deposit['usdt'] ?: '');
+        $tx = htmlspecialchars($deposit['payout_id'] ?: '');
+        $mark = htmlspecialchars($deposit['remark'] ?: $deposit['payout_err_msg'] ?: '');
+        $status = intval($deposit['status']);
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="/app/admin/component/pear/css/pear.css"/><link rel="stylesheet" href="/app/admin/admin/css/reset.css"/><script src="/app/admin/component/layui/layui.js"></script><script src="/admin_i18n.js"></script></head><body style="padding: 20px 25px; background: #fff;">
+        <form class="layui-form" lay-filter="extract-edit-form">
+            <input type="hidden" name="id" value="' . $orderNo . '">
+            <div class="layui-form-item"><label class="layui-form-label">订单号</label><div class="layui-input-block"><input type="text" value="' . $orderNo . '" class="layui-input" disabled style="background:#f5f5f5;"></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">用户</label><div class="layui-input-block"><input type="text" value="' . $acc . ' (UID: ' . $uid . ')" class="layui-input" disabled style="background:#f5f5f5;"></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">提现金额</label><div class="layui-input-block"><input type="number" step="0.01" name="extract_price" value="' . $price . '" required lay-verify="required" class="layui-input"></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">实际到账</label><div class="layui-input-block"><input type="number" step="0.01" name="actual_fee" value="' . $actual . '" required lay-verify="required" class="layui-input"></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">提现地址</label><div class="layui-input-block"><input type="text" name="withdrawal_address" value="' . $address . '" class="layui-input"></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">审核状态</label><div class="layui-input-block"><select name="status">
+                <option value="0"' . ($status === 0 ? ' selected' : '') . '>待审核 (Pending)</option>
+                <option value="1"' . ($status === 1 ? ' selected' : '') . '>处理中 (Processing)</option>
+                <option value="2"' . ($status === 2 ? ' selected' : '') . '>提现成功 (Approved / Success)</option>
+                <option value="3"' . ($status === 3 ? ' selected' : '') . '>提现拒绝 (Rejected / Refund)</option>
+                <option value="4"' . ($status === 4 ? ' selected' : '') . '>提现忽略 (Ignored)</option>
+            </select></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">打款TxID</label><div class="layui-input-block"><input type="text" name="tx" value="' . $tx . '" class="layui-input"></div></div>
+            <div class="layui-form-item"><label class="layui-form-label">管理员备注</label><div class="layui-input-block"><textarea name="mark" class="layui-textarea">' . $mark . '</textarea></div></div>
+            <div class="layui-form-item" style="text-align: right;"><button type="button" class="pear-btn pear-btn-primary" id="btn-save"><i class="layui-icon layui-icon-ok"></i> 保存</button></div>
+        </form>
+        <script>
+        layui.use(["form", "layer", "jquery"], function(){
+            var form = layui.form, layer = layui.layer, $ = layui.$;
+            form.render();
+            $("#btn-save").on("click", function(){
+                var data = form.val("extract-edit-form");
+                var loadIdx = layer.load(2);
+                $.ajax({
+                    url: "/admin/bill/user-extract/update",
+                    type: "POST",
+                    data: data,
+                    dataType: "json",
+                    success: function(res){
+                        layer.close(loadIdx);
+                        if(res.code === 0){
+                            layer.msg(res.msg || "保存成功", {icon: 1, time: 1000}, function(){
+                                var p = parent.layer.getFrameIndex(window.name);
+                                if(p) parent.layer.close(p);
+                                if(parent.refreshTable) parent.refreshTable();
+                            });
+                        } else {
+                            layer.msg(res.msg || "保存失败", {icon: 2});
+                        }
+                    },
+                    error: function(){ layer.close(loadIdx); layer.msg("网络异常", {icon: 2}); }
+                });
+            });
+        });
+        </script></body></html>';
+        exit;
     }
 
     // E. 会员列表查询

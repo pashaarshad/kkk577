@@ -193,49 +193,36 @@
 
 <!-- 表格行工具栏 -->
 <script type="text/html" id="table-bar">
-    {{#  if(d.status === 1){ }}
-    <button class="pear-btn pear-btn-primary pear-btn-xs" lay-event="query" permission="admin.bill.userextract.query">查询
-    </button>
+    <div style="display:flex; flex-wrap:wrap; gap:4px; justify-content:center; align-items:center; padding: 4px 0;">
+    {{#  if(d.status === 0 || d.status === 1 || d.status === 4 || d.status === 6){ }}
+        <button class="pear-btn pear-btn-success pear-btn-xs" lay-event="check" title="审核通过">
+            <i class="layui-icon layui-icon-ok"></i> 通过
+        </button>
+        <button class="pear-btn pear-btn-primary pear-btn-xs" lay-event="payment" title="打款出款">
+            <i class="layui-icon layui-icon-rmb"></i> 打款
+        </button>
+        <button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="ignore" title="驳回退还余额">
+            <i class="layui-icon layui-icon-close"></i> 驳回
+        </button>
+    {{#  } else if(d.status === 2){ }}
+        <span class="layui-badge layui-bg-green" style="padding: 2px 6px;"><i class="layui-icon layui-icon-ok-circle"></i> 已通过</span>
+        <button class="pear-btn pear-btn-primary pear-btn-xs" lay-event="payment" title="打款/更新Tx">
+            <i class="layui-icon layui-icon-rmb"></i> 打款
+        </button>
+    {{#  } else if(d.status === 3){ }}
+        <span class="layui-badge layui-bg-gray" style="padding: 2px 6px;"><i class="layui-icon layui-icon-close-fill"></i> 已驳回</span>
     {{#  } else { }}
-    <button class="pear-btn pear-btn-xs layui-btn-disabled" disabled lay-event="query"
-            permission="admin.bill.userextract.query">查询
-    </button>
+        <button class="pear-btn pear-btn-success pear-btn-xs" lay-event="check" title="审核通过">
+            <i class="layui-icon layui-icon-ok"></i> 通过
+        </button>
+        <button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="ignore" title="驳回">
+            <i class="layui-icon layui-icon-close"></i> 驳回
+        </button>
     {{#  } }}
-    {{#  if(d.status === 0 || d.status === 1 || d.status === 4){ }}
-    <button class="pear-btn pear-btn-success pear-btn-xs" lay-event="check" title="审核通过">审核
-    </button>
-    {{#  } else { }}
-    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="check">审核
-    </button>
-    {{#  } }}
-    <br/>
-    {{#  if(d.status === 0 || d.status === 1){ }}
-    <button class="pear-btn pear-btn-danger pear-btn-xs" lay-event="ignore" title="驳回退回余额">驳回
-    </button>
-    {{#  } else { }}
-    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="ignore">驳回
-    </button>
-    {{#  } }}
-    {{#  if((d.status===5 || d.tx_status ===2 || d.status===6 || d.status===1) && d.status != 3){ }}
-    <button class="pear-btn pear-btn-success pear-btn-xs" lay-event="payment"
-            permission="admin.bill.userextract.payment">
-        打款
-    </button>
-    {{#  } else { }}
-    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="payment"
-            permission="admin.bill.userextract.payment">
-        打款
-    </button>
-    {{#  } }}
-    <br/>
-    {{#  if(d.money_type >= 21){ }}
-    <button class="pear-btn pear-btn-primary pear-btn-xs" lay-event="edit" permission="admin.bill.userextract.edit">编辑
-    </button>
-    {{#  } else { }}
-    <button class="pear-btn layui-btn-disabled pear-btn-xs" disabled lay-event="edit"
-            permission="admin.bill.userextract.edit">编辑
-    </button>
-    {{#  } }}
+        <button class="pear-btn pear-btn-warm pear-btn-xs" lay-event="edit" title="编辑订单">
+            <i class="layui-icon layui-icon-edit"></i> 编辑
+        </button>
+    </div>
 </script>
 
 <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
@@ -491,7 +478,8 @@
                 toolbar: "#table-bar",
                 align: "center",
                 fixed: "right",
-                width: 200,
+                width: 260,
+                minWidth: 260
             }
         ];
 
@@ -627,27 +615,141 @@
 
         // 表格编辑数据
         let edit = function (obj) {
-            let value = obj.data[PRIMARY_KEY];
-            layer.open({
-                type: 2,
-                title: "编辑",
-                shade: 0.1,
-                maxmin: true,
-                area: [common.isModile() ? "100%" : "500px", common.isModile() ? "100%" : "450px"],
-                content: EDIT_URL + "?" + PRIMARY_KEY + "=" + value
+            let d = obj.data;
+            let currentStatus = parseInt(d.status);
+            let uidText = (d.user && d.user.account) ? (d.user.account + ' (UID: ' + d.uid + ')') : ('UID: ' + d.uid);
+            let contentHtml = '<div style="padding: 20px 25px;">' +
+                '<form class="layui-form" lay-filter="extract-edit-form">' +
+                    '<input type="hidden" name="id" value="' + d.id + '">' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">订单号</label>' +
+                        '<div class="layui-input-block">' +
+                            '<input type="text" value="' + (d.order_no || d.id) + '" class="layui-input" disabled style="background:#f5f5f5;">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">用户</label>' +
+                        '<div class="layui-input-block">' +
+                            '<input type="text" value="' + uidText + '" class="layui-input" disabled style="background:#f5f5f5;">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">提现金额</label>' +
+                        '<div class="layui-input-block">' +
+                            '<input type="number" step="0.01" name="extract_price" value="' + (d.extract_price || '0.00') + '" required lay-verify="required" class="layui-input">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">实际到账</label>' +
+                        '<div class="layui-input-block">' +
+                            '<input type="number" step="0.01" name="actual_fee" value="' + (d.actual_fee || d.extract_price || '0.00') + '" required lay-verify="required" class="layui-input">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">提现地址</label>' +
+                        '<div class="layui-input-block">' +
+                            '<input type="text" name="withdrawal_address" value="' + (d.withdrawal_address || '') + '" class="layui-input">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">审核状态</label>' +
+                        '<div class="layui-input-block">' +
+                            '<select name="status">' +
+                                '<option value="0"' + (currentStatus === 0 ? ' selected' : '') + '>待审核 (Pending)</option>' +
+                                '<option value="1"' + (currentStatus === 1 ? ' selected' : '') + '>处理中 (Processing)</option>' +
+                                '<option value="2"' + (currentStatus === 2 ? ' selected' : '') + '>提现成功 (Approved / Success)</option>' +
+                                '<option value="3"' + (currentStatus === 3 ? ' selected' : '') + '>提现拒绝 (Rejected / Refund)</option>' +
+                                '<option value="4"' + (currentStatus === 4 ? ' selected' : '') + '>提现忽略 (Ignored)</option>' +
+                            '</select>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">打款TxID</label>' +
+                        '<div class="layui-input-block">' +
+                            '<input type="text" name="tx" value="' + (d.tx || '') + '" placeholder="Blockchain TXID / Payout ID" class="layui-input">' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item">' +
+                        '<label class="layui-form-label">管理员备注</label>' +
+                        '<div class="layui-input-block">' +
+                            '<textarea name="mark" placeholder="备注信息 (Remarks)" class="layui-textarea">' + (d.mark || '') + '</textarea>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="layui-form-item" style="text-align: right; margin-top: 20px;">' +
+                        '<button type="button" class="pear-btn pear-btn-primary" id="btn-save-extract"><i class="layui-icon layui-icon-ok"></i> 保存</button>' +
+                        '<button type="button" class="pear-btn" id="btn-cancel-extract" style="margin-left: 8px;">取消</button>' +
+                    '</div>' +
+                '</form>' +
+            '</div>';
+
+            let editLayerIdx = layer.open({
+                type: 1,
+                title: "编辑提现订单 / Edit Withdrawal Order",
+                shade: 0.2,
+                area: [common.isModile() ? "100%" : "540px", common.isModile() ? "100%" : "620px"],
+                content: contentHtml,
+                success: function (layero, index) {
+                    form.render(null, 'extract-edit-form');
+                    layero.find('#btn-cancel-extract').on('click', function () {
+                        layer.close(editLayerIdx);
+                    });
+                    layero.find('#btn-save-extract').on('click', function () {
+                        let formData = form.val('extract-edit-form');
+                        let loadIdx = layer.load(2);
+                        $.ajax({
+                            url: UPDATE_URL,
+                            type: 'POST',
+                            data: formData,
+                            dataType: 'json',
+                            success: function (res) {
+                                layer.close(loadIdx);
+                                if (res.code === 0) {
+                                    layer.close(editLayerIdx);
+                                    layui.popup.success(res.msg || "修改成功", refreshTable);
+                                } else {
+                                    layui.popup.failure(res.msg || "保存失败");
+                                }
+                            },
+                            error: function () {
+                                layer.close(loadIdx);
+                                layui.popup.failure("网络异常");
+                            }
+                        });
+                    });
+                }
             });
-        }
+        };
+
+        // 审核通过
         let check = function (obj) {
-            let value = obj.data[PRIMARY_KEY];
-            layer.open({
-                type: 2,
-                title: "审核",
-                shade: 0.1,
-                maxmin: true,
-                area: [common.isModile() ? "100%" : "95%", common.isModile() ? "100%" : "95%"],
-                content: CHECK_URL + "?" + PRIMARY_KEY + "=" + value
+            let data = obj.data;
+            let orderNo = data.order_no || data.id;
+            let amount = parseFloat(data.extract_price || data.actual_fee || 0).toFixed(2);
+            layer.confirm("是否确认审核通过提现订单 <strong>" + orderNo + "</strong>？<br>金额: <strong>$" + amount + "</strong>", {
+                icon: 3,
+                title: "通过提现"
+            }, function (index) {
+                layer.close(index);
+                let loading = layer.load(2);
+                $.ajax({
+                    url: CHECK_URL,
+                    data: { ids: [data[PRIMARY_KEY]], id: data[PRIMARY_KEY] },
+                    dataType: "json",
+                    type: "post",
+                    success: function (res) {
+                        layer.close(loading);
+                        if (res.code) {
+                            return layui.popup.failure(res.msg || "审核失败");
+                        }
+                        return layui.popup.success(res.msg || "审核通过成功", refreshTable);
+                    },
+                    error: function () {
+                        layer.close(loading);
+                        layui.popup.failure("网络异常");
+                    }
+                });
             });
-        }
+        };
 
         let manual = function (obj) {
             let checkIds = common.checkField(obj, PRIMARY_KEY);
@@ -776,54 +878,65 @@
         }
 
         let ignore = function (obj) {
-            let data = {};
-            data[PRIMARY_KEY] = obj.data[PRIMARY_KEY];
-            layer.confirm("确定忽略?", {
-                icon: 3,
-                title: "提示"
+            let data = obj.data;
+            let orderNo = data.order_no || data.id;
+            let amount = parseFloat(data.extract_price || data.actual_fee || 0).toFixed(2);
+            layer.confirm("确定驳回提现订单 <strong>" + orderNo + "</strong>？<br>驳回后提现金额 <strong>$" + amount + "</strong> 将退还至用户余额！", {
+                icon: 2,
+                title: "驳回提现"
             }, function (index) {
                 layer.close(index);
-                let loading = layer.load();
+                let loading = layer.load(2);
                 $.ajax({
                     url: IGNORE_URL,
-                    data: data,
+                    data: { ids: [data[PRIMARY_KEY]], id: data[PRIMARY_KEY] },
                     dataType: "json",
                     type: "post",
                     success: function (res) {
                         layer.close(loading);
                         if (res.code) {
-                            return layui.popup.failure(res.msg);
+                            return layui.popup.failure(res.msg || "驳回失败");
                         }
-                        return layui.popup.success("操作成功", refreshTable);
+                        return layui.popup.success(res.msg || "驳回成功，资金已返回用户余额", refreshTable);
+                    },
+                    error: function () {
+                        layer.close(loading);
+                        layui.popup.failure("网络异常");
                     }
-                })
+                });
             });
-        }
+        };
 
         let payment = function (obj) {
-            let data = {};
-            data[PRIMARY_KEY] = obj.data[PRIMARY_KEY];
-            layer.confirm("是否确认打款？打款前请先查询确认该笔订单未成功打款！否则可能将造成资金损失！一旦打款无法退回！", {
+            let data = obj.data;
+            let orderNo = data.order_no || data.id;
+            let amount = parseFloat(data.extract_price || data.actual_fee || 0).toFixed(2);
+            let addr = data.withdrawal_address || 'USDT';
+            layer.confirm("是否确认出款/打款给该提现订单 <strong>" + orderNo + "</strong>？<br>出款地址: <code>" + addr + "</code><br>金额: <strong>$" + amount + "</strong>", {
                 icon: 3,
-                title: "提示"
+                title: "打款确认"
             }, function (index) {
                 layer.close(index);
-                let loading = layer.load();
+                let loading = layer.load(2);
                 $.ajax({
                     url: PAYMENT_URL,
-                    data: data,
+                    data: { ids: [data[PRIMARY_KEY]], id: data[PRIMARY_KEY] },
                     dataType: "json",
                     type: "post",
                     success: function (res) {
                         layer.close(loading);
                         if (res.code) {
-                            return layui.popup.failure(res.msg);
+                            return layui.popup.failure(res.msg || "打款失败");
                         }
-                        return layui.popup.success("操作成功", refreshTable);
+                        return layui.popup.success(res.msg || "打款成功", refreshTable);
+                    },
+                    error: function () {
+                        layer.close(loading);
+                        layui.popup.failure("网络异常");
                     }
-                })
+                });
             });
-        }
+        };
 
         // 删除一行
         let remove = function (obj) {
