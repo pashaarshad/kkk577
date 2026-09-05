@@ -261,13 +261,10 @@ if ($uri === '/app/admin/dict/get/country_code' || $uri === '/admin/dict/get/cou
     ]);
 }
 
-// 7c. System Config - getLinkPattern Endpoint (Dynamic skin styles)
+// 7c. System Config - getLinkPattern Endpoint (Single default style, no other skin available)
 if (strpos($uri, 'getLinkPattern') !== false) {
-    $skinId = intval($_GET['id'] ?? 1);
     $patterns = [
-        ['pattern_no' => 1, 'pattern_name' => "样式{$skinId}-1 (默认样式)"],
-        ['pattern_no' => 2, 'pattern_name' => "样式{$skinId}-2 (炫彩经典)"],
-        ['pattern_no' => 3, 'pattern_name' => "样式{$skinId}-3 (暗黑奢华)"]
+        ['pattern_no' => 1, 'pattern_name' => '默认样式 (Default Style)']
     ];
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['code' => 1, 'msg' => 'success', 'data' => $patterns], JSON_UNESCAPED_UNICODE);
@@ -415,11 +412,10 @@ layui.use(["form", "jquery"], function() {
     var $ = layui.$;
     var saved = ' . $configJson . ';
     if (saved && Object.keys(saved).length > 0) {
-        if (saved.skin_no) {
-            var sId = saved.skin_no;
-            var opt = "<option value=\"1\">【1】样式" + sId + "-1 (默认样式)</option><option value=\"2\">【2】样式" + sId + "-2 (炫彩经典)</option>";
-            $("#pattern_select").html(opt);
-        }
+        saved.skin_no = "1";
+        saved.pattern_no = "1";
+        var opt = "<option value=\"1\" selected>【1】默认样式 (Default Style)</option><option value=\"\" disabled>暂无其他样式 (No skin available)</option>";
+        $("#pattern_select").html(opt);
         form.val("app-form-1", saved);
         form.render();
     }

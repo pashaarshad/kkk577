@@ -51,106 +51,24 @@
         <label class="layui-form-label required">皮肤模板</label>
         <div class="layui-input-inline">
             <select name="skin_no" lay-filter="skin_no">
-                                <option value="1" >
-                    【1】皮肤1                </option>
-                                <option value="2" >
-                    【2】皮肤2                </option>
-                                <option value="3" >
-                    【3】皮肤3                </option>
-                                <option value="4" >
-                    【4】皮肤4                </option>
-                                <option value="5" >
-                    【5】皮肤5                </option>
-                                <option value="6" >
-                    【6】皮肤6                </option>
-                                <option value="7" >
-                    【7】皮肤7                </option>
-                                <option value="8" >
-                    【8】皮肤8                </option>
-                                <option value="9" >
-                    【9】皮肤9                </option>
-                                <option value="10" >
-                    【10】皮肤10                </option>
-                                <option value="11" >
-                    【11】皮肤11                </option>
-                                <option value="12" >
-                    【12】皮肤12                </option>
-                                <option value="13" >
-                    【13】皮肤13                </option>
-                                <option value="14" >
-                    【14】皮肤14                </option>
-                                <option value="15" >
-                    【15】皮肤15                </option>
-                                <option value="16" >
-                    【16】皮肤16                </option>
-                                <option value="17" >
-                    【17】皮肤17                </option>
-                                <option value="18" >
-                    【18】皮肤18                </option>
-                                <option value="19" >
-                    【19】皮肤19                </option>
-                                <option value="20" >
-                    【20】皮肤20                </option>
-                                <option value="21" >
-                    【21】皮肤21                </option>
-                                <option value="22" >
-                    【22】皮肤22                </option>
-                                <option value="23" >
-                    【23】皮肤23                </option>
-                                <option value="24" >
-                    【24】皮肤24                </option>
-                                <option value="25" >
-                    【25】皮肤25                </option>
-                                <option value="26" >
-                    【26】皮肤26                </option>
-                                <option value="27" >
-                    【27】皮肤27                </option>
-                                <option value="28" >
-                    【28】皮肤28                </option>
-                                <option value="29" >
-                    【29】皮肤29                </option>
-                                <option value="30" >
-                    【30】皮肤30                </option>
-                                <option value="31" >
-                    【31】皮肤31                </option>
-                                <option value="32" selected>
-                    【32】皮肤32                </option>
-                                <option value="33" >
-                    【33】皮肤33                </option>
-                                <option value="35" >
-                    【35】皮肤35                </option>
-                                <option value="36" >
-                    【36】皮肤36                </option>
-                                <option value="37" >
-                    【37】皮肤37                </option>
-                                <option value="38" >
-                    【38】皮肤38                </option>
-                                <option value="39" >
-                    【39】石油皮肤                </option>
-                                <option value="40" >
-                    【40】充电桩皮肤                </option>
-                                <option value="44" >
-                    【44】皮肤44                </option>
-                                <option value="60" >
-                    【60】皮肤60                </option>
-                                <option value="61" >
-                    【61】皮肤61                </option>
-                                <option value="62" >
-                    【62】皮肤62                </option>
-                                <option value="63" >
-                    【63】皮肤63                </option>
-                            </select>
+                <option value="1" selected>当前默认皮肤 (Default Theme)</option>
+                <option value="" disabled>暂无其他皮肤 (No skin available)</option>
+            </select>
         </div>
         <label class="layui-form-label required">皮肤样式：</label>
         <div class="layui-input-inline">
             <select name="pattern_no" lay-filter="pattern_no" id="pattern_select">
-                                <option value="1" selected>
-                    【1】样式32-1                </option>
-                            </select>
+                <option value="1" selected>【1】默认样式 (Default Style)</option>
+                <option value="" disabled>暂无其他样式 (No skin available)</option>
+            </select>
         </div>
         <div class="layui-form-mid" style="padding: 0!important;">
-            <a href="show_skin" target="_blank" class="layui-btn layui-btn-normal">预览皮肤</a>
+            <a href="/admin/system/system-config/show_skin" target="_blank" class="layui-btn layui-btn-normal"><i class="layui-icon layui-icon-cellphone"></i> 预览皮肤</a>
         </div>
+        <div style="clear: both;"></div>
+        <tip class="tip_style" style="display: block; margin-left: 110px; padding-top: 6px; color: #8c9ba5; font-size: 13px;">
+            <i class="layui-icon layui-icon-tips" style="color: #ffb800; margin-right: 4px;"></i> 提示：当前系统仅启用唯一一套专属定制皮肤，暂无其他可用皮肤 (No other skin available. Only current system theme is enabled.)
+        </tip>
     </div>
 
     <div id="login_page_image_div" hidden>
@@ -515,50 +433,14 @@
         });
 
         form.on('select(skin_no)', function (data) {
-            let id = data.value;
-            $.get('getLinkPattern?id=' + id, function (res) {
-                if (res.code == 1) {
-                    let options = "";
-                    let patterns = res.data;
-                    for (let pattern_value of patterns) {
-                        options += `<option value="${pattern_value.pattern_no}">【${pattern_value.pattern_no}】${pattern_value.pattern_name}</option>`;
-                    }
-                    $("#pattern_select").html(options);
-                    form.render('select');
-                } else layer.msg(res.msg, {'time': 1000, icon: 5});
-            }, 'json');
-            if(id == 39){
-                $("#login_page_image_div").show();
-                $("#my_page_image_div").show();
-                $("#index_page_product_image_div").hide();
-                $("#skin_no_41").hide();
-                $("#skin_no_43").hide();
-            }else if(id == 40){
-                $("#login_page_image_div").show();
-                $("#my_page_image_div").hide();
-                $("#index_page_product_image_div").show();
-                $("#skin_no_41").hide();
-                $("#skin_no_43").hide();
-            }else if(id == 41){
-                $("#login_page_image_div").hide();
-                $("#my_page_image_div").hide();
-                $("#index_page_product_image_div").hide();
-                $("#skin_no_41").show();
-                $("#skin_no_43").hide();
-            }else if(id == 43 || id == 45 || id == 46){
-                $("#login_page_image_div").hide();
-                $("#my_page_image_div").hide();
-                $("#index_page_product_image_div").hide();
-                $("#skin_no_41").hide();
-                $("#skin_no_43").show();
-            }else{
-                $("#login_page_image_div").hide();
-                $("#my_page_image_div").hide();
-                $("#index_page_product_image_div").hide();
-                $("#skin_no_41").hide();
-                $("#skin_no_43").hide();
-            }
-
+            let options = '<option value="1" selected>【1】默认样式 (Default Style)</option><option value="" disabled>暂无其他样式 (No skin available)</option>';
+            $("#pattern_select").html(options);
+            form.render('select');
+            $("#login_page_image_div").hide();
+            $("#my_page_image_div").hide();
+            $("#index_page_product_image_div").hide();
+            $("#skin_no_41").hide();
+            $("#skin_no_43").hide();
         });
 
         let input2 = layui.$("#login_page_image").prev();
