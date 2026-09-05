@@ -1,8 +1,8 @@
 <template>
   <div class="withdraw-record-page">
-    <div class="header">
+    <div v-if="!$route.meta.navbarShow" class="header">
       <van-icon name="arrow-left" size="20" color="#fff" @click="router.back()" class="back-btn" />
-      <h3 class="title">{{ $t('mine.withdrawalRecord') || 'Withdrawal History' }}</h3>
+      <h3 class="title">{{ $t('main.withdrawRecord') || 'Withdrawal History' }}</h3>
     </div>
 
     <!-- Summary Banner -->
@@ -130,7 +130,7 @@ onMounted(() => {
   font-size: 14px;
 
   .header {
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #B83A2E 0%, #d9483b 100%);
     color: #fff;
     padding: 16px 20px;
     display: flex;
@@ -153,14 +153,14 @@ onMounted(() => {
 
   .summary-card {
     margin: 16px;
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    background: linear-gradient(135deg, #B83A2E 0%, #E86C3F 100%);
     border-radius: 12px;
     padding: 20px 24px;
     color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 6px 16px rgba(30, 60, 114, 0.25);
+    box-shadow: 0 6px 16px rgba(184, 58, 46, 0.25);
 
     .summary-label {
       font-size: 13px;

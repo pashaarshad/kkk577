@@ -1,8 +1,8 @@
 <template>
   <div class="recharge-record-page">
-    <div class="header">
+    <div v-if="!$route.meta.navbarShow" class="header">
       <van-icon name="arrow-left" size="20" color="#fff" @click="router.back()" class="back-btn" />
-      <h3 class="title">{{ $t('mine.rechargeRecord') || 'Recharge History' }}</h3>
+      <h3 class="title">{{ $t('main.rechargeRecord') || 'Recharge History' }}</h3>
     </div>
 
     <!-- Summary Banner -->
