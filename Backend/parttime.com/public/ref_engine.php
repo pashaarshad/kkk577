@@ -261,6 +261,89 @@ if ($uri === '/app/admin/dict/get/country_code' || $uri === '/admin/dict/get/cou
     ]);
 }
 
+// 7c. System Config - getLinkPattern Endpoint (Dynamic skin styles)
+if (strpos($uri, 'getLinkPattern') !== false) {
+    $skinId = intval($_GET['id'] ?? 1);
+    $patterns = [
+        ['pattern_no' => 1, 'pattern_name' => "样式{$skinId}-1 (默认样式)"],
+        ['pattern_no' => 2, 'pattern_name' => "样式{$skinId}-2 (炫彩经典)"],
+        ['pattern_no' => 3, 'pattern_name' => "样式{$skinId}-3 (暗黑奢华)"]
+    ];
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['code' => 1, 'msg' => 'success', 'data' => $patterns], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// 7d. System Config - show_skin Live Preview Page
+if (strpos($uri, 'show_skin') !== false) {
+    header('Content-Type: text/html; charset=utf-8');
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Live Frontend Skin Preview</title>
+        <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+            body { background: #14171f; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+            .preview-header { margin-bottom: 20px; text-align: center; }
+            .preview-header h2 { font-size: 22px; font-weight: 700; color: #fff; display: flex; align-items: center; justify-content: center; gap: 8px; }
+            .preview-header p { font-size: 13px; color: #8c9ba5; margin-top: 6px; }
+            .device-container { width: 390px; height: 790px; background: #000; border-radius: 46px; padding: 12px; box-shadow: 0 25px 60px rgba(0,0,0,0.65), 0 0 0 4px #2b303c; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+            .device-notch { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 120px; height: 24px; background: #000; border-radius: 20px; z-index: 10; }
+            .device-screen { width: 100%; height: 100%; border-radius: 36px; overflow: hidden; background: #fff; position: relative; }
+            .device-screen iframe { width: 100%; height: 100%; border: none; }
+            .preview-actions { margin-top: 20px; display: flex; gap: 12px; }
+            .preview-btn { background: #B83A2E; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s; }
+            .preview-btn:hover { background: #96281e; }
+            .preview-btn.btn-outline { background: #222631; border: 1px solid #3c4252; color: #e2e8f0; }
+            .preview-btn.btn-outline:hover { background: #2d3342; color: #fff; }
+        </style>
+    </head>
+    <body>
+        <div class="preview-header">
+            <h2>📱 Live Frontend Skin & UI Preview</h2>
+            <p>Interactive real-time preview of the user application</p>
+        </div>
+        <div class="device-container">
+            <div class="device-notch"></div>
+            <div class="device-screen">
+                <iframe id="preview-frame" src="/"></iframe>
+            </div>
+        </div>
+        <div class="preview-actions">
+            <button class="preview-btn" onclick="document.getElementById('preview-frame').src='/'">🔄 Refresh View</button>
+            <a href="/" target="_blank" class="preview-btn btn-outline">↗ Open App in New Tab</a>
+        </div>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+
+// 7e. System Config - Save Settings to Database
+if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/save') !== false || (strpos($uri, 'system-config') !== false && strpos($uri, '/save') !== false)) {
+    if (!empty($_POST)) {
+        try {
+            require_once dirname(__DIR__) . '/thinkphp/base.php';
+            \think\Container::get('app')->initialize();
+            
+            foreach ($_POST as $k => $v) {
+                if ($k === '_token_') continue;
+                if (is_array($v)) $v = json_encode($v, JSON_UNESCAPED_UNICODE);
+                $exist = \think\Db::name('system_config')->where('name', $k)->find();
+                if ($exist) {
+                    \think\Db::name('system_config')->where('name', $k)->update(['value' => (string)$v]);
+                } else {
+                    \think\Db::name('system_config')->insert(['name' => $k, 'value' => (string)$v]);
+                }
+            }
+        } catch (\Exception $e) {}
+    }
+    json_resp(['is_update_play_type' => 0], 0, '操作成功');
+}
+
 // 8. Dynamic Reference HTML Views Loading & Universal Interceptor
 if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
     $subPath = $viewMatches[2];
@@ -313,6 +396,38 @@ var apiResults = new Proxy(window.apiResults, {
             } else {
                 $htmlContent = $poly . "\n" . $htmlContent;
             }
+
+            if ($cleanSubPath === 'system/system-config') {
+                $savedConfig = [];
+                try {
+                    require_once dirname(__DIR__) . '/thinkphp/base.php';
+                    \think\Container::get('app')->initialize();
+                    $savedRows = \think\Db::name('system_config')->select();
+                    foreach ($savedRows as $row) {
+                        $savedConfig[$row['name']] = $row['value'];
+                    }
+                } catch (\Exception $e) {}
+                
+                $configJson = json_encode($savedConfig, JSON_UNESCAPED_UNICODE);
+                $initScript = '<script>
+layui.use(["form", "jquery"], function() {
+    var form = layui.form;
+    var $ = layui.$;
+    var saved = ' . $configJson . ';
+    if (saved && Object.keys(saved).length > 0) {
+        if (saved.skin_no) {
+            var sId = saved.skin_no;
+            var opt = "<option value=\"1\">【1】样式" + sId + "-1 (默认样式)</option><option value=\"2\">【2】样式" + sId + "-2 (炫彩经典)</option>";
+            $("#pattern_select").html(opt);
+        }
+        form.val("app-form-1", saved);
+        form.render();
+    }
+});
+</script>';
+                $htmlContent = str_replace('</body>', $initScript . "\n</body>", $htmlContent);
+            }
+
             echo $htmlContent;
             exit;
         }
