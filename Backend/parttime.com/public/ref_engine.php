@@ -595,7 +595,7 @@ layui.use(['form', 'upload', 'jquery'], function() {
     // 7h. Deposit & Withdrawal Currency Channels (system-coin-channel / xy_pay QR Code & Wallet Address Manager)
     if (strpos($uri, 'system-coin-channel') !== false || strpos($uri, 'system_coin_channel') !== false) {
         init_think();
-        $id = intval($_REQUEST['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
+        $id = intval($_REQUEST['id'] ?? $_POST['id'] ?? $_GET['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
 
         // Handle SELECT
         if (strpos($uri, '/select') !== false) {
@@ -605,7 +605,7 @@ layui.use(['form', 'upload', 'jquery'], function() {
             $list = \think\Db::name('xy_pay')->page($page, $limit)->order('sort desc, id asc')->select();
             foreach ($list as &$item) {
                 if (empty($item['name'])) {
-                    $item['name'] = $item['show_name'] ?? ('Channel #' . $item['id']);
+                    $item['name'] = 'Channel #' . $item['id'];
                 }
                 if (empty($item['usercode'])) {
                     $item['usercode'] = '0x4f85459F610376Ee6Ad77216785582c55817d5bc';
@@ -630,15 +630,10 @@ layui.use(['form', 'upload', 'jquery'], function() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [];
             if (isset($_POST['name'])) $data['name'] = trim($_POST['name']);
-            if (isset($_POST['show_name'])) $data['show_name'] = trim($_POST['show_name']);
             if (isset($_POST['usercode'])) $data['usercode'] = trim($_POST['usercode']);
             if (isset($_POST['ewm'])) $data['ewm'] = trim($_POST['ewm']);
             if (isset($_POST['ico'])) $data['ico'] = trim($_POST['ico']);
-            if (isset($_POST['status'])) {
-                $data['status'] = intval($_POST['status']);
-                $data['recharge_is_show'] = intval($_POST['status']);
-            }
-            if (isset($_POST['min_recharge_money'])) $data['min_recharge_money'] = floatval($_POST['min_recharge_money']);
+            if (isset($_POST['status'])) $data['status'] = intval($_POST['status']);
             
             if ($id > 0) {
                 if (!empty($data)) {
@@ -653,7 +648,6 @@ layui.use(['form', 'upload', 'jquery'], function() {
                     $data['usercode'] = '0x4f85459F610376Ee6Ad77216785582c55817d5bc';
                 }
                 $data['status'] = 1;
-                $data['recharge_is_show'] = 1;
                 \think\Db::name('xy_pay')->insert($data);
                 json_resp(null, 0, 'Payment currency channel added successfully');
             }
@@ -685,7 +679,7 @@ layui.use(['form', 'upload', 'jquery'], function() {
     <div class="layui-form-item">
         <label class="layui-form-label required">Currency Channel Name</label>
         <div class="layui-input-block">
-            <input type="text" name="name" placeholder="e.g. TRC20-USDT, BEP20-USDT, ETH, Bank Transfer" class="layui-input" value="<?= htmlspecialchars($pay['name'] ?? $pay['show_name'] ?? '') ?>" required style="width: 340px;">
+            <input type="text" name="name" placeholder="e.g. TRC20-USDT, BEP20-USDT, ETH, Bank Transfer" class="layui-input" value="<?= htmlspecialchars($pay['name'] ?? '') ?>" required style="width: 340px;">
         </div>
     </div>
 
@@ -765,7 +759,7 @@ layui.use(['form', 'upload', 'jquery'], function() {
     
     form.on('submit(saveCoin)', function(data) {
         data.field.status = data.field.status ? 1 : 0;
-        var targetUrl = data.field.id ? '/admin/system/system-coin-channel/update' : '/admin/system/system-coin-channel/insert';
+        var targetUrl = data.field.id ? ('/admin/system/system-coin-channel/update?id=' + data.field.id) : '/admin/system/system-coin-channel/insert';
         $.ajax({
             url: targetUrl,
             type: 'POST',
@@ -781,6 +775,9 @@ layui.use(['form', 'upload', 'jquery'], function() {
                 } else {
                     layer.msg(res.msg || 'Save failed', {icon: 2});
                 }
+            },
+            error: function(xhr, status, err) {
+                layer.msg('Server error during save: ' + (err || xhr.statusText), {icon: 2});
             }
         });
         return false;
