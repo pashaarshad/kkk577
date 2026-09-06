@@ -44,6 +44,15 @@ if (is_file($realFile)) {
 }
 
 // Helper function for JSON responses
+function init_think() {
+    if (!class_exists('think\Db')) {
+        try {
+            require_once dirname(__DIR__) . '/thinkphp/base.php';
+            \think\Container::get('app')->initialize();
+        } catch (\Throwable $e) {}
+    }
+}
+
 function json_resp($data, $code = 0, $msg = 'ok') {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['code' => $code, 'msg' => $msg, 'data' => $data], JSON_UNESCAPED_UNICODE);
@@ -397,6 +406,7 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
 
     // 7g. Poster Banners Management (slide-item insert & update)
     if (strpos($uri, 'system/slide-item/insert') !== false || strpos($uri, 'system/slide-item/update') !== false) {
+        init_think();
         $id = intval($_REQUEST['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [];
