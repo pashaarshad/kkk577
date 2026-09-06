@@ -2,6 +2,10 @@
 // Unified REST Engine for Huanyuys (Pear Admin + Vue Frontend)
 // Handles: /usdt, /app/admin/*, /admin/*, and proxies or responds cleanly
 
+@ini_set('upload_max_filesize', '50M');
+@ini_set('post_max_size', '50M');
+@ini_set('memory_limit', '256M');
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
@@ -341,17 +345,37 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
     json_resp(['is_update_play_type' => 0], 0, '操作成功');
 }
 
-    // 7f. Generic file uploads for Admin
+    // 7f. Generic file uploads for Admin (Supports High Quality images up to 10MB)
     if (strpos($uri, 'upload/image') !== false || strpos($uri, 'upload/attachment') !== false || strpos($uri, 'upload/file') !== false) {
         $fileField = !empty($_FILES) ? array_key_first($_FILES) : null;
         if (!$fileField) {
-            json_resp(null, 1, 'No file uploaded');
+            json_resp(null, 1, 'No file uploaded or file exceeds server limits');
         }
         $file = $_FILES[$fileField];
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            json_resp(null, 1, 'File upload error code: ' . $file['error']);
+            $errMsgs = [
+                1 => 'File size exceeds maximum allowed size (10 MB limit)',
+                2 => 'File size exceeds HTML form limit',
+                3 => 'File was only partially uploaded. Please try again.',
+                4 => 'No file was selected for upload.',
+                6 => 'Missing a temporary folder on the server.',
+                7 => 'Failed to write file to disk.',
+                8 => 'A PHP extension stopped the file upload.'
+            ];
+            $msg = $errMsgs[$file['error']] ?? ('Upload error code: ' . $file['error']);
+            json_resp(null, 1, $msg);
         }
+
+        // Max file size: 10 MB (10,485,760 bytes)
+        if ($file['size'] > 10 * 1024 * 1024) {
+            json_resp(null, 1, 'File size exceeds maximum 10 MB limit');
+        }
+
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'mp3', 'wav', 'ogg', 'm4a'];
+        if (!in_array($ext, $allowedExts)) {
+            json_resp(null, 1, 'Unsupported file format: .' . $ext . '. Allowed: JPG, PNG, WEBP, GIF, BMP');
+        }
         if (empty($ext)) $ext = 'png';
         
         $isAudio = in_array($ext, ['mp3', 'wav', 'ogg', 'm4a']);
@@ -368,7 +392,7 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
             $url = '/upload/' . $subDir . '/' . $dateDir . '/' . $filename;
             json_resp(['url' => $url, 'src' => $url], 0, 'Upload success');
         }
-        json_resp(null, 1, 'Failed to save file');
+        json_resp(null, 1, 'Failed to save file to disk');
     }
 
     // 7g. Poster Banners Management (slide-item insert & update)
@@ -430,6 +454,9 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
                     <i class="layui-icon layui-icon-upload"></i> Upload
                 </button>
             </div>
+            <div style="margin-top: 6px; font-size: 12px; color: #86909c; width: 320px; line-height: 1.4;">
+                <i class="layui-icon layui-icon-info" style="color: #1e9fff;"></i> <b>Rules:</b> Max size: <b>10 MB</b> (High Quality) | Formats: <b>JPG, PNG, WEBP, GIF, BMP</b>
+            </div>
         </div>
     </div>
     
@@ -459,6 +486,7 @@ layui.use(['form', 'upload', 'jquery'], function() {
         url: '/app/admin/upload/image',
         acceptMime: 'image/gif,image/jpeg,image/jpg,image/png,image/webp',
         exts: 'jpg|png|gif|bmp|jpeg|webp',
+        size: 10240,
         done: function(res) {
             var imgUrl = (res && res.data && (res.data.url || res.data.src)) ? (res.data.url || res.data.src) : (res && (res.url || res.src));
             if (imgUrl) {
