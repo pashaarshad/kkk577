@@ -404,16 +404,49 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
         json_resp(null, 1, 'Failed to save file to disk');
     }
 
-    // 7g. Poster Banners Management (slide-item insert & update)
-    if (strpos($uri, 'system/slide-item/insert') !== false || strpos($uri, 'system/slide-item/update') !== false) {
+    // 7g. Poster Banners Management (slide-item select, insert, update & delete)
+    if (strpos($uri, 'slide-item') !== false || strpos($uri, 'slide_item') !== false) {
         init_think();
         $id = intval($_REQUEST['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
+
+        // Handle Table List SELECT
+        if (strpos($uri, '/select') !== false) {
+            $page = intval($_GET['page'] ?? 1);
+            $limit = intval($_GET['limit'] ?? 15);
+            $count = \think\Db::name('xy_banner')->count();
+            $list = \think\Db::name('xy_banner')->page($page, $limit)->order('id desc')->select();
+            foreach ($list as &$item) {
+                if (empty($item['title'])) {
+                    $item['title'] = 'Banner #' . $item['id'];
+                }
+                if (!isset($item['status'])) {
+                    $item['status'] = 1;
+                }
+                if (!isset($item['sort'])) {
+                    $item['sort'] = $item['id'];
+                }
+                if (!isset($item['add_time'])) {
+                    $item['add_time'] = date('Y-m-d H:i:s');
+                }
+            }
+            table_resp($list, $count);
+        }
+
+        // Handle DELETE
+        if (strpos($uri, '/delete') !== false) {
+            if ($id > 0) {
+                \think\Db::name('xy_banner')->where('id', $id)->delete();
+                json_resp(null, 0, 'Banner deleted successfully');
+            }
+            json_resp(null, 1, 'Delete failed');
+        }
+
+        // Handle POST Save (Insert / Update)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [];
             $data['title'] = !empty($_POST['title']) ? trim($_POST['title']) : ('Banner ' . date('M d H:i'));
             $data['image'] = trim($_POST['image'] ?? '');
             $data['url'] = trim($_POST['url'] ?? '');
-            $data['status'] = 1;
             
             if (empty($data['image'])) {
                 json_resp(null, 1, 'Banner image is required');
@@ -427,6 +460,7 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
                 json_resp(null, 0, 'Banner created successfully');
             }
         } else {
+            // Handle GET (HTML Form View)
             $banner = [];
             if ($id > 0) {
                 $banner = \think\Db::name('xy_banner')->where('id', $id)->find() ?: [];
