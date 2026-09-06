@@ -103,6 +103,18 @@
           "value": 150,
           "children": [
             {
+              "id": 155,
+              "title": "Company Profile",
+              "name": "Company Profile",
+              "icon": "layui-icon layui-icon-read",
+              "key": "company_profile",
+              "pid": 150,
+              "href": "/admin/system/article/index?type=9",
+              "type": 1,
+              "weight": 990,
+              "children": []
+            },
+            {
               "id": 160,
               "title": "Carousel Settings",
               "name": "Carousel Settings",
@@ -112,6 +124,42 @@
               "href": "/admin/system/slide-item/index",
               "type": 1,
               "weight": 980,
+              "children": []
+            },
+            {
+              "id": 165,
+              "title": "Regulatory Agency",
+              "name": "Regulatory Agency",
+              "icon": "layui-icon layui-icon-vercode",
+              "key": "regulatory_agency",
+              "pid": 150,
+              "href": "/admin/system/supervision-item/index",
+              "type": 1,
+              "weight": 970,
+              "children": []
+            },
+            {
+              "id": 170,
+              "title": "User Agreement",
+              "name": "User Agreement",
+              "icon": "layui-icon layui-icon-file",
+              "key": "user_agreement",
+              "pid": 150,
+              "href": "/admin/system/article/index?type=1",
+              "type": 1,
+              "weight": 960,
+              "children": []
+            },
+            {
+              "id": 175,
+              "title": "Privacy Policy",
+              "name": "Privacy Policy",
+              "icon": "layui-icon layui-icon-auz",
+              "key": "privacy_policy",
+              "pid": 150,
+              "href": "/admin/system/article/index?type=2",
+              "type": 1,
+              "weight": 950,
               "children": []
             },
             {
