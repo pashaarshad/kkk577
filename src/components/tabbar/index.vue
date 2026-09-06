@@ -80,7 +80,7 @@ const list = ref([
   }
 ])
 
-const token = sessionStorage.getItem('token')
+const token = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('user_id')
 if (!token) {
   list.value[list.value.length - 1].title = t('main.login') || 'Login'
   list.value[list.value.length - 1].path = '/login'

@@ -26,16 +26,17 @@ class Base extends Controller
             $uid = cookie('user_id');
         }
         if (!$uid) {
-            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('uid/d', 0));
         }
         if (!$uid) {
-            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            $token = request()->header('token') ?: cookie('token') ?: input('token');
             if ($token) {
                 $uid = Db::name('xy_users')->where('token', $token)->value('id');
             }
         }
         if ($uid) {
             session('user_id', $uid);
+            cookie('user_id', $uid, 30 * 86400);
         }
         //echo App::VERSION;exit;
         /*if (request()->subDomain() == 'cs' || request()->subDomain() == '') {

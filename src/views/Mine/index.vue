@@ -75,13 +75,14 @@ const navList = [
 
 const router = useRouter()
 const token = localStorage.getItem('token') || sessionStorage.getItem('token')
+const userId = localStorage.getItem('user_id') || sessionStorage.getItem('user_id')
 
-if (!token) {
+if (!token && !userId) {
   router.replace('/login')
 }
 
 const toViews = (path) => {
-  const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token')
+  const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token') || localStorage.getItem('user_id')
   if (!currentToken) {
     router.replace('/login')
     return
@@ -90,11 +91,11 @@ const toViews = (path) => {
 }
 
 const data = ref({})
-if (token) {
-  Request.get({ url: 'index/user/info' }).then(res => {
-    data.value = res.info || {}
-  }).catch(() => {
-    router.replace('/login')
+if (token || userId) {
+  Request.get({ url: 'index/user/info', params: { uid: userId, token } }).then(res => {
+    data.value = res.info || res.data || {}
+  }).catch(err => {
+    console.error('Mine info load error:', err)
   })
 }
 

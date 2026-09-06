@@ -183,10 +183,10 @@ class User extends Controller
     public function info() {
         $uid = session('user_id') ?: cookie('user_id');
         if (!$uid) {
-            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('uid/d', 0));
         }
         if (!$uid) {
-            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            $token = request()->header('token') ?: cookie('token') ?: input('token');
             if ($token) {
                 $uid = Db::name('xy_users')->where('token', $token)->value('id');
             }

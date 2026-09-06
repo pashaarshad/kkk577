@@ -295,27 +295,25 @@ const onConfirmTransfer = async () => {
 
 const loadData = async () => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  if (!token) {
+  const userId = localStorage.getItem('user_id') || sessionStorage.getItem('user_id')
+  if (!token && !userId) {
     router.replace('/login')
     return
   }
 
   try {
-    const uRes = await Request.get({ url: 'index/user/info' })
-    if (uRes && uRes.info) {
-      userData.value = uRes.info
-    } else {
-      router.replace('/login')
-      return
+    const uRes = await Request.get({ url: 'index/user/info', params: { uid: userId, token } })
+    if (uRes && (uRes.info || uRes.data)) {
+      userData.value = uRes.info || uRes.data
     }
   } catch (e) {
-    router.replace('/login')
-    return
+    console.error('User info fetch error in Team:', e)
   }
 
   try {
-    const res = await Request.get({ url: 'index/user/team' })
-    if (res) data.value = res
+    const res = await Request.get({ url: 'index/user/team', params: { uid: userId, token } })
+    if (res && res.data) data.value = res.data
+    else if (res) data.value = res
   } catch (e) {
     console.error('Failed to load team data:', e)
   }
