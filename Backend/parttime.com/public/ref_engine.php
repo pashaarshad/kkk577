@@ -441,26 +441,31 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
             json_resp(null, 1, 'Delete failed');
         }
 
-        // Handle POST Save (Insert / Update)
+        // Handle POST Save (Insert / Update / Status Toggle)
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [];
-            $data['title'] = !empty($_POST['title']) ? trim($_POST['title']) : ('Banner ' . date('M d H:i'));
-            $data['image'] = trim($_POST['image'] ?? '');
-            $data['url'] = trim($_POST['url'] ?? '');
-            
-            if (empty($data['image'])) {
-                json_resp(null, 1, 'Banner image is required');
-            }
+            if (isset($_POST['title'])) $data['title'] = trim($_POST['title']);
+            if (isset($_POST['image'])) $data['image'] = trim($_POST['image']);
+            if (isset($_POST['url'])) $data['url'] = trim($_POST['url']);
+            if (isset($_POST['status'])) $data['status'] = intval($_POST['status']);
             
             if ($id > 0) {
-                \think\Db::name('xy_banner')->where('id', $id)->update($data);
+                if (!empty($data)) {
+                    \think\Db::name('xy_banner')->where('id', $id)->update($data);
+                }
                 json_resp(null, 0, 'Banner updated successfully');
             } else {
+                if (empty($data['image'])) {
+                    json_resp(null, 1, 'Banner image is required');
+                }
+                if (empty($data['title'])) {
+                    $data['title'] = 'Banner ' . date('M d H:i');
+                }
                 \think\Db::name('xy_banner')->insert($data);
                 json_resp(null, 0, 'Banner created successfully');
             }
-        } else {
-            // Handle GET (HTML Form View)
+        } elseif (strpos($uri, '/insert') !== false || strpos($uri, '/update') !== false || strpos($uri, '/edit') !== false || strpos($uri, '/add') !== false) {
+            // Handle GET (HTML Form View for popup modals ONLY)
             $banner = [];
             if ($id > 0) {
                 $banner = \think\Db::name('xy_banner')->where('id', $id)->find() ?: [];
