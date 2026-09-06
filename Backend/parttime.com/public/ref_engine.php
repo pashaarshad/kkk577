@@ -400,9 +400,14 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
         $id = intval($_REQUEST['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [];
-            if (isset($_POST['title'])) $data['title'] = trim($_POST['title']);
-            if (isset($_POST['image'])) $data['image'] = trim($_POST['image']);
-            if (isset($_POST['url'])) $data['url'] = trim($_POST['url']);
+            $data['title'] = !empty($_POST['title']) ? trim($_POST['title']) : ('Banner ' . date('M d H:i'));
+            $data['image'] = trim($_POST['image'] ?? '');
+            $data['url'] = trim($_POST['url'] ?? '');
+            $data['status'] = 1;
+            
+            if (empty($data['image'])) {
+                json_resp(null, 1, 'Banner image is required');
+            }
             
             if ($id > 0) {
                 \think\Db::name('xy_banner')->where('id', $id)->update($data);
@@ -436,9 +441,9 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
     <input type="hidden" name="id" value="<?= htmlspecialchars($banner['id'] ?? '') ?>">
     
     <div class="layui-form-item">
-        <label class="layui-form-label required">Banner Name</label>
+        <label class="layui-form-label">Banner Name</label>
         <div class="layui-input-block">
-            <input type="text" name="title" required lay-verify="required" placeholder="Enter banner title" class="layui-input" value="<?= htmlspecialchars($banner['title'] ?? '') ?>" style="width: 320px;">
+            <input type="text" name="title" placeholder="Enter banner title (optional)" class="layui-input" value="<?= htmlspecialchars($banner['title'] ?? '') ?>" style="width: 320px;">
         </div>
     </div>
     
