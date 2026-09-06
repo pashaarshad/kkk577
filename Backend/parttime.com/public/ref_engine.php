@@ -341,6 +341,35 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
     json_resp(['is_update_play_type' => 0], 0, '操作成功');
 }
 
+    // 7f. Generic file uploads for Admin
+    if (strpos($uri, 'upload/image') !== false || strpos($uri, 'upload/attachment') !== false || strpos($uri, 'upload/file') !== false) {
+        $fileField = isset($_FILES['__file__']) ? '__file__' : (isset($_FILES['file']) ? 'file' : null);
+        if (!$fileField) {
+            json_resp(null, 1, 'No file uploaded');
+        }
+        $file = $_FILES[$fileField];
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            json_resp(null, 1, 'File upload error code: ' . $file['error']);
+        }
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        
+        $isAudio = in_array($ext, ['mp3', 'wav', 'ogg', 'm4a']);
+        $subDir = $isAudio ? 'audio' : 'img';
+        
+        $dateDir = date('Ymd');
+        $saveDir = __DIR__ . '/upload/' . $subDir . '/' . $dateDir . '/';
+        if (!is_dir($saveDir)) {
+            mkdir($saveDir, 0777, true);
+        }
+        $filename = md5(time() . rand(1000, 9999)) . '.' . $ext;
+        $targetFile = $saveDir . $filename;
+        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+            $url = '/upload/' . $subDir . '/' . $dateDir . '/' . $filename;
+            json_resp(['url' => $url], 0, 'Upload success');
+        }
+        json_resp(null, 1, 'Failed to save file');
+    }
+
 // 8. Dynamic Reference HTML Views Loading & Universal Interceptor
 if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
     $subPath = $viewMatches[2];
