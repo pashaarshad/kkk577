@@ -374,9 +374,9 @@
 
         getLang: function () {
             try {
-                return localStorage.getItem('admin_lang') || 'zh';
+                return localStorage.getItem('admin_lang') || 'en';
             } catch (e) {
-                return 'zh';
+                return 'en';
             }
         },
 
@@ -524,7 +524,7 @@
         },
 
         init: function () {
-            // Inject layout CSS fixes for sidebar width, text wrapping, and table button overflow
+            // Inject layout CSS fixes for sidebar width, text wrapping, table button overflow, and modal icons
             if (!document.getElementById('admin-i18n-css')) {
                 var styleNode = document.createElement('style');
                 styleNode.id = 'admin-i18n-css';
@@ -558,7 +558,9 @@
                     '}\n' +
                     '.layui-btn-xs {\n' +
                     '    padding: 0 8px !important;\n' +
-                    '    font-size: 12px !important;\n' +
+                    '}\n' +
+                    '.layui-layer-setwin .layui-layer-close1 { background: none !important; text-decoration: none !important; font-size: 0 !important; }\n' +
+                    '.layui-layer-setwin .layui-layer-close1:after { content: "✕" !important; font-family: sans-serif !important; font-size: 16px !important; font-weight: bold !important; color: #555 !important; display: block; line-height: 16px; text-align: center; }\n';    font-size: 12px !important;\n' +
                     '    height: 24px !important;\n' +
                     '    line-height: 24px !important;\n' +
                     '}\n';

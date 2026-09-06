@@ -979,6 +979,8 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $updateData = [];
             if (isset($_POST['balance'])) $updateData['balance'] = floatval($_POST['balance']);
+            if (isset($_POST['commission_balance'])) $updateData['commission_balance'] = floatval($_POST['commission_balance']);
+            if (isset($_POST['tel']) && $_POST['tel'] !== '') $updateData['tel'] = trim($_POST['tel']);
             if (isset($_POST['level'])) $updateData['level'] = intval($_POST['level']);
             if (isset($_POST['status'])) $updateData['status'] = intval($_POST['status']);
             if (isset($_POST['pwd']) && $_POST['pwd'] !== '') $updateData['pwd'] = md5($_POST['pwd']);
@@ -989,7 +991,131 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
             json_resp(null, 1, '保存失败');
         } else {
             $user = \think\Db::name('xy_users')->where('id', $uid)->find();
-            json_resp($user);
+            if (empty($user)) {
+                echo "<h3 style='color:red;text-align:center;margin-top:50px;'>User not found</h3>";
+                exit;
+            }
+            header('Content-Type: text/html; charset=utf-8');
+            ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Details</title>
+    <link rel="stylesheet" href="/app/admin/component/layui/css/layui.css?v=2.8.12" />
+    <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
+    <link rel="stylesheet" href="/app/admin/admin/css/reset.css" />
+    <script src="/admin_i18n.js"></script>
+    <style>
+        .layui-form-label { width: 130px !important; }
+        .layui-input-inline { width: 220px !important; }
+    </style>
+</head>
+<body class="pear-container" style="background:#fff; padding: 25px;">
+<form class="layui-form" lay-filter="user-form" id="user-form">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
+    <div class="layui-form-item">
+        <label class="layui-form-label">User ID</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" value="<?= htmlspecialchars($user['id']) ?>" readonly disabled style="background:#f8f8f8;">
+        </div>
+        <label class="layui-form-label">Username</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" value="<?= htmlspecialchars($user['username']) ?>" readonly disabled style="background:#f8f8f8;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Phone Number</label>
+        <div class="layui-input-inline">
+            <input type="text" name="tel" class="layui-input" value="<?= htmlspecialchars($user['tel']) ?>">
+        </div>
+        <label class="layui-form-label">Invite Code</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" value="<?= htmlspecialchars($user['invite_code']) ?>" readonly disabled style="background:#f8f8f8;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Account Balance</label>
+        <div class="layui-input-inline">
+            <input type="number" step="0.01" name="balance" class="layui-input" value="<?= htmlspecialchars($user['balance']) ?>">
+        </div>
+        <label class="layui-form-label">Commission</label>
+        <div class="layui-input-inline">
+            <input type="number" step="0.01" name="commission_balance" class="layui-input" value="<?= htmlspecialchars($user['commission_balance']) ?>">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">VIP Level</label>
+        <div class="layui-input-inline">
+            <select name="level">
+                <?php for($i=0; $i<=6; $i++): ?>
+                <option value="<?= $i ?>" <?= ($user['level']==$i)?'selected':'' ?>>VIP<?= $i ?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+        <label class="layui-form-label">Account Status</label>
+        <div class="layui-input-inline">
+            <select name="status">
+                <option value="1" <?= ($user['status']==1)?'selected':'' ?>>Normal (正常)</option>
+                <option value="0" <?= ($user['status']==0)?'selected':'' ?>>Disabled (禁用)</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">New Password</label>
+        <div class="layui-input-inline">
+            <input type="password" name="pwd" placeholder="Leave empty to keep unchanged" class="layui-input">
+        </div>
+        <label class="layui-form-label">Reg IP</label>
+        <div class="layui-input-inline">
+            <input type="text" class="layui-input" value="<?= htmlspecialchars($user['ip']) ?>" readonly disabled style="background:#f8f8f8;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Reg Time</label>
+        <div class="layui-input-inline" style="width: 220px !important;">
+            <input type="text" class="layui-input" value="<?= !empty($user['addtime']) ? date('Y-m-d H:i:s', $user['addtime']) : '' ?>" readonly disabled style="background:#f8f8f8;">
+        </div>
+    </div>
+    <div class="layui-form-item text-center" style="margin-top: 30px;">
+        <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="saveUser">Save Changes</button>
+        <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()">Cancel</button>
+    </div>
+</form>
+<script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script src="/app/admin/component/pear/pear.js"></script>
+<script>
+layui.use(['form', 'jquery', 'popup'], function() {
+    var form = layui.form;
+    var $ = layui.$;
+    form.render();
+    
+    form.on('submit(saveUser)', function(data) {
+        $.ajax({
+            url: '/admin/member/user/edit',
+            type: 'POST',
+            data: data.field,
+            dataType: 'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    layui.popup.success(res.msg || 'Saved successfully', function() {
+                        parent.layer.closeAll();
+                        if (parent.refreshTable) parent.refreshTable();
+                        else parent.location.reload();
+                    });
+                } else {
+                    layui.popup.failure(res.msg || 'Save failed');
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+</body>
+</html>
+            <?php
+            exit;
         }
     }
 
