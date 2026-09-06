@@ -335,6 +335,21 @@
         { zh: '首充', en: 'First Deposit' },
         { zh: '累充', en: 'Cumulative Deposit' },
 
+        // Table Pagination & LayUI Components
+        { zh: '10 条/页', en: '10 / page' },
+        { zh: '20 条/页', en: '20 / page' },
+        { zh: '30 条/页', en: '30 / page' },
+        { zh: '50 条/页', en: '50 / page' },
+        { zh: '90 条/页', en: '90 / page' },
+        { zh: '条/页', en: '/ page' },
+        { zh: '共 ', en: 'Total ' },
+        { zh: ' 条', en: ' items' },
+        { zh: '到第', en: 'Go to' },
+        { zh: '页', en: 'Page' },
+        { zh: '确定', en: 'Confirm' },
+        { zh: '中文', en: 'ZH' },
+        { zh: '英文', en: 'EN' },
+
         // Messages & Placeholders
         { zh: '操作成功', en: 'Operation succeeded' },
         { zh: '操作失败', en: 'Operation failed' },
@@ -507,6 +522,37 @@
         },
 
         init: function () {
+            // Inject layout CSS fixes for sidebar width, text wrapping, and table button overflow
+            if (!document.getElementById('admin-i18n-css')) {
+                var styleNode = document.createElement('style');
+                styleNode.id = 'admin-i18n-css';
+                styleNode.innerHTML =
+                    '.layui-side, .pear-side, .layui-side-scroll, .pear-admin .layui-side { width: 235px !important; }\n' +
+                    '.layui-body, .pear-body, .pear-container, .layui-layout-admin .layui-body { left: 235px !important; }\n' +
+                    '.pear-nav-tree .layui-nav-item a, .layui-nav-tree .layui-nav-item a {\n' +
+                    '    white-space: nowrap !important;\n' +
+                    '    overflow: hidden !important;\n' +
+                    '    text-overflow: ellipsis !important;\n' +
+                    '    font-size: 13px !important;\n' +
+                    '    padding-left: 14px !important;\n' +
+                    '    padding-right: 8px !important;\n' +
+                    '}\n' +
+                    '.pear-nav-tree .layui-nav-child dd a, .layui-nav-tree .layui-nav-child dd a {\n' +
+                    '    padding-left: 28px !important;\n' +
+                    '}\n' +
+                    '.layui-table-cell {\n' +
+                    '    overflow: visible !important;\n' +
+                    '    white-space: nowrap !important;\n' +
+                    '}\n' +
+                    '.layui-btn-xs {\n' +
+                    '    padding: 0 8px !important;\n' +
+                    '    font-size: 12px !important;\n' +
+                    '    height: 24px !important;\n' +
+                    '    line-height: 24px !important;\n' +
+                    '}\n';
+                (document.head || document.documentElement).appendChild(styleNode);
+            }
+
             var currentLang = I18N.getLang();
 
             I18N.applyLang(currentLang);

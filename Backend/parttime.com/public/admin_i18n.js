@@ -114,35 +114,24 @@
         { zh: '体验金过期时间', en: 'Bonus Expiration Time' },
 
         // Compound Buttons & Toolbar Actions (from screenshot)
-        { zh: '一键审核', en: 'Batch Approve' },
+        { zh: '一键审核', en: 'Batch Audit' },
         { zh: '一键出款', en: 'Batch Payout' },
         { zh: '手动出款', en: 'Manual Payout' },
-        { zh: '一键退回', en: 'Batch Refund' },
+        { zh: '一键退回', en: 'Batch Return' },
         { zh: '导出订单', en: 'Export Orders' },
         { zh: '批量删除', en: 'Batch Delete' },
         { zh: '保存设置', en: 'Save Settings' },
         { zh: '确认到账', en: 'Confirm Received' },
-        { zh: '审核通过', en: 'Approve' },
-        { zh: '通过提现', en: 'Approve Withdrawal' },
-        { zh: '已通过', en: 'Approved' },
-        { zh: '审核拒绝', en: 'Reject' },
-        { zh: '审核驳回', en: 'Reject' },
-        { zh: '驳回提现', en: 'Reject Withdrawal' },
-        { zh: '驳回退还余额', en: 'Reject & Refund' },
-        { zh: '已驳回', en: 'Rejected' },
+        { zh: '审核通过', en: 'Audit Pass' },
+        { zh: '审核拒绝', en: 'Audit Reject' },
+        { zh: '审核驳回', en: 'Audit Reject' },
         { zh: '原路退款', en: 'Refund' },
         { zh: '同意', en: 'Approve' },
         { zh: '通过', en: 'Approve' },
-        { zh: '审核', en: 'Approve' },
-        { zh: '打款', en: 'Payout' },
-        { zh: '打款出款', en: 'Payout' },
-        { zh: '打款确认', en: 'Confirm Payout' },
         { zh: '驳回', en: 'Reject' },
         { zh: '拒绝', en: 'Reject' },
         { zh: '退款', en: 'Refund' },
         { zh: '退回', en: 'Return' },
-        { zh: '编辑订单', en: 'Edit Order' },
-        { zh: '编辑提现订单', en: 'Edit Withdrawal Order' },
         { zh: '重试', en: 'Retry' },
         { zh: '查询', en: 'Search' },
         { zh: '搜索', en: 'Search' },
@@ -228,8 +217,6 @@
         { zh: '用户IP', en: 'User IP' },
         { zh: '打款tx', en: 'Payout TXID' },
         { zh: '打款TX', en: 'Payout TXID' },
-        { zh: '打款TxID', en: 'Payout TXID' },
-        { zh: '管理员备注', en: 'Admin Remarks' },
         { zh: '手续费', en: 'Fee' },
         { zh: '税费', en: 'Tax Fee' },
         { zh: '订单号', en: 'Order No.' },
@@ -347,6 +334,21 @@
         { zh: '人员', en: 'Staff' },
         { zh: '首充', en: 'First Deposit' },
         { zh: '累充', en: 'Cumulative Deposit' },
+
+        // Table Pagination & LayUI Components
+        { zh: '10 条/页', en: '10 / page' },
+        { zh: '20 条/页', en: '20 / page' },
+        { zh: '30 条/页', en: '30 / page' },
+        { zh: '50 条/页', en: '50 / page' },
+        { zh: '90 条/页', en: '90 / page' },
+        { zh: '条/页', en: '/ page' },
+        { zh: '共 ', en: 'Total ' },
+        { zh: ' 条', en: ' items' },
+        { zh: '到第', en: 'Go to' },
+        { zh: '页', en: 'Page' },
+        { zh: '确定', en: 'Confirm' },
+        { zh: '中文', en: 'ZH' },
+        { zh: '英文', en: 'EN' },
 
         // Messages & Placeholders
         { zh: '操作成功', en: 'Operation succeeded' },
@@ -520,6 +522,37 @@
         },
 
         init: function () {
+            // Inject layout CSS fixes for sidebar width, text wrapping, and table button overflow
+            if (!document.getElementById('admin-i18n-css')) {
+                var styleNode = document.createElement('style');
+                styleNode.id = 'admin-i18n-css';
+                styleNode.innerHTML =
+                    '.layui-side, .pear-side, .layui-side-scroll, .pear-admin .layui-side { width: 235px !important; }\n' +
+                    '.layui-body, .pear-body, .pear-container, .layui-layout-admin .layui-body { left: 235px !important; }\n' +
+                    '.pear-nav-tree .layui-nav-item a, .layui-nav-tree .layui-nav-item a {\n' +
+                    '    white-space: nowrap !important;\n' +
+                    '    overflow: hidden !important;\n' +
+                    '    text-overflow: ellipsis !important;\n' +
+                    '    font-size: 13px !important;\n' +
+                    '    padding-left: 14px !important;\n' +
+                    '    padding-right: 8px !important;\n' +
+                    '}\n' +
+                    '.pear-nav-tree .layui-nav-child dd a, .layui-nav-tree .layui-nav-child dd a {\n' +
+                    '    padding-left: 28px !important;\n' +
+                    '}\n' +
+                    '.layui-table-cell {\n' +
+                    '    overflow: visible !important;\n' +
+                    '    white-space: nowrap !important;\n' +
+                    '}\n' +
+                    '.layui-btn-xs {\n' +
+                    '    padding: 0 8px !important;\n' +
+                    '    font-size: 12px !important;\n' +
+                    '    height: 24px !important;\n' +
+                    '    line-height: 24px !important;\n' +
+                    '}\n';
+                (document.head || document.documentElement).appendChild(styleNode);
+            }
+
             var currentLang = I18N.getLang();
 
             I18N.applyLang(currentLang);

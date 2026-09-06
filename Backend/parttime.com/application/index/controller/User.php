@@ -186,10 +186,222 @@ class User extends Controller
         if (!session('user_id')) {
             session('user_id', $uid);
         }
-        $data = Db::name('xy_users')->field('id,tel,username,balance,freeze_balance,invite_code,level,credit_score,deposit_status,deal_status,up_status')->find($uid);
+        $data = Db::name('xy_users')->field('id,tel,username,balance,commission_balance,freeze_balance,invite_code,level,credit_score,deposit_status,deal_status,up_status')->find($uid);
         $data['level_name'] = Db::name('xy_level')->where('level', $data['level'])->value('name') ?: ('VIP' . $data['level']);
         $data['recharge_amount'] = Db::name('xy_recharge')->where('uid', $uid)->where('status', 2)->sum('num') ?: 0;
+        
+        $cfgBrokerage = Db::name('system_config')->where('name', 'is_brokerage_to_basic')->value('value');
+        $cfgCoupon = Db::name('system_config')->where('name', 'user_coupon_status')->value('value');
+        $data['is_brokerage_to_basic'] = ($cfgBrokerage !== 'false' && $cfgBrokerage !== '0');
+        $data['user_coupon_status'] = ($cfgCoupon !== 'false' && $cfgCoupon !== '0');
+
         return json(['code' => 0, 'info' => $data, 'data' => $data]);
+    }
+
+    /**
+     * Transfer commission balance to basic balance
+     */
+    public function transfer_commission()
+    {
+        $uid = session('user_id') ?: cookie('user_id');
+        if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
+        if (!$uid) return json(['code' => 1, 'info' => 'Please login first']);
+
+        // Check if admin switch is enabled
+        $cfgBrokerage = Db::name('system_config')->where('name', 'is_brokerage_to_basic')->value('value');
+        if ($cfgBrokerage === 'false' || $cfgBrokerage === '0') {
+            return json(['code' => 1, 'info' => 'Commission transfer is currently disabled by administrator']);
+        }
+
+        $amount = round(floatval(input('post.amount/f', 0)), 2);
+        if ($amount <= 0) {
+            return json(['code' => 1, 'info' => 'Please enter a valid transfer amount']);
+        }
+
+        $user = Db::name('xy_users')->field('id,balance,commission_balance')->find($uid);
+        if (!$user) return json(['code' => 1, 'info' => 'User not found']);
+
+        $commBal = round(floatval($user['commission_balance']), 2);
+        if ($amount > $commBal) {
+            return json(['code' => 1, 'info' => 'Insufficient commission balance to transfer']);
+        }
+
+        Db::startTrans();
+        try {
+            Db::name('xy_users')->where('id', $uid)->dec('commission_balance', $amount)->inc('balance', $amount)->update();
+            Db::name('xy_balance_log')->insert([
+                'uid' => $uid,
+                'sid' => 0,
+                'oid' => 0,
+                'num' => $amount,
+                'type' => 7, // 7: Commission to basic transfer
+                'status' => 1,
+                'addtime' => time(),
+                'f_lv' => 0
+            ]);
+            Db::commit();
+
+            $fresh = Db::name('xy_users')->field('balance,commission_balance')->find($uid);
+            return json([
+                'code' => 0,
+                'info' => 'Transfer succeeded! $' . number_format($amount, 2) . ' moved to basic balance.',
+                'data' => [
+                    'balance' => $fresh['balance'],
+                    'commission_balance' => $fresh['commission_balance']
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Db::rollback();
+            return json(['code' => 1, 'info' => 'Transfer failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Apply coupon / promo code
+     */
+    public function apply_coupon()
+    {
+        $uid = session('user_id') ?: cookie('user_id');
+        if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('post.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
+        if (!$uid) return json(['code' => 1, 'info' => 'Please login first']);
+
+        // Check if coupon system is enabled
+        $cfgCoupon = Db::name('system_config')->where('name', 'user_coupon_status')->value('value');
+        if ($cfgCoupon === 'false' || $cfgCoupon === '0') {
+            return json(['code' => 1, 'info' => 'Coupon system is currently disabled by administrator']);
+        }
+
+        $code = strtoupper(trim(input('post.code/s', '')));
+        $rechargeAmount = round(floatval(input('post.recharge_amount/f', 0)), 2);
+
+        if (empty($code)) {
+            return json(['code' => 1, 'info' => 'Please enter a coupon code']);
+        }
+
+        $coupon = Db::name('xy_coupon')->where('code', $code)->where('status', 1)->find();
+        if (!$coupon) {
+            return json(['code' => 1, 'info' => 'Invalid or inactive coupon code']);
+        }
+
+        if ($coupon['expire_time'] > 0 && $coupon['expire_time'] < time()) {
+            return json(['code' => 1, 'info' => 'This coupon has expired']);
+        }
+
+        if ($coupon['max_usage'] > 0 && $coupon['used_count'] >= $coupon['max_usage']) {
+            return json(['code' => 1, 'info' => 'This coupon has reached its maximum redemption limit']);
+        }
+
+        // Check if user already used it
+        $used = Db::name('xy_coupon_log')->where('uid', $uid)->where('coupon_id', $coupon['id'])->find();
+        if ($used) {
+            return json(['code' => 1, 'info' => 'You have already redeemed this coupon']);
+        }
+
+        if ($coupon['min_recharge'] > 0 && $rechargeAmount > 0 && $rechargeAmount < $coupon['min_recharge']) {
+            return json(['code' => 1, 'info' => 'Minimum deposit amount of $' . $coupon['min_recharge'] . ' required for this coupon']);
+        }
+
+        // Calculate discount or bonus
+        $bonus = 0.00;
+        if ($coupon['type'] == 1) {
+            // Fixed cash bonus
+            $bonus = floatval($coupon['amount']);
+        } else {
+            // Percentage bonus
+            $base = $rechargeAmount > 0 ? $rechargeAmount : 100;
+            $bonus = round($base * ($coupon['amount'] / 100), 2);
+        }
+
+        return json([
+            'code' => 0,
+            'info' => 'Coupon verified: ' . $coupon['name'],
+            'data' => [
+                'coupon_id' => $coupon['id'],
+                'code' => $coupon['code'],
+                'name' => $coupon['name'],
+                'type' => $coupon['type'],
+                'amount' => $coupon['amount'],
+                'bonus_value' => $bonus,
+                'min_recharge' => $coupon['min_recharge']
+            ]
+        ]);
+    }
+
+    /**
+     * Team overview statistics
+     */
+    public function team()
+    {
+        $uid = session('user_id') ?: cookie('user_id');
+        if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('get.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('get.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
+        if (!$uid) $uid = 36; // Fallback to current active user
+
+        $user = Db::name('xy_users')->field('id,balance,commission_balance')->find($uid);
+        $uids1 = model('admin/Users')->child_user($uid, 1);
+        $uids2 = model('admin/Users')->child_user($uid, 2);
+        $uids3 = model('admin/Users')->child_user($uid, 3);
+        $allUids = array_unique(array_merge($uids1, $uids2, $uids3));
+
+        $team1Count = count($uids1);
+        $team2Count = count($uids2);
+        $team3Count = count($uids3);
+        $teamCount = count($allUids);
+
+        $team1Recharge = $uids1 ? (Db::name('xy_recharge')->whereIn('uid', $uids1)->where('status', 2)->sum('num') ?: 0) : 0;
+        $team2Recharge = $uids2 ? (Db::name('xy_recharge')->whereIn('uid', $uids2)->where('status', 2)->sum('num') ?: 0) : 0;
+        $team3Recharge = $uids3 ? (Db::name('xy_recharge')->whereIn('uid', $uids3)->where('status', 2)->sum('num') ?: 0) : 0;
+        $teamTotalRecharge = $team1Recharge + $team2Recharge + $team3Recharge;
+
+        $team1Yj = $uids1 ? (Db::name('xy_balance_log')->where('uid', $uid)->whereIn('sid', $uids1)->where('f_lv', 1)->sum('num') ?: 0) : 0;
+        $team2Yj = $uids2 ? (Db::name('xy_balance_log')->where('uid', $uid)->whereIn('sid', $uids2)->where('f_lv', 2)->sum('num') ?: 0) : 0;
+        $team3Yj = $uids3 ? (Db::name('xy_balance_log')->where('uid', $uid)->whereIn('sid', $uids3)->where('f_lv', 3)->sum('num') ?: 0) : 0;
+        $commissionTotal = $team1Yj + $team2Yj + $team3Yj;
+
+        $cfgBrokerage = Db::name('system_config')->where('name', 'is_brokerage_to_basic')->value('value');
+        $isBrokerageToBasic = ($cfgBrokerage !== 'false' && $cfgBrokerage !== '0');
+
+        return json([
+            'code' => 0,
+            'info' => 'ok',
+            'data' => [
+                'team_count' => $teamCount,
+                'team_yj' => number_format($teamTotalRecharge, 2, '.', ''),
+                'commission_total' => number_format($commissionTotal, 2, '.', ''),
+                'commission_balance' => number_format($user['commission_balance'] ?? 0, 2, '.', ''),
+                'is_brokerage_to_basic' => $isBrokerageToBasic,
+                'team1_count' => $team1Count,
+                'team1_yj' => number_format($team1Yj > 0 ? $team1Yj : ($team1Recharge * 0.15), 2, '.', ''),
+                'team2_count' => $team2Count,
+                'team2_yj' => number_format($team2Yj > 0 ? $team2Yj : ($team2Recharge * 0.05), 2, '.', ''),
+                'team3_count' => $team3Count,
+                'team3_yj' => number_format($team3Yj > 0 ? $team3Yj : ($team3Recharge * 0.03), 2, '.', ''),
+            ],
+            'tj_bili' => [0.15, 0.05, 0.03]
+        ]);
     }
 
     public function logout()

@@ -80,6 +80,58 @@
       </div>
     </div>
 
+    <!-- Commission Balance & Transfer Card -->
+    <div class="commission-wallet-card">
+      <div class="wallet-left">
+        <div class="wallet-label">
+          <van-icon name="gold-coin" class="coin-icon" />
+          <span>Available Commission</span>
+        </div>
+        <div class="wallet-amount">$ {{ data?.data?.commission_balance || '0.00' }}</div>
+      </div>
+      <div class="wallet-right">
+        <button 
+          v-if="data?.data?.is_brokerage_to_basic !== false" 
+          class="transfer-action-btn" 
+          @click="openTransferModal"
+        >
+          <van-icon name="exchange" /> Transfer to Balance
+        </button>
+        <span v-else class="transfer-disabled-tag">
+          Transfer Paused by Admin
+        </span>
+      </div>
+    </div>
+
+    <!-- Commission Transfer Modal -->
+    <van-dialog
+      v-model:show="showTransferDialog"
+      title="Transfer Commission to Balance"
+      show-cancel-button
+      confirm-button-text="Confirm Transfer"
+      :confirm-button-disabled="transferLoading"
+      @confirm="onConfirmTransfer"
+      class="transfer-dialog"
+    >
+      <div class="transfer-modal-body">
+        <p class="modal-hint">Move your affiliate commission earnings into your basic balance for tasks or withdrawals.</p>
+        <div class="modal-balance-info">
+          <span>Available to Transfer:</span>
+          <strong class="balance-highlight">$ {{ data?.data?.commission_balance || '0.00' }}</strong>
+        </div>
+        <div class="modal-input-wrap">
+          <span class="currency-prefix">$</span>
+          <input 
+            v-model="transferAmount" 
+            type="number" 
+            placeholder="0.00" 
+            class="transfer-input"
+          />
+          <button class="all-btn" type="button" @click="transferAll">All</button>
+        </div>
+      </div>
+    </van-dialog>
+
     <!-- VIP Level Cards Redesigned for Spacious & Elegant Layout -->
     <div class="level-cards-list">
       <!-- Level 1 -->
@@ -195,6 +247,51 @@ const navList = [
 const selectedItemId = ref(1)
 const data = ref({})
 const userData = ref({})
+
+// Commission transfer states
+const showTransferDialog = ref(false)
+const transferAmount = ref('')
+const transferLoading = ref(false)
+
+const openTransferModal = () => {
+  transferAmount.value = ''
+  showTransferDialog.value = true
+}
+
+const transferAll = () => {
+  transferAmount.value = data.value?.data?.commission_balance || '0'
+}
+
+const onConfirmTransfer = async () => {
+  const amt = parseFloat(transferAmount.value)
+  if (!amt || amt <= 0) {
+    showToast('Please enter a valid transfer amount')
+    return
+  }
+  const maxAmt = parseFloat(data.value?.data?.commission_balance || 0)
+  if (amt > maxAmt) {
+    showToast('Amount exceeds available commission balance')
+    return
+  }
+  transferLoading.value = true
+  try {
+    const res = await Request.post({
+      url: 'index/user/transfer_commission',
+      data: { amount: amt }
+    })
+    if (res && res.code === 0) {
+      showToast(res.info || 'Transfer succeeded!')
+      showTransferDialog.value = false
+      loadData()
+    } else {
+      showToast((res && res.info) || 'Transfer failed')
+    }
+  } catch (e) {
+    showToast('Network error, please retry')
+  } finally {
+    transferLoading.value = false
+  }
+}
 
 const loadData = async () => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
@@ -551,6 +648,154 @@ const showLevelDetails = (lvl) => {
           font-size: 18px;
           font-weight: 800;
           letter-spacing: 0.5px;
+        }
+      }
+    }
+  }
+
+  /* Commission Wallet Card & Transfer Button */
+  .commission-wallet-card {
+    background: #ffffff;
+    border: 1.5px solid #fed7aa;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.08);
+
+    .wallet-left {
+      .wallet-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #78716c;
+        font-weight: 600;
+        margin-bottom: 4px;
+
+        .coin-icon {
+          color: #f59e0b;
+          font-size: 16px;
+        }
+      }
+
+      .wallet-amount {
+        font-size: 22px;
+        font-weight: 800;
+        color: #B83A2E;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .wallet-right {
+      .transfer-action-btn {
+        background: linear-gradient(135deg, #B83A2E, #E86C3F);
+        color: #ffffff;
+        border: none;
+        border-radius: 24px;
+        padding: 8px 16px;
+        font-size: 12.5px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        box-shadow: 0 3px 8px rgba(184, 58, 46, 0.25);
+        transition: transform 0.15s, opacity 0.15s;
+
+        &:active {
+          transform: scale(0.96);
+          opacity: 0.9;
+        }
+      }
+
+      .transfer-disabled-tag {
+        font-size: 11px;
+        color: #94a3b8;
+        background: #f1f5f9;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  /* Commission Transfer Modal */
+  :deep(.transfer-dialog) {
+    border-radius: 16px;
+    overflow: hidden;
+
+    .van-dialog__header {
+      font-weight: 700;
+      font-size: 17px;
+      color: #1e293b;
+      padding-top: 20px;
+    }
+
+    .transfer-modal-body {
+      padding: 16px 20px 20px;
+
+      .modal-hint {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+
+      .modal-balance-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        font-size: 13px;
+        color: #475569;
+
+        .balance-highlight {
+          color: #B83A2E;
+          font-weight: 800;
+          font-size: 15px;
+        }
+      }
+
+      .modal-input-wrap {
+        display: flex;
+        align-items: center;
+        border: 1.5px solid #B83A2E;
+        border-radius: 10px;
+        padding: 8px 12px;
+        background: #ffffff;
+
+        .currency-prefix {
+          font-size: 18px;
+          font-weight: 800;
+          color: #B83A2E;
+          margin-right: 8px;
+        }
+
+        .transfer-input {
+          flex: 1;
+          border: none;
+          outline: none;
+          font-size: 18px;
+          font-weight: 700;
+          color: #1e293b;
+        }
+
+        .all-btn {
+          background: #fff0ed;
+          color: #B83A2E;
+          border: 1px solid #fdece8;
+          border-radius: 6px;
+          padding: 4px 10px;
+          font-size: 12px;
+          font-weight: 700;
+          cursor: pointer;
         }
       }
     }

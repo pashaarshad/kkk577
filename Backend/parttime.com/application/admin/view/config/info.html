@@ -116,12 +116,10 @@
                 </div>
             </div>
 
-            <div class="layui-form-item">
+            <div class="layui-form-item" style="display:none;">
                 <label class="layui-form-label" style="width:160px;">用户端开启谷歌验证器 / 2FA</label>
                 <div class="layui-input-block">
-                    <input type="radio" name="google_secret_status" value="1" title="开启 / Open" {if sysconf('google_secret_status')=='1'}checked{/if}>
-                    <input type="radio" name="google_secret_status" value="0" title="关闭 / Close" {if sysconf('google_secret_status')=='0' || !sysconf('google_secret_status')}checked{/if}>
-                    <p class="help-block" style="color:#86909c; font-size:12px;">google_secret_status: 用户端是否开启谷歌验证器</p>
+                    <input type="radio" name="google_secret_status" value="0" title="关闭 / Close" checked>
                 </div>
             </div>
 

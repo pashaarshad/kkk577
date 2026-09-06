@@ -225,17 +225,14 @@
         </div>
     </div>
 
-    <div class="layui-form-item">
+    <div class="layui-form-item" style="display: none;">
         <label class="layui-form-label required">用户端是否开启谷歌验证器</label>
         <div class="layui-input-block">
-                        <input type="radio" v-model="google_secret_status" name="google_secret_status"
-                   lay-filter="google_secret_status" value="true" title="开启"
-                   >
-                        <input type="radio" v-model="google_secret_status" name="google_secret_status"
+            <input type="radio" v-model="google_secret_status" name="google_secret_status"
                    lay-filter="google_secret_status" value="false" title="关闭"
                    checked="">
-                    </div>
-        <tip class="tip_style">google_secret_status：用户端是否开启谷歌验证器</tip>
+        </div>
+        <tip class="tip_style">google_secret_status：用户端谷歌验证器已停用 (Google 2FA disabled)</tip>
     </div>
 
     <div class="layui-form-item">
