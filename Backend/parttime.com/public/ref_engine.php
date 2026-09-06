@@ -370,6 +370,135 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
         json_resp(null, 1, 'Failed to save file');
     }
 
+    // 7g. Poster Banners Management (slide-item insert & update)
+    if (strpos($uri, 'system/slide-item/insert') !== false || strpos($uri, 'system/slide-item/update') !== false) {
+        $id = intval($_REQUEST['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [];
+            if (isset($_POST['title'])) $data['title'] = trim($_POST['title']);
+            if (isset($_POST['image'])) $data['image'] = trim($_POST['image']);
+            if (isset($_POST['url'])) $data['url'] = trim($_POST['url']);
+            
+            if ($id > 0) {
+                \think\Db::name('xy_banner')->where('id', $id)->update($data);
+                json_resp(null, 0, 'Banner updated successfully');
+            } else {
+                \think\Db::name('xy_banner')->insert($data);
+                json_resp(null, 0, 'Banner created successfully');
+            }
+        } else {
+            $banner = [];
+            if ($id > 0) {
+                $banner = \think\Db::name('xy_banner')->where('id', $id)->find() ?: [];
+            }
+            header('Content-Type: text/html; charset=utf-8');
+            ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Poster Banner Management</title>
+    <link rel="stylesheet" href="/app/admin/component/layui/css/layui.css?v=2.8.12" />
+    <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
+    <script src="/admin_i18n.js"></script>
+    <style>
+        .layui-form-label { width: 120px !important; }
+        .layui-input-block { margin-left: 150px !important; }
+    </style>
+</head>
+<body class="pear-container" style="background:#fff; padding: 25px;">
+<form class="layui-form" lay-filter="banner-form">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($banner['id'] ?? '') ?>">
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label required">Banner Name</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" required lay-verify="required" placeholder="Enter banner title" class="layui-input" value="<?= htmlspecialchars($banner['title'] ?? '') ?>" style="width: 320px;">
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label required">Banner Image</label>
+        <div class="layui-input-block">
+            <div style="margin-bottom: 10px;">
+                <img id="banner-preview" src="<?= htmlspecialchars($banner['image'] ?? '') ?>" style="max-width: 260px; max-height: 120px; border: 1px solid #e6e6e6; border-radius: 4px; display: <?= !empty($banner['image']) ? 'block' : 'none' ?>;" />
+            </div>
+            <input type="hidden" id="image-input" name="image" value="<?= htmlspecialchars($banner['image'] ?? '') ?>">
+            <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="upload-banner-btn">
+                <i class="layui-icon layui-icon-upload"></i> Upload Image
+            </button>
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">Target URL (Link)</label>
+        <div class="layui-input-block">
+            <input type="text" name="url" placeholder="Optional link e.g. /#/vip" class="layui-input" value="<?= htmlspecialchars($banner['url'] ?? '') ?>" style="width: 320px;">
+        </div>
+    </div>
+    
+    <div class="layui-form-item text-center" style="margin-top: 35px;">
+        <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBanner">Save Banner</button>
+        <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()">Cancel</button>
+    </div>
+</form>
+<script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script>
+layui.use(['form', 'upload', 'jquery', 'popup'], function() {
+    var form = layui.form;
+    var upload = layui.upload;
+    var $ = layui.$;
+    form.render();
+    
+    upload.render({
+        elem: '#upload-banner-btn',
+        url: '/app/admin/upload/image',
+        accept: 'images',
+        done: function(res) {
+            if (res.code === 0 && res.data && res.data.url) {
+                $('#image-input').val(res.data.url);
+                $('#banner-preview').attr('src', res.data.url).show();
+                layui.popup.success('Image uploaded successfully');
+            } else {
+                layui.popup.failure(res.msg || 'Upload failed');
+            }
+        }
+    });
+    
+    form.on('submit(saveBanner)', function(data) {
+        if (!data.field.image) {
+            layui.popup.failure('Please upload a banner image');
+            return false;
+        }
+        var targetUrl = data.field.id ? '/admin/system/slide-item/update' : '/admin/system/slide-item/insert';
+        $.ajax({
+            url: targetUrl,
+            type: 'POST',
+            data: data.field,
+            dataType: 'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    layui.popup.success(res.msg || 'Saved successfully', function() {
+                        parent.layer.closeAll();
+                        if (parent.refreshTable) parent.refreshTable();
+                        else parent.location.reload();
+                    });
+                } else {
+                    layui.popup.failure(res.msg || 'Save failed');
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+</body>
+</html>
+            <?php
+            exit;
+        }
+    }
+
 // 8. Dynamic Reference HTML Views Loading & Universal Interceptor
 if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
     $subPath = $viewMatches[2];
