@@ -118,6 +118,16 @@ class Index extends Controller
     {
         $id = input('id/d', 1);
         $data = Db::name('xy_index_msg')->find($id);
+        if (!$data || empty($data['content'])) {
+            if ($id == 12) {
+                $data = [
+                    'id' => 12,
+                    'title' => 'Company Profile',
+                    'addtime' => time(),
+                    'content' => '<div style="line-height:1.8; color:#333;"><p style="font-weight:bold; font-size:16px; color:#B83A2E; margin-bottom:12px;">Global Task Marketing Platform</p><p>Global Task is a premier international digital marketing and task allocation platform, delivering high-precision optimization solutions for global merchants, digital advertisers, and remote freelancers.</p><p style="margin-top:12px;">Founded with a vision to streamline decentralized e-commerce and digital engagement, our platform handles millions of task interactions daily with end-to-end encryption, strict transaction integrity, and instant commission settlements.</p><p style="margin-top:14px; font-weight:bold; color:#E86C3F;">Key Platform Principles:</p><ul style="padding-left:20px; margin-top:8px;"><li><b>Global Coverage:</b> Supporting operations across 30+ countries and global financial channels.</li><li><b>Financial Security:</b> Multi-currency USDT wallet security with instant recharge and withdrawal capabilities.</li><li><b>Automated Dispatch:</b> Smart algorithm matching high-priority tasks to active platform members.</li></ul></div>'
+                ];
+            }
+        }
         if ($data)
             return json(['code' => 0, 'info' => lang('czcg'), 'data' => $data]);
         else
