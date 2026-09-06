@@ -17,7 +17,7 @@
         { zh: '订单管理', en: 'Order Management' },
         { zh: '数据统计', en: 'Data Statistics' },
 
-        // Top Header
+        { zh: '提现待审(', en: 'Pending (' },
         { zh: '未处理提款', en: 'Pending Withdrawals' },
         { zh: '续费', en: 'Renewal' },
         { zh: '公告', en: 'Notice' },
@@ -265,6 +265,8 @@
         { zh: '审核人员', en: 'Auditor' },
         { zh: '发送地址', en: 'Sender Address' },
         { zh: '接收地址', en: 'Receiver Address' },
+        { zh: '管理员备注', en: 'Admin Remarks' },
+        { zh: '备注信息', en: 'Remarks Info' },
         { zh: '备注', en: 'Remarks' },
         { zh: '说明', en: 'Description' },
         { zh: '类型', en: 'Type' },
@@ -537,12 +539,22 @@
                     '    padding-left: 14px !important;\n' +
                     '    padding-right: 8px !important;\n' +
                     '}\n' +
+                    '.layui-layout-right .layui-nav-item > a {\n' +
+                    '    padding: 0 10px !important;\n' +
+                    '}\n' +
+                    '.layui-layout-control {\n' +
+                    '    left: 140px !important;\n' +
+                    '    width: auto !important;\n' +
+                    '    right: 480px !important;\n' +
+                    '}\n' +
                     '.pear-nav-tree .layui-nav-child dd a, .layui-nav-tree .layui-nav-child dd a {\n' +
                     '    padding-left: 28px !important;\n' +
                     '}\n' +
                     '.layui-table-cell {\n' +
+                    '    height: auto !important;\n' +
+                    '    white-space: normal !important;\n' +
+                    '    word-break: break-word !important;\n' +
                     '    overflow: visible !important;\n' +
-                    '    white-space: nowrap !important;\n' +
                     '}\n' +
                     '.layui-btn-xs {\n' +
                     '    padding: 0 8px !important;\n' +
