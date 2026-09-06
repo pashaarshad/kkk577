@@ -560,12 +560,12 @@
                     '}\n' +
                     '.layui-btn-xs {\n' +
                     '    padding: 0 8px !important;\n' +
-                    '}\n' +
-                    '.layui-layer-setwin .layui-layer-close1 { background: none !important; text-decoration: none !important; font-size: 0 !important; }\n' +
-                    '.layui-layer-setwin .layui-layer-close1:after { content: "✕" !important; font-family: sans-serif !important; font-size: 16px !important; font-weight: bold !important; color: #555 !important; display: block; line-height: 16px; text-align: center; }\n';    font-size: 12px !important;\n' +
+                    '    font-size: 12px !important;\n' +
                     '    height: 24px !important;\n' +
                     '    line-height: 24px !important;\n' +
-                    '}\n';
+                    '}\n' +
+                    '.layui-layer-setwin .layui-layer-close1 { background: none !important; text-decoration: none !important; font-size: 0 !important; }\n' +
+                    '.layui-layer-setwin .layui-layer-close1:after { content: "✕" !important; font-family: sans-serif !important; font-size: 16px !important; font-weight: bold !important; color: #555 !important; display: block; line-height: 16px; text-align: center; }\n';
                 (document.head || document.documentElement).appendChild(styleNode);
             }
 
