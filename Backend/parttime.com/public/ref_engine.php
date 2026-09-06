@@ -343,7 +343,7 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
 
     // 7f. Generic file uploads for Admin
     if (strpos($uri, 'upload/image') !== false || strpos($uri, 'upload/attachment') !== false || strpos($uri, 'upload/file') !== false) {
-        $fileField = isset($_FILES['__file__']) ? '__file__' : (isset($_FILES['file']) ? 'file' : null);
+        $fileField = !empty($_FILES) ? array_key_first($_FILES) : null;
         if (!$fileField) {
             json_resp(null, 1, 'No file uploaded');
         }
@@ -352,6 +352,7 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
             json_resp(null, 1, 'File upload error code: ' . $file['error']);
         }
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (empty($ext)) $ext = 'png';
         
         $isAudio = in_array($ext, ['mp3', 'wav', 'ogg', 'm4a']);
         $subDir = $isAudio ? 'audio' : 'img';
@@ -365,7 +366,7 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
         $targetFile = $saveDir . $filename;
         if (move_uploaded_file($file['tmp_name'], $targetFile)) {
             $url = '/upload/' . $subDir . '/' . $dateDir . '/' . $filename;
-            json_resp(['url' => $url], 0, 'Upload success');
+            json_resp(['url' => $url, 'src' => $url], 0, 'Upload success');
         }
         json_resp(null, 1, 'Failed to save file');
     }
@@ -459,17 +460,16 @@ layui.use(['form', 'upload', 'jquery'], function() {
         acceptMime: 'image/gif,image/jpeg,image/jpg,image/png,image/webp',
         exts: 'jpg|png|gif|bmp|jpeg|webp',
         done: function(res) {
-            if (res.code === 0 && res.data && res.data.url) {
-                $('#image-input').val(res.data.url);
-                $('#banner-preview').attr('src', res.data.url).show();
-                if (window.layui.popup) layui.popup.success('Image uploaded successfully');
-                else layer.msg('Image uploaded successfully', {icon: 1});
+            var imgUrl = (res && res.data && (res.data.url || res.data.src)) ? (res.data.url || res.data.src) : (res && (res.url || res.src));
+            if (imgUrl) {
+                $('#image-input').val(imgUrl);
+                $('#banner-preview').attr('src', imgUrl).show();
+                layer.msg('Image uploaded successfully', {icon: 1});
             } else {
-                if (window.layui.popup) layui.popup.failure(res.msg || 'Upload failed');
-                else layer.msg(res.msg || 'Upload failed', {icon: 2});
+                layer.msg((res && res.msg) || 'Upload failed', {icon: 2});
             }
         },
-        error: function() {
+        error: function(err) {
             layer.msg('Upload failed', {icon: 2});
         }
     });
