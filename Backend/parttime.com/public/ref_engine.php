@@ -423,10 +423,12 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
             <div style="margin-bottom: 10px;">
                 <img id="banner-preview" src="<?= htmlspecialchars($banner['image'] ?? '') ?>" style="max-width: 260px; max-height: 120px; border: 1px solid #e6e6e6; border-radius: 4px; display: <?= !empty($banner['image']) ? 'block' : 'none' ?>;" />
             </div>
-            <input type="hidden" id="image-input" name="image" value="<?= htmlspecialchars($banner['image'] ?? '') ?>">
-            <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="upload-banner-btn">
-                <i class="layui-icon layui-icon-upload"></i> Upload Image
-            </button>
+            <div style="display: flex; gap: 8px; align-items: center; width: 320px;">
+                <input type="text" id="image-input" name="image" placeholder="Image URL or click Upload" value="<?= htmlspecialchars($banner['image'] ?? '') ?>" class="layui-input" style="flex: 1;">
+                <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="upload-banner-btn" style="flex-shrink: 0;">
+                    <i class="layui-icon layui-icon-upload"></i> Upload
+                </button>
+            </div>
         </div>
     </div>
     
@@ -443,8 +445,9 @@ if (strpos($uri, 'system-config/save') !== false || strpos($uri, 'system_config/
     </div>
 </form>
 <script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script src="/app/admin/component/pear/pear.js"></script>
 <script>
-layui.use(['form', 'upload', 'jquery', 'popup'], function() {
+layui.use(['form', 'upload', 'jquery'], function() {
     var form = layui.form;
     var upload = layui.upload;
     var $ = layui.$;
@@ -453,23 +456,31 @@ layui.use(['form', 'upload', 'jquery', 'popup'], function() {
     upload.render({
         elem: '#upload-banner-btn',
         url: '/app/admin/upload/image',
-        accept: 'images',
+        acceptMime: 'image/gif,image/jpeg,image/jpg,image/png,image/webp',
+        exts: 'jpg|png|gif|bmp|jpeg|webp',
         done: function(res) {
             if (res.code === 0 && res.data && res.data.url) {
                 $('#image-input').val(res.data.url);
                 $('#banner-preview').attr('src', res.data.url).show();
-                layui.popup.success('Image uploaded successfully');
+                if (window.layui.popup) layui.popup.success('Image uploaded successfully');
+                else layer.msg('Image uploaded successfully', {icon: 1});
             } else {
-                layui.popup.failure(res.msg || 'Upload failed');
+                if (window.layui.popup) layui.popup.failure(res.msg || 'Upload failed');
+                else layer.msg(res.msg || 'Upload failed', {icon: 2});
             }
+        },
+        error: function() {
+            layer.msg('Upload failed', {icon: 2});
         }
     });
     
     form.on('submit(saveBanner)', function(data) {
-        if (!data.field.image) {
-            layui.popup.failure('Please upload a banner image');
+        var imgVal = $('#image-input').val() || data.field.image;
+        if (!imgVal) {
+            layer.msg('Please upload or enter a banner image', {icon: 2});
             return false;
         }
+        data.field.image = imgVal;
         var targetUrl = data.field.id ? '/admin/system/slide-item/update' : '/admin/system/slide-item/insert';
         $.ajax({
             url: targetUrl,
@@ -478,13 +489,13 @@ layui.use(['form', 'upload', 'jquery', 'popup'], function() {
             dataType: 'json',
             success: function(res) {
                 if (res.code === 0) {
-                    layui.popup.success(res.msg || 'Saved successfully', function() {
+                    layer.msg(res.msg || 'Saved successfully', {icon: 1, time: 1000}, function() {
                         parent.layer.closeAll();
                         if (parent.refreshTable) parent.refreshTable();
-                        else parent.location.reload();
+                        else if (parent.location) parent.location.reload();
                     });
                 } else {
-                    layui.popup.failure(res.msg || 'Save failed');
+                    layer.msg(res.msg || 'Save failed', {icon: 2});
                 }
             }
         });
