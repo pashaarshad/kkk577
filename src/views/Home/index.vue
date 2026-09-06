@@ -145,6 +145,7 @@
             playsinline
             @loadedmetadata="onVideoLoaded"
           ></video>
+          <div class="video-overlay-shield"></div>
         </div>
       </div>
     </section>
@@ -221,7 +222,7 @@ const youtubeEmbedUrl = computed(() => {
   const match = url.match(regExp)
   const videoId = (match && match[2].length === 11) ? match[2] : null
   if (!videoId) return null
-  return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&loop=1&playlist=${videoId}`
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&modestbranding=1&rel=0&iv_load_policy=3&playsinline=1&loop=1&playlist=${videoId}&enablejsapi=1`
 })
 
 const isYoutubeVideo = computed(() => !!youtubeEmbedUrl.value)
@@ -802,6 +803,7 @@ const onWaClick = (e) => {
     }
 
     .intro-video-wrapper {
+      position: relative;
       width: 100%;
       aspect-ratio: 9 / 16;
       max-height: 520px;
@@ -817,8 +819,22 @@ const onWaClick = (e) => {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border: none;
         border-radius: 12px;
         display: block;
+        pointer-events: none;
+        transform: scale(1.05);
+      }
+
+      .video-overlay-shield {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        background: transparent;
+        pointer-events: auto;
       }
     }
   }
