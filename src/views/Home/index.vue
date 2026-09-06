@@ -35,7 +35,7 @@
         </div>
       </div>
 
-      <!-- 5 Action Buttons Container (Curved Shape) -->
+      <!-- 4 Action Buttons Container (Curved Shape) -->
       <div class="five-action-container">
         <div class="action-grid">
           <a class="action-btn" @click="onMenuClick('/recharge')">
@@ -50,13 +50,6 @@
               <svg viewBox="0 0 24 24"><rect x="4" y="6" width="11" height="12" rx="2"></rect><path d="M14 10h6v8a2 2 0 0 1-2 2h-7"></path><path d="M11 9l3 3-3 3"></path></svg>
             </div>
             <span>Withdraw</span>
-          </a>
-
-          <a class="action-btn" @click="onMenuClick('/poster/detail/12')">
-            <div class="action-icon-circle">
-              <svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"></path><path d="M15 4v4h4"></path><path d="M9 12h6"></path><path d="M9 16h5"></path></svg>
-            </div>
-            <span>Company Profile</span>
           </a>
 
           <a class="action-btn" @click="onMenuClick('/poster/detail/13')">
@@ -150,15 +143,7 @@
       </div>
     </section>
 
-    <!-- PARTNERS / REGULATORY AUTHORITY -->
-    <section class="partner-section">
-      <h3 class="section-title">Regulatory Authority</h3>
-      <div class="partner-grid">
-        <div v-for="(item, idx) in footList" :key="idx" class="partner-item">
-          <img :src="item" alt="Partner">
-        </div>
-      </div>
-    </section>
+    <!-- USER COMMISSION DYNAMICS (Member List) -->
 
     <!-- USER COMMISSION DYNAMICS (Member List) -->
     <Commission :list="data.deposit_list" />

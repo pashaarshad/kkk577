@@ -98,16 +98,6 @@
           </div>
         </div>
 
-        <!-- Agreement Checkbox -->
-        <div class="agree-row" @click="agreed = !agreed">
-          <div :class="['custom-checkbox', agreed ? 'checked' : '']">
-            <span v-if="agreed">✓</span>
-          </div>
-          <span class="agree-text">
-            Agree with our <a href="#" @click.stop.prevent>Terms of use</a> And <a href="#" @click.stop.prevent>Privacy agreement</a>
-          </span>
-        </div>
-
         <!-- Primary Sign Up Button -->
         <button type="submit" class="submit-btn" :disabled="loading">
           {{ loading ? 'Creating Account...' : 'Sign Up' }}
@@ -165,7 +155,6 @@ const pwd = ref('')
 const confirm_pwd = ref('')
 const deposit_pwd = ref('')
 const showPwd = ref(false)
-const agreed = ref(true)
 const loading = ref(false)
 
 const currentLangName = ref('English')
@@ -175,10 +164,6 @@ const toggleLang = () => {
 }
 
 const onSubmit = async () => {
-  if (!agreed.value) {
-    showFailToast('Please agree to terms')
-    return
-  }
   if (pwd.value !== confirm_pwd.value) {
     showFailToast('Passwords do not match')
     return

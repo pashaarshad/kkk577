@@ -58,16 +58,6 @@
           </div>
         </div>
 
-        <!-- Agreement Checkbox -->
-        <div class="agree-row" @click="agreed = !agreed">
-          <div :class="['custom-checkbox', agreed ? 'checked' : '']">
-            <span v-if="agreed">✓</span>
-          </div>
-          <span class="agree-text">
-            Agree with our <a href="#" @click.stop.prevent>Terms of use</a> And <a href="#" @click.stop.prevent>Privacy agreement</a>
-          </span>
-        </div>
-
         <!-- Primary Sign In Button -->
         <button type="submit" class="submit-btn" :disabled="loginLoading">
           {{ loginLoading ? 'Signing In...' : 'Sign In' }}
@@ -101,7 +91,6 @@ const router = useRouter()
 const username = ref('')
 const password = ref('')
 const showPwd = ref(false)
-const agreed = ref(true)
 const loginLoading = ref(false)
 
 onMounted(() => {
@@ -116,11 +105,6 @@ const toggleLang = () => {
 }
 
 const onSubmit = async () => {
-  if (!agreed.value) {
-    showFailToast('Please agree to terms')
-    return
-  }
-
   loginLoading.value = true
   try {
     const res = await Request.post({
