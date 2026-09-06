@@ -203,8 +203,10 @@ Request.get({ url: 'index/user/vip' }).then(res => {
 })
 
 const data = ref({})
-Request.get({ url: 'index/index/home' }).then(res => {
-  data.value = res.data
+const tokenVal = localStorage.getItem('token') || sessionStorage.getItem('token')
+const uidVal = localStorage.getItem('user_id') || sessionStorage.getItem('user_id')
+Request.get({ url: 'index/index/home', params: { uid: uidVal, token: tokenVal } }).then(res => {
+  data.value = res.data || {}
 })
 
 const youtubeEmbedUrl = computed(() => {
@@ -250,7 +252,8 @@ const computedVideoStyle = computed(() => {
 
 const loginShow = computed(() => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token')
-  return !!token && !!data.value?.user_info
+  const userId = localStorage.getItem('user_id') || sessionStorage.getItem('user_id')
+  return !!(token || userId || data.value?.user_info)
 })
 
 const onMenuClick = (path) => {

@@ -117,12 +117,13 @@ const onSubmit = async () => {
 
     if (res && res.code === 0) {
       showSuccessToast('Login successful!')
-      const userToken = res.token || ('user_token_' + Date.now())
+      const userToken = res.token || res.data?.token || ('user_token_' + Date.now())
+      const userId = res.user_id || res.data?.user_id
       localStorage.setItem('token', userToken)
       sessionStorage.setItem('token', userToken)
-      if (res.user_id) {
-        localStorage.setItem('user_id', res.user_id)
-        sessionStorage.setItem('user_id', res.user_id)
+      if (userId) {
+        localStorage.setItem('user_id', userId)
+        sessionStorage.setItem('user_id', userId)
       }
       setTimeout(() => {
         router.push('/home')

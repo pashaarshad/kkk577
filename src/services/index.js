@@ -47,7 +47,7 @@ class Request {
         .then((res) => {
           if (res?.data?.code !== 0) {
             const infoMsg = String(res?.data?.info || '')
-            if (infoMsg.includes('login') || infoMsg.includes('no_login') || infoMsg.includes('登录')) {
+            if (infoMsg === 'no_login' || infoMsg === 'login_first' || infoMsg === 'not_user') {
               sessionStorage.clear()
               localStorage.clear()
               const currentHash = window.location.hash || ''

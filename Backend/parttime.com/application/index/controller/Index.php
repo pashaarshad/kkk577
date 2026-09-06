@@ -52,10 +52,20 @@ class Index extends Controller
         }
         $data->deposit_list = $deposit_list;
         $uid = session('user_id') ?: cookie('user_id');
+        if (!$uid) {
+            $uid = intval(request()->header('user-id') ?: request()->header('uid') ?: input('post.uid/d', 0) ?: input('get.uid/d', 0));
+        }
+        if (!$uid) {
+            $token = request()->header('token') ?: cookie('token') ?: input('post.token') ?: input('get.token');
+            if ($token) {
+                $uid = Db::name('xy_users')->where('token', $token)->value('id');
+            }
+        }
         if ($uid) {
             if (!session('user_id')) {
                 session('user_id', $uid);
             }
+            cookie('user_id', $uid, 30 * 86400);
             $userInfo = Db::name('xy_users')->field('id,username,tel,invite_code,balance,level,deposit_status,deal_status,up_status')->find($uid);
             if ($userInfo) {
                 $userInfo['level_name'] = Db::name('xy_level')->where('level', $userInfo['level'])->value('name') ?: ('VIP' . $userInfo['level']);

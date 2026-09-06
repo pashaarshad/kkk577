@@ -140,12 +140,23 @@ class User extends Controller
             }
     
     
-            Db::table($this->table)->where('id', $userinfo['id'])->update(['pwd_error_num' => 0, 'allow_login_time' => 0, 'login_status' => 1]);
+            $token = md5($userinfo['id'] . time() . 'huanyuys');
+            Db::table($this->table)->where('id', $userinfo['id'])->update(['token' => $token, 'pwd_error_num' => 0, 'allow_login_time' => 0, 'login_status' => 1]);
             session('user_id', $userinfo['id']);
             session('avatar', $userinfo['headpic']);
             cookie('user_id', $userinfo['id'], 30 * 86400);
+            cookie('token', $token, 30 * 86400);
 
-            return json(['code' => 0, 'info' => lang('loging_ok')]);
+            return json([
+                'code' => 0,
+                'info' => lang('loging_ok'),
+                'token' => $token,
+                'user_id' => $userinfo['id'],
+                'data' => [
+                    'token' => $token,
+                    'user_id' => $userinfo['id']
+                ]
+            ]);
         // return json($res);
     }
 
