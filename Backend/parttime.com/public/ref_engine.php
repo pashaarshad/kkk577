@@ -957,20 +957,138 @@ if (preg_match('#^/(admin|app/admin)/#', $uri)) {
         json_resp(null, 1, '更新失败');
     }
 
-    // F2. 会员余额修改
+    // F2. 会员余额修改 (Change Money)
     if (strpos($uri, 'member/user/modifymoney') !== false || strpos($uri, 'users/edit_money') !== false) {
-        $uid = intval($_POST['uid'] ?? $_POST['id'] ?? 0);
-        $money = floatval($_POST['money'] ?? $_POST['balance'] ?? 0);
-        $type = intval($_POST['type'] ?? 1);
-        if ($uid && $money > 0) {
-            if ($type == 1) {
-                \think\Db::name('xy_users')->where('id', $uid)->setInc('balance', $money);
-            } else {
-                \think\Db::name('xy_users')->where('id', $uid)->setDec('balance', $money);
+        $uid = intval($_REQUEST['uid'] ?? $_REQUEST['id'] ?? 0);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $money = floatval($_POST['money'] ?? $_POST['balance'] ?? 0);
+            $type = intval($_POST['type'] ?? 1);
+            if ($uid && $money > 0) {
+                if ($type == 1) {
+                    \think\Db::name('xy_users')->where('id', $uid)->setInc('balance', $money);
+                } else {
+                    \think\Db::name('xy_users')->where('id', $uid)->setDec('balance', $money);
+                }
+                json_resp(null, 0, '余额修改成功');
             }
-            json_resp(null, 0, '余额修改成功');
+            json_resp(null, 1, '修改失败，请输入有效金额');
+        } else {
+            $user = \think\Db::name('xy_users')->where('id', $uid)->find();
+            if (empty($user)) {
+                echo "<h3 style='color:red;text-align:center;margin-top:50px;'>User not found</h3>";
+                exit;
+            }
+            header('Content-Type: text/html; charset=utf-8');
+            ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Balance</title>
+    <link rel="stylesheet" href="/app/admin/component/layui/css/layui.css?v=2.8.12" />
+    <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
+    <script src="/admin_i18n.js"></script>
+    <style>
+        .layui-form-label { width: 130px !important; }
+        .layui-input-block { margin-left: 160px !important; }
+    </style>
+</head>
+<body class="pear-container" style="background:#fff; padding: 30px;">
+<form class="layui-form" lay-filter="money-form">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($user['id']) ?>">
+    <div class="layui-form-item">
+        <label class="layui-form-label">User ID</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" value="<?= htmlspecialchars($user['id']) ?>" readonly disabled style="background:#f8f8f8; width: 280px;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Username</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" value="<?= htmlspecialchars($user['username']) ?> (<?= htmlspecialchars($user['tel']) ?>)" readonly disabled style="background:#f8f8f8; width: 280px;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Current Balance</label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" value="$<?= htmlspecialchars($user['balance']) ?>" readonly disabled style="background:#f8f8f8; font-weight:bold; color:#10b981; width: 280px;">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Operation Type</label>
+        <div class="layui-input-block" style="width: 280px;">
+            <select name="type">
+                <option value="1">➕ Add Balance (增加余额)</option>
+                <option value="2">➖ Deduct Balance (扣除余额)</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">Amount ($)</label>
+        <div class="layui-input-block">
+            <input type="number" step="0.01" min="0.01" name="money" required lay-verify="required" placeholder="Enter amount" class="layui-input" style="width: 280px;">
+        </div>
+    </div>
+    <div class="layui-form-item text-center" style="margin-top: 35px;">
+        <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="saveMoney">Submit Adjustment</button>
+        <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()">Cancel</button>
+    </div>
+</form>
+<script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script>
+layui.use(['form', 'jquery', 'popup'], function() {
+    var form = layui.form;
+    var $ = layui.$;
+    form.render();
+    
+    form.on('submit(saveMoney)', function(data) {
+        $.ajax({
+            url: '/admin/member/user/modifymoney',
+            type: 'POST',
+            data: data.field,
+            dataType: 'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    layui.popup.success(res.msg || 'Balance adjusted successfully', function() {
+                        parent.layer.closeAll();
+                        if (parent.refreshTable) parent.refreshTable();
+                        else parent.location.reload();
+                    });
+                } else {
+                    layui.popup.failure(res.msg || 'Adjustment failed');
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+</body>
+</html>
+            <?php
+            exit;
         }
-        json_resp(null, 1, '修改失败');
+    }
+
+    // F2b. 模拟登录与强制下线 (Simulate Login & Force Offline)
+    if (strpos($uri, 'member/user/simulate') !== false) {
+        $uid = intval($_POST['id'] ?? $_POST['uid'] ?? 0);
+        $user = \think\Db::name('xy_users')->where('id', $uid)->find();
+        if ($user) {
+            session('user_id', $user['id']);
+            $token = md5($user['id'] . time() . 'sim_token');
+            json_resp(['url' => 'http://localhost:5173/#/home?token=' . $token], 0, 'Simulation successful');
+        }
+        json_resp(null, 1, 'User not found');
+    }
+
+    if (strpos($uri, 'member/user/forceOffline') !== false) {
+        $uid = intval($_POST['id'] ?? $_POST['uid'] ?? 0);
+        if ($uid) {
+            \think\Db::name('xy_users')->where('id', $uid)->update(['login_status' => 0]);
+            json_resp(null, 0, 'User forced offline successfully');
+        }
+        json_resp(null, 1, 'Operation failed');
     }
 
     // F3. 会员详情与修改
