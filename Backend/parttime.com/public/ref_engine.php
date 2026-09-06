@@ -592,6 +592,208 @@ layui.use(['form', 'upload', 'jquery'], function() {
         }
     }
 
+    // 7h. Deposit & Withdrawal Currency Channels (system-coin-channel / xy_pay QR Code & Wallet Address Manager)
+    if (strpos($uri, 'system-coin-channel') !== false || strpos($uri, 'system_coin_channel') !== false) {
+        init_think();
+        $id = intval($_REQUEST['id'] ?? $_REQUEST['PRIMARY_KEY'] ?? 0);
+
+        // Handle SELECT
+        if (strpos($uri, '/select') !== false) {
+            $page = intval($_GET['page'] ?? 1);
+            $limit = intval($_GET['limit'] ?? 20);
+            $count = \think\Db::name('xy_pay')->count();
+            $list = \think\Db::name('xy_pay')->page($page, $limit)->order('sort desc, id asc')->select();
+            foreach ($list as &$item) {
+                if (empty($item['name'])) {
+                    $item['name'] = $item['show_name'] ?? ('Channel #' . $item['id']);
+                }
+                if (empty($item['usercode'])) {
+                    $item['usercode'] = '0x4f85459F610376Ee6Ad77216785582c55817d5bc';
+                }
+                if (!isset($item['status'])) {
+                    $item['status'] = 1;
+                }
+            }
+            table_resp($list, $count);
+        }
+
+        // Handle DELETE
+        if (strpos($uri, '/delete') !== false) {
+            if ($id > 0) {
+                \think\Db::name('xy_pay')->where('id', $id)->delete();
+                json_resp(null, 0, 'Payment channel deleted successfully');
+            }
+            json_resp(null, 1, 'Delete failed');
+        }
+
+        // Handle POST Save (Insert / Update / Status Switch)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [];
+            if (isset($_POST['name'])) $data['name'] = trim($_POST['name']);
+            if (isset($_POST['show_name'])) $data['show_name'] = trim($_POST['show_name']);
+            if (isset($_POST['usercode'])) $data['usercode'] = trim($_POST['usercode']);
+            if (isset($_POST['ewm'])) $data['ewm'] = trim($_POST['ewm']);
+            if (isset($_POST['ico'])) $data['ico'] = trim($_POST['ico']);
+            if (isset($_POST['status'])) {
+                $data['status'] = intval($_POST['status']);
+                $data['recharge_is_show'] = intval($_POST['status']);
+            }
+            if (isset($_POST['min_recharge_money'])) $data['min_recharge_money'] = floatval($_POST['min_recharge_money']);
+            
+            if ($id > 0) {
+                if (!empty($data)) {
+                    \think\Db::name('xy_pay')->where('id', $id)->update($data);
+                }
+                json_resp(null, 0, 'Payment currency details updated successfully');
+            } else {
+                if (empty($data['name'])) {
+                    json_resp(null, 1, 'Currency name is required');
+                }
+                if (empty($data['usercode'])) {
+                    $data['usercode'] = '0x4f85459F610376Ee6Ad77216785582c55817d5bc';
+                }
+                $data['status'] = 1;
+                $data['recharge_is_show'] = 1;
+                \think\Db::name('xy_pay')->insert($data);
+                json_resp(null, 0, 'Payment currency channel added successfully');
+            }
+        } elseif (strpos($uri, '/insert') !== false || strpos($uri, '/update') !== false || strpos($uri, '/edit') !== false || strpos($uri, '/add') !== false) {
+            // Handle GET (HTML Edit Form Modal)
+            $pay = [];
+            if ($id > 0) {
+                $pay = \think\Db::name('xy_pay')->where('id', $id)->find() ?: [];
+            }
+            header('Content-Type: text/html; charset=utf-8');
+            ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Payment Wallet & QR Code</title>
+    <link rel="stylesheet" href="/app/admin/component/layui/css/layui.css?v=2.8.12" />
+    <link rel="stylesheet" href="/app/admin/component/pear/css/pear.css" />
+    <script src="/admin_i18n.js"></script>
+    <style>
+        .layui-form-label { width: 170px !important; }
+        .layui-input-block { margin-left: 200px !important; }
+    </style>
+</head>
+<body class="pear-container" style="background:#fff; padding: 25px;">
+<form class="layui-form" lay-filter="coin-form">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($pay['id'] ?? '') ?>">
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label required">Currency Channel Name</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" placeholder="e.g. TRC20-USDT, BEP20-USDT, ETH, Bank Transfer" class="layui-input" value="<?= htmlspecialchars($pay['name'] ?? $pay['show_name'] ?? '') ?>" required style="width: 340px;">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">Wallet Address / Account</label>
+        <div class="layui-input-block">
+            <input type="text" id="usercode-input" name="usercode" placeholder="Enter crypto wallet address or bank account / UPI ID" class="layui-input" value="<?= htmlspecialchars($pay['usercode'] ?? '0x4f85459F610376Ee6Ad77216785582c55817d5bc') ?>" required style="width: 340px; font-family: monospace;">
+        </div>
+    </div>
+    
+    <div class="layui-form-item">
+        <label class="layui-form-label">Payment QR Code Image</label>
+        <div class="layui-input-block">
+            <div style="margin-bottom: 10px;">
+                <img id="qr-preview" src="<?= htmlspecialchars($pay['ewm'] ?? '') ?>" style="max-width: 180px; max-height: 180px; border: 1px solid #e6e6e6; border-radius: 6px; display: <?= !empty($pay['ewm']) ? 'block' : 'none' ?>;" />
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center; width: 340px;">
+                <input type="text" id="qr-input" name="ewm" placeholder="QR Image URL or click Upload" value="<?= htmlspecialchars($pay['ewm'] ?? '') ?>" class="layui-input" style="flex: 1;">
+                <button type="button" class="pear-btn pear-btn-primary pear-btn-sm" id="upload-qr-btn" style="flex-shrink: 0;">
+                    <i class="layui-icon layui-icon-upload"></i> Upload QR
+                </button>
+            </div>
+            <div style="margin-top: 6px; font-size: 12px; color: #86909c; width: 340px; line-height: 1.4;">
+                <i class="layui-icon layui-icon-info" style="color: #1e9fff;"></i> Max size: <b>10 MB</b> (JPG, PNG, WEBP, GIF). Uploading custom QR replaces generated QR in user app.
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">Channel Icon (Optional)</label>
+        <div class="layui-input-block">
+            <input type="text" name="ico" placeholder="Icon URL e.g. /static/image/trc20-usdt.jpg" class="layui-input" value="<?= htmlspecialchars($pay['ico'] ?? '') ?>" style="width: 340px;">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">Active Status</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="status" value="1" lay-skin="switch" lay-text="ON|OFF" <?= (!isset($pay['status']) || $pay['status'] == 1) ? 'checked' : '' ?>>
+        </div>
+    </div>
+    
+    <div class="layui-form-item text-center" style="margin-top: 35px;">
+        <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="saveCoin">Save Payment Channel</button>
+        <button type="button" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()">Cancel</button>
+    </div>
+</form>
+<script src="/app/admin/component/layui/layui.js?v=2.8.12"></script>
+<script src="/app/admin/component/pear/pear.js"></script>
+<script>
+layui.use(['form', 'upload', 'jquery'], function() {
+    var form = layui.form;
+    var upload = layui.upload;
+    var $ = layui.$;
+    form.render();
+    
+    upload.render({
+        elem: '#upload-qr-btn',
+        url: '/app/admin/upload/image',
+        acceptMime: 'image/*',
+        exts: 'jpg|png|gif|bmp|jpeg|webp',
+        size: 10240,
+        done: function(res) {
+            var imgUrl = (res && res.data && (res.data.url || res.data.src)) ? (res.data.url || res.data.src) : (res && (res.url || res.src));
+            if (imgUrl) {
+                $('#qr-input').val(imgUrl);
+                $('#qr-preview').attr('src', imgUrl).show();
+                layer.msg('QR Code uploaded successfully', {icon: 1});
+            } else {
+                layer.msg((res && res.msg) || 'Upload failed', {icon: 2});
+            }
+        },
+        error: function() {
+            layer.msg('Upload failed', {icon: 2});
+        }
+    });
+    
+    form.on('submit(saveCoin)', function(data) {
+        data.field.status = data.field.status ? 1 : 0;
+        var targetUrl = data.field.id ? '/admin/system/system-coin-channel/update' : '/admin/system/system-coin-channel/insert';
+        $.ajax({
+            url: targetUrl,
+            type: 'POST',
+            data: data.field,
+            dataType: 'json',
+            success: function(res) {
+                if (res.code === 0) {
+                    layer.msg(res.msg || 'Saved successfully', {icon: 1, time: 1000}, function() {
+                        parent.layer.closeAll();
+                        if (parent.refreshTable) parent.refreshTable();
+                        else if (parent.location) parent.location.reload();
+                    });
+                } else {
+                    layer.msg(res.msg || 'Save failed', {icon: 2});
+                }
+            }
+        });
+        return false;
+    });
+});
+</script>
+</body>
+</html>
+            <?php
+            exit;
+        }
+    }
+
 // 8. Dynamic Reference HTML Views Loading & Universal Interceptor
 if (preg_match('#^/(admin|app/admin)/(.*)$#', $uri, $viewMatches)) {
     $subPath = $viewMatches[2];
