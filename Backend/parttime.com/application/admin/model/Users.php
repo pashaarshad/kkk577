@@ -465,7 +465,7 @@ class Users extends Model
 
         unset($data['__token__']);
         $res = Db::table($this->table)->where('id', $id)->update($data);
-        if ($res)
+        if ($res !== false)
             return ['code' => 0, 'info' => lang('czcg')];
         else
             return ['code' => 1, 'info' => lang('czsb')];

@@ -428,6 +428,9 @@ class Users extends Base
             }
             $res = model('Users')
                 ->edit_users($id, $tel, $user_name, $pwd, $parent_id, $balance, $freeze_balance, $token, $pwd2);
+            if (isset($res['code']) && $res['code'] !== 0) {
+                return $this->error($res['info']);
+            }
             $res2 = Db::table($this->table)->where('id', $id)->update([
                 'deal_status' => $deal_status,
                 'level' => $level,

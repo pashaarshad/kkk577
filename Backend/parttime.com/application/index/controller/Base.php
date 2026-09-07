@@ -21,6 +21,12 @@ class Base extends Controller
     {
         parent::__construct($app);
         if (config('shop_status') == 0) exit();
+        try {
+            $fields = Db::getTableFields('xy_users');
+            if ($fields && !in_array('token', $fields)) {
+                Db::execute("ALTER TABLE xy_users ADD COLUMN token VARCHAR(64) DEFAULT NULL");
+            }
+        } catch (\Exception $e) {}
         $uid = session('user_id');
         if (!$uid) {
             $uid = cookie('user_id');
