@@ -23,8 +23,13 @@ class Base extends Controller
         if (config('shop_status') == 0) exit();
         try {
             $fields = Db::getTableFields('xy_users');
-            if ($fields && !in_array('token', $fields)) {
-                Db::execute("ALTER TABLE xy_users ADD COLUMN token VARCHAR(64) DEFAULT NULL");
+            if ($fields) {
+                if (!in_array('token', $fields)) {
+                    Db::execute("ALTER TABLE xy_users ADD COLUMN token VARCHAR(64) DEFAULT NULL");
+                }
+                if (!in_array('commission_balance', $fields)) {
+                    Db::execute("ALTER TABLE xy_users ADD COLUMN commission_balance DECIMAL(10,2) NOT NULL DEFAULT '0.00' AFTER balance");
+                }
             }
         } catch (\Exception $e) {}
         $uid = session('user_id');
